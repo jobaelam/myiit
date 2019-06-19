@@ -3,6 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use App\User;
+use App\Chat;
+use App\Chat_Message;
 
 class PagesController extends Controller
 {
@@ -25,7 +29,12 @@ class PagesController extends Controller
     }
 
     public function messenger(){
-        return view('pages.messenger');
+        $data = array(
+            'users' => User::all(),
+            'chats' => Chat::where('user2', '==', Auth::user()->id)->get(),
+        );
+        
+        return view('pages.messenger')->with($data);
     }
 
     public function profile(){

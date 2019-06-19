@@ -1,0 +1,11 @@
+#greeting
+{
+    text-align: center;
+}
+
+#chat-window
+{
+    height: 400px;
+    border-left: solid 1px lightgray;
+    border-right: solid 1px lightgray;
+}

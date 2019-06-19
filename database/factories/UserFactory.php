@@ -17,11 +17,12 @@ use Faker\Generator as Faker;
 */
 
 $factory->define(User::class, function (Faker $faker) {
+
     return [
         'first_name' => $faker->firstName,
         'last_name' => $faker->lastName,
         'profile_image' => 'http://via.placeholder.com/150x150',
-        'dept_id' => '1',
+        'dept_id' => rand(1,3),
         'type' => '2',
         'email' => $faker->unique()->safeEmail,
         'email_verified_at' => now(),
@@ -31,16 +32,24 @@ $factory->define(User::class, function (Faker $faker) {
 });
 
 
-$factory->define(App\Message::class, function (Faker $faker) {
+$factory->define(App\Chat::class, function (Faker $faker) {
 
     do{
-        $from = rand(1,5);
-        $to = rand(1,5);
+        $from = rand(2,10);
+        $to = rand(2,10);
     } while ($from === $to);
 
     return [
-        'from' => $from,
-        'to' => $to,
-        'text' => $faker->sentence,
+        'user1' => $from,
+        'user2' => $to,
+    ];
+});
+
+$factory->define(App\Chat_Message::class, function (Faker $faker) {
+
+    return [
+        'chat_id' => random_int(1,8),
+        'sender_id' => random_int(2,10),
+        'message' => $faker->sentence,
     ];
 });

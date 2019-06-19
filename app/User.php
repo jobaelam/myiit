@@ -10,8 +10,12 @@ class User extends Authenticatable
 {
     use Notifiable;
 
-    public function type(){
-        return $this->hasOne('App\Type', 'id', 'type')->get();
+    public function types(){
+        return $this->belongsTo('App\Type');
+    }
+
+    public function chats(){
+        return $this->hasMany('App\Chat');
     }
 
     public function fullName(){

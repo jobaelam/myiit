@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html>
-<head>
+<head> 
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>{{config('app.name', 'My.IIT')}} | Dashboard</title>
   <link rel="icon" type="image/png" href="/dist/img/logo/msuiit.png" />
   <!-- Tell the browser to be responsive to screen width -->
+  <meta name="csrf-token" content="{{ csrf_token() }}" />
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.7 -->
   <link rel="stylesheet" href="/bower_components/bootstrap/dist/css/bootstrap.min.css">
@@ -15,6 +16,7 @@
   <link rel="stylesheet" href="/bower_components/Ionicons/css/ionicons.min.css">
   <!-- Theme style -->
   <link rel="stylesheet" href="/dist/css/AdminLTE.min.css">
+  {{-- <link rel="stylesheet" href="/dist/css/chats.css"> --}}
   <!-- AdminLTE Skins. Choose a skin from the css/skins
        folder instead of downloading all of them to reduce the load. -->
   <link rel="stylesheet" href="/dist/css/skins/_all-skins.min.css">
@@ -131,7 +133,7 @@
                   </li>
                 </ul>
               </li>
-              <li class="footer"><a href="/messeger">See All Messages</a></li>
+              <li class="footer"><a href="/messenger">See All Messages</a></li>
             </ul>
           </li>
           <!-- Notifications: style can be found in dropdown.less -->
@@ -324,7 +326,7 @@
             <div class="pull-left info">
                 <p>
                   @if(Auth::user()->first_name == 'Admin' OR Auth::user()->first_name == 'Admin')
-                  {{Auth::user()->first_name}} 
+                  {{Auth::user()->types}} 
                   @else
                   {{Auth::user()->fullName()}}
                   @endif
@@ -380,10 +382,12 @@
     <script src="/bower_components/fastclick/lib/fastclick.js"></script>
     <!-- AdminLTE App -->
     <script src="/dist/js/adminlte.min.js"></script>
-    <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
-    <script src="/dist/js/pages/dashboard.js"></script>
+    {{-- <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
+    <script src="/dist/js/pages/dashboard.js"></script> --}}
     <!-- AdminLTE for demo purposes -->
     <script src="/dist/js/demo.js"></script>
+    <script src="/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js"></script>
+    <script src="/dist/js/chats.js"></script>
     </body>
     </html>
     
