@@ -11,6 +11,18 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', 'PagesController@index');
+Route::get('/accreditation', 'PagesController@accreditation');
+Route::get('/messeger', 'PagesController@messenger');
+Route::get('/profile', 'PagesController@profile');
+
+// Route::view('/home', 'welcome');
+
+// Route::get('accreditation', function(){
+//     return view('pages.accreditation');}
+// );
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');
+
+Route::get('/contacts', 'ContactsController@get');

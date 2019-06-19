@@ -10,6 +10,14 @@ class User extends Authenticatable
 {
     use Notifiable;
 
+    public function type(){
+        return $this->hasOne('App\Type', 'id', 'type')->get();
+    }
+
+    public function fullName(){
+        return $this->first_name.' '.$this->last_name;
+    }
+
     /**
      * The attributes that are mass assignable.
      *
