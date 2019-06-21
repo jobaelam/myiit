@@ -29,9 +29,11 @@ class PagesController extends Controller
     }
 
     public function messenger(){
+        $user = Auth::user()->id;
         $data = array(
             'users' => User::all(),
-            'chats' => Chat::where('user2', '==', Auth::user()->id)->get(),
+            'chats' => Chat::where('user1', $user)->get(),
+            'chats2' => Chat::where('user2', $user)->get(),
         );
         
         return view('pages.messenger')->with($data);

@@ -8,7 +8,9 @@ class Chat_Message extends Model
 {
     protected $table='chat_messages';
 
+    protected $guarded = [];
+
     public function message(){
-        return $this->hasOne('App\Chat');
+        return $this->belongsTo(Chat::class);
     }
 }

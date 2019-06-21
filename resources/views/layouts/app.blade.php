@@ -387,7 +387,7 @@
     <!-- AdminLTE for demo purposes -->
     <script src="/dist/js/demo.js"></script>
     <script src="/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js"></script>
-    <script src="/dist/js/chats.js"></script>
+    {{-- <script src="/dist/js/chats.js"></script> --}}
     </body>
     </html>
     

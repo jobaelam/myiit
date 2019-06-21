@@ -11,11 +11,11 @@ class User extends Authenticatable
     use Notifiable;
 
     public function types(){
-        return $this->belongsTo('App\Type');
+        return $this->belongsTo(Type::class);
     }
 
     public function chats(){
-        return $this->hasMany('App\Chat');
+        return $this->hasMany(Chat::class);
     }
 
     public function fullName(){

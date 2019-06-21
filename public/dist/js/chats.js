@@ -1,4 +1,4 @@
-var username,user2;
+var username,chat;
 
 $(document).ready(function()
 {
@@ -9,8 +9,7 @@ $(document).ready(function()
     $("li.active").removeClass("active");
     // And make this active
     $(this).addClass("active");}
-        user2 = $(this).attr('value');
-    username = $('#id').val();
+        chat = $(this).attr('value');
     
     pullData();
 
@@ -22,6 +21,7 @@ $(document).ready(function()
     });
 
     });
+    
 });
 
 function pullData()
@@ -33,11 +33,11 @@ function pullData()
 
 function retrieveChatMessages()
 {   
-    $.get('/retrieveChatMessages/'+username+'/'+user2, function(data)
+    $.get('/retrieveChatMessages/'+chat, function(data)
     {
-        console.log(data);
         // if (data.length > 0)
-        //  $('#direct-chat-text').append('<div class="direct-chat-text">'+data+'</div>');
+        console.log(data);
+        // $('div.direct-chat-msg').append('<div class="direct-chat-text">'+data+'</div>');
     });
 }
 
@@ -55,13 +55,14 @@ function retrieveTypingStatus()
 function sendMessage()
 {
     var text = $('#text').val();
-
     if (text.length > 0)
     {
-        $.post('sendMessage', {text: text, username: username}, function()
+        alert(chat+''+text);
+        $.post('/sendMessage', {chat: chat, text: text }, function(data)
         {
-            $('#chat-window').append('<br><div style="text-align: right">'+text+'</div><br>');
-            $('#text').val('');
+            // $('#chat-window').append('<br><div style="text-align: right">'+text+'</div><br>');
+            // $('#text').val('');
+            console.log(data)
             notTyping();
         });
     }
@@ -69,7 +70,6 @@ function sendMessage()
 
 function isTyping()
 {
-    alert(username);
     $.post('/isTyping', {_token:"{{csrf_token()}}",username: username},function(){
         alert('lol');
     });

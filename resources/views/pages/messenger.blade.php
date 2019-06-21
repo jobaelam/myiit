@@ -3,12 +3,12 @@
 @section('sidebar')
 <ul class="sidebar-menu" data-widget="tree">
     <li><a href="/"><i class="fa fa-home"></i> <span>Home</span></a></li>
-    <li class="active"><a href="/accreditation"><i class="fa fa-book"></i> <span>Accreditation</span></a></li>
+    <li><a href="/accreditation"><i class="fa fa-book"></i> <span>Accreditation</span></a></li>
 </ul>
 @endsection
 
 @section('content')
-<input type="hidden" id="id" name="id" value="{{Auth::user()->id}}">
+
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
     <!-- Content Header (Page header) -->
@@ -25,7 +25,7 @@
     <!-- Main content -->
     <section class="content">
         <div class="row">
-            <div class="col-md-3">
+            <div class="col-md-2">
     
             <div class="box box-solid">
                 <div class="box-header with-border">
@@ -38,13 +38,29 @@
                 </div>
                 <div class="box-body no-padding">
                 <ul class="nav nav-pills nav-stacked">
-                    @if(count($users) > 0)
+                    @if(count($chats) > 0)
+                        @foreach($chats as $chat)
+                        @csrf
+                            {{-- @if($user->fullName() != 'Admin Admin') --}}
+                                <li value="{{$chat->id}}" ><a href="#"><span>{{$chat->hasUser2->first_name}}</span> </a></li>
+                            {{-- @endif --}}
+                        @endforeach
+                     @endif
+                     @if(count($chats2) > 0)
+                        @foreach($chats2 as $chat)
+                        @csrf
+                            {{-- @if($user->fullName() != 'Admin Admin') --}}
+                                <li value="{{$chat->id}}" ><a href="#"><span>{{$chat->hasUser1->first_name}}</span> </a></li>
+                            {{-- @endif --}}
+                        @endforeach
+                     @endif
+                    {{-- @if(count($users) > 0)
                         @foreach($users as $user)
                             @if($user->fullName() != 'Admin Admin')
                                 <li value="{{$user->id}}"><a href="#"><span>{{$user->fullName()}}</span> </a></li>
                             @endif
                         @endforeach
-                     @endif
+                     @endif --}}
                 </ul>
                 </div>
             </div>
@@ -59,13 +75,14 @@
                     </div>
                     <div class="box-body no-padding">
                     <ul class="nav nav-pills nav-stacked">
-                                    <li class="active"><a href="#"> Group Chat<span class="label label-primary pull-right"></span></a></li>
+                        <li class="active"><a href="#"> Group Chat<span class="label label-primary pull-right"></span></a></li>
                     </ul>
                     </div>
                 <!-- /.box-body -->
             </div>
             </div>
             <!-- /.col -->
+
             <div class="col-md-6">
             <!-- DIRECT CHAT PRIMARY -->
             <div class="box box-primary direct-chat direct-chat-primary">
@@ -74,10 +91,6 @@
     
                 <div class="box-tools pull-right">
                     <span data-toggle="tooltip" title="3 New Messages" class="badge bg-light-blue">3</span>
-                    <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-                    </button>
-                    <button type="button" class="btn btn-box-tool" data-toggle="tooltip" title="Contacts" data-widget="chat-pane-toggle">
-                    <i class="fa fa-comments"></i></button>
                     <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
                 </div>
                 </div>
@@ -85,75 +98,29 @@
                 <div class="box-body">
                 <!-- Conversations are loaded here -->
                 <div class="direct-chat-messages">
-                    <!-- Message. Default to the left -->
-                    <div class="direct-chat-msg">
-                    {{-- <div class="direct-chat-info clearfix">
-                        <span class="direct-chat-name pull-left">Alexander Pierce</span>
-                        <span class="direct-chat-timestamp pull-right">23 Jan 2:00 pm</span>
-                    </div> --}}
-                    <!-- /.direct-chat-info -->
-                    {{-- <img class="direct-chat-img" src="../dist/img/user1-128x128.jpg" alt="Message User Image"><!-- /.direct-chat-img --> --}}
-                    <div class="direct-chat-text">
-                        
-                    </div>
-                    <!-- /.direct-chat-text -->
-                    </div>
-                    <!-- /.direct-chat-msg -->
-    
-                    {{-- <!-- Message to the right -->
-                    <div class="direct-chat-msg right">
-                    <div class="direct-chat-info clearfix">
-                        <span class="direct-chat-name pull-right">Sarah Bullock</span>
-                        <span class="direct-chat-timestamp pull-left">23 Jan 2:05 pm</span>
-                    </div>
-                    <!-- /.direct-chat-info -->
-                    <img class="direct-chat-img" src="../dist/img/user3-128x128.jpg" alt="Message User Image"><!-- /.direct-chat-img -->
-                    <div class="direct-chat-text">
-                        You better believe it!
-                    </div>
-                    <!-- /.direct-chat-text -->
-                    </div>
-                    <!-- /.direct-chat-msg --> --}}
+
                 </div>
                 <!--/.direct-chat-messages-->
-    
-                <!-- Contacts are loaded here -->
-                <div class="direct-chat-contacts">
-                    <ul class="contacts-list">
-                    <li>
-                        <a href="#">
-                        <img class="contacts-list-img" src="../dist/img/user1-128x128.jpg" alt="User Image">
-    
-                        <div class="contacts-list-info">
-                                <span class="contacts-list-name">
-                                Count Dracula
-                                <small class="contacts-list-date pull-right">2/28/2015</small>
-                                </span>
-                            <span class="contacts-list-msg">How have you been? I was...</span>
-                        </div>
-                        <!-- /.contacts-list-info -->
-                        </a>
-                    </li>
-                    <!-- End Contact Item -->
-                    </ul>
-                    <!-- /.contatcts-list -->
-                </div>
-                <!-- /.direct-chat-pane -->
                 </div>
                 <!-- /.box-body -->
                 <div class="box-footer">
-                <form action="#" method="post">
+                    <div id="typingStatus" class="col-lg-12" style="padding: 15px"></div>
                     <div class="input-group">
-                    <input type="text" name="message" placeholder="Type Message ..." class="form-control">
+                    <input id="text" type="text" name="message" placeholder="Type Message ..." class="form-control">
                         <span class="input-group-btn">
                             <button type="submit" class="btn btn-primary btn-flat">Send</button>
                         </span>
                     </div>
-                </form>
+                
                 </div>
                 <!-- /.box-footer-->
             </div>
             <!--/.direct-chat -->
+            </div>
+
+            <div class="col-md-2">
+    
+            
             </div>
             <!-- /.col -->
           
@@ -176,4 +143,170 @@
     </section>
     <!-- /.content -->
     </div>
+    <script src="/bower_components/jquery/dist/jquery.min.js"></script>
+<script>
+var i,user,chat;
+
+$(document).ready(function()
+{
+    $("li").click(function(){
+    if (!$(this).hasClass("active")) {
+    // Remove the class from anything that is active
+    $("li.active").removeClass("active");
+    $('div.direct-chat-msg').remove();
+    // $("li.active").removeAttr("disabled");
+    $(this).addClass("active").attr("disabled");
+    // $(this).attr("disabled");
+    
+    user = {{Auth::user()->id}};
+    chat = $(this).attr('value');
+    $(document).keyup(function(e) {
+        if (e.keyCode == 13){            
+            sendMessage();  
+        }
+        else{isTyping();}
+    });
+    i = 0;
+    retrieveExistingMessages(i);
+    pullData();
+    }; 
+    });
+    
+});
+
+function pullData()
+{
+    retrieveChatMessages();
+    retrieveTypingStatus();
+    setTimeout(pullData,1500);
+}
+
+function retrieveExistingMessages(i)
+{  
+    if(i == 0){ 
+    $.post('/retrieveExistingMessages', {_token:"{{csrf_token()}}",user: user, chat: chat}, function(data)
+    {
+        for (i = 0; i < data.length; i++) { 
+        if(data[i]['user'] == "{{Auth::user()->first_name}}"){
+            var message = '<div class="direct-chat-msg right">' +
+            '<div class="direct-chat-info clearfix">'+
+            '<span class="direct-chat-name pull-right">'+data[i]['user']+'</span>'+
+            '<span class="direct-chat-timestamp pull-left">23 Jan 2:00 pm</span>'+
+            '</div>'+
+            '<img class="direct-chat-img" src="../dist/img/user1-128x128.jpg" alt="Message User Image">'+
+            '<div class="direct-chat-text">'+data[i]['message']+'</div>'+
+            '</div>';
+            console.log(i);
+            $('div.direct-chat-messages').append(message);
+        }else{
+            var message = '<div class="direct-chat-msg">' +
+            '<div class="direct-chat-info clearfix">'+
+            '<span class="direct-chat-name pull-left">'+data[i]['user']+'</span>'+
+            '<span class="direct-chat-timestamp pull-right">23 Jan 2:00 pm</span>'+
+            '</div>'+
+            '<img class="direct-chat-img" src="../dist/img/user1-128x128.jpg" alt="Message User Image">'+
+            '<div class="direct-chat-text">'+data[i]['message']+'</div>'+
+            '</div>';
+            $('div.direct-chat-messages').append(message);
+            console.log(i+'fale');
+        }
+        }
+    });
+    console.log(i);
+    i = 1;
+    console.log(i);
+    }
+}
+
+function retrieveChatMessages()
+{   
+    $.post('/retrieveChatMessages', {_token:"{{csrf_token()}}",user: user, chat: chat}, function(data)
+    {
+        if(data.length > 0){
+            console.log(data);
+            var message = '<div class="direct-chat-msg">' +
+            '<div class="direct-chat-info clearfix">'+
+            '<span class="direct-chat-name pull-left">'+data[0]['sender']+'</span>'+
+            '<span class="direct-chat-timestamp pull-right">23 Jan 2:00 pm</span>'+
+            '</div>'+
+            '<img class="direct-chat-img" src="../dist/img/user1-128x128.jpg" alt="Message User Image">'+
+            '<div class="direct-chat-text">'+data[0]['message']+'</div>'+
+            '</div>';
+            $('div.direct-chat-messages').append(message);
+        }
+    });
+}
+
+function retrieveTypingStatus()
+{
+    $.post('/retrieveTypingStatus', {_token:"{{csrf_token()}}",user: user, chat: chat}, function(data)
+    {
+        if (data.length > 0)
+            $('#typingStatus').html(data+' is typing');
+        else
+            $('#typingStatus').html('');
+    });
+}
+
+function sendMessage()
+{
+    var text = $('#text').val();
+    if (text.length > 0)
+    {
+        $.post('/sendMessage', {_token:"{{csrf_token()}}",user: user, chat: chat, text: text }, function(data)
+        {
+            // if (data.length > 0){
+                var message = '<div class="direct-chat-msg right">' +
+                '<div class="direct-chat-info clearfix">'+
+                '<span class="direct-chat-name pull-right">'+data['user']+'</span>'+
+                '<span class="direct-chat-timestamp pull-left">23 Jan 2:00 pm</span>'+
+                '</div>'+
+                '<img class="direct-chat-img" src="../dist/img/user1-128x128.jpg" alt="Message User Image">'+
+                '<div class="direct-chat-text">'+data['message']+'</div>'+
+                '</div>';
+                $('div.direct-chat-messages').append(message);
+                notTyping();
+            // }
+        });
+    }
+}
+
+function isTyping()
+{
+    $.post('/isTyping', {_token:"{{csrf_token()}}",user: user, chat: chat});
+}
+
+function notTyping()
+{
+    $.post('/notTyping', {_token:"{{csrf_token()}}",user: user, chat: chat});
+}
+
+// function displayUserChat()
+// {
+//     '<div class="box box-primary direct-chat direct-chat-primary">'+
+//     '<div class="box-header with-border">'+
+//     '<h3 class="box-title">Direct Chat</h3>'+
+//     '<div class="box-tools pull-right">'+
+//     '<span data-toggle="tooltip" title="3 New Messages" class="badge bg-light-blue">3</span>'+
+//     '<button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>'+
+//     '</div></div>'+
+//     '<div class="box-body">'+
+//     '<div class="direct-chat-messages">'+
+//     '<div class="direct-chat-msg right">' +
+//     '<div class="direct-chat-info clearfix">'+
+//     '<span class="direct-chat-name pull-right">'+data[i]['user']+'</span>'+
+//     '<span class="direct-chat-timestamp pull-left">23 Jan 2:00 pm</span>'+
+//     '</div>'+
+//     '<img class="direct-chat-img" src="../dist/img/user1-128x128.jpg" alt="Message User Image">'+
+//     '<div class="direct-chat-text">'+data[i]['message']+'</div>'+
+//     '</div></div></div>'+
+//     '<div class="box-footer">'+
+//     '<div id="typingStatus" class="col-lg-12" style="padding: 15px"></div>'+
+//     '<div class="input-group">'+
+//     ' <input id="text" type="text" name="message" placeholder="Type Message ..." class="form-control">'+
+//     '<span class="input-group-btn">'+
+//     '<button type="submit" class="btn btn-primary btn-flat">Send</button>'+
+//     '</span></div></div></div>'
+// }
+// </script>
 @endsection

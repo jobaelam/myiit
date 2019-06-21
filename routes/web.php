@@ -21,5 +21,6 @@ Route::get('/messenger', 'PagesController@messenger');
 Route::post('/sendMessage', 'ChatController@sendMessage');
 Route::post('/isTyping','ChatController@isTyping');
 Route::post('/notTyping', 'ChatController@notTyping');
-Route::get('/retrieveChatMessages/{id}/{user2}', 'ChatController@retrieveChatMessages');
+Route::post('/retrieveChatMessages', 'ChatController@retrieveChatMessages');
+Route::post('/retrieveExistingMessages', 'ChatController@retrieveExistingMessages');
 Route::post('/retrieveTypingStatus', 'ChatController@retrieveTypingStatus');
