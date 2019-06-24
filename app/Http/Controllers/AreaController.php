@@ -3,18 +3,39 @@
 namespace App\Http\Controllers;
 
 use App\Area;
+use App\Agency;
+use App\User;
 use Illuminate\Http\Request;
 
 class AreaController extends Controller
 {
     /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $id = $request->id;
+        $areas = Area::where(array(
+            'agency_id' => $id
+        ))->get();
+        $data = array(
+            'title' => Agency::find($id)->name,
+            'agency' => Agency::find($id),
+            'areas' => $areas,
+            'users' => User::all()
+        );
+        return view('pages.area')->with($data);
     }
 
     /**
@@ -35,7 +56,20 @@ class AreaController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $agency_id = $request->agency_id;
+        $name = $request->name;
+        $desc = $request->desc;
+        $head = $request->head;
+        $data = array(
+            'agency_id' => $agency_id,
+            'name' => $name,
+            'desc' => $desc,
+            'head' => $head,
+        );
+        Area::create($data);
+        //$Area->create($data);
+        //$Area = Area::where('agency_id', $agency_id)->where('name', $name)->first();
+        return $Agency;
     }
 
     /**

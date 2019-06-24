@@ -18,6 +18,10 @@ class User extends Authenticatable
         return $this->hasMany(Chat::class);
     }
 
+    public function areaAssigned(){
+        return $this->hasOne(Chat::class);
+    }
+
     public function fullName(){
         return $this->first_name.' '.$this->last_name;
     }

@@ -6,5 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Area extends Model
 {
-    //
+    protected $guarded = [];
+
+    public function headUser(){
+        return $this->belongsTo(Area::class);
+    }
 }

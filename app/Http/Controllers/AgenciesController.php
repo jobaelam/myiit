@@ -5,8 +5,17 @@ namespace App\Http\Controllers;
 use App\Agency;
 use Illuminate\Http\Request;
 
-class AgencyController extends Controller
+class AgenciesController extends Controller
 {
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -14,7 +23,11 @@ class AgencyController extends Controller
      */
     public function index()
     {
-        //
+        $data = array(
+            'title' => 'Accreditation Agencies',
+            'agencies' => Agency::all()
+        );
+        return view('pages.accreditation')->with($data);
     }
 
     /**
@@ -35,7 +48,17 @@ class AgencyController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $name = $request->name;
+        $desc = $request->desc;
+
+        $data = array(
+            'name' => $name,
+            'desc' => $desc
+        );
+        $Agency = new Agency();
+        $Agency->create($data);
+        $Agency = Agency::where('name', $name)->where('desc', $desc)->first();
+        return $Agency;
     }
 
     /**

@@ -19,7 +19,8 @@ class CreateAreasTable extends Migration
             $table->foreign('agency_id')->references('id')->on('agencies');
             $table->string('name');
             $table->mediumText('desc');
-            $table->string('head');
+            $table->unsignedBigInteger('head');
+            $table->foreign('head')->references('id')->on('agencies');
             $table->mediumText('comment')->nullable();
             $table->timestamps();
         });

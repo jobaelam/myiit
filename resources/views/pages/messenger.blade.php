@@ -134,7 +134,6 @@
                                 <button type="reset" onClick="sendMessage();" class="btn btn-primary btn-flat">Send</button>
                             </span>
                     </div>
-                
                 </div>
                 <!-- /.box-footer-->
             </div>
