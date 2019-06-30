@@ -14,8 +14,8 @@
 <!-- Content Header (Page header) -->
 <section class="content-header">
     <h1>
-    Accreditation
-    <small>Agencies</small>
+    Accreditaion
+    <small>Agency</small>
     </h1>
     <ol class="breadcrumb">
     <li><a href="/"><i class="fa fa-home"></i> Home</a></li>
@@ -108,7 +108,7 @@
         $('.table-row:has(td)').click(function() 
         {
             var val = $(this).attr('value');
-            console.log(val);
+             console.log(val);
             window.location.href="/areas/"+val;
         });
 

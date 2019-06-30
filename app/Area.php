@@ -9,6 +9,6 @@ class Area extends Model
     protected $guarded = [];
 
     public function headUser(){
-        return $this->belongsTo(Area::class);
+        return $this->belongsTo(User::class, 'head', 'id');
     }
 }

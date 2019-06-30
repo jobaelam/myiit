@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use App\File;
 use App\Area;
 use App\User;
@@ -38,6 +39,26 @@ class FileController extends Controller
         return view('pages.files')->with($data);
     }
 
+    public function download(Request $request)
+    {
+        $File = File::find($request->val);
+        return $File = Storage::disk('public')->download('files/'.auth()->user()->first_name.'/'.$File['fileName']);
+        $header = ['Content-Type: application/txt'];
+        return response()->download($File,$File,$header);
+
+        $id = $request->id;
+        $files = File::where(array(
+            'areaId' => $id
+        ))->get();
+        $data = array(
+            'title' => Area::find($id)->name,
+            'areas' => Area::find($id),
+            'files' => $files,
+            'users' => User::all()
+        );
+        return view('pages.files')->with($data);
+    }
+
     /**
      * Show the form for creating a new resource.
      *
@@ -55,20 +76,23 @@ class FileController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {
-        $agency_id = $request->agency_id;
-        $name = $request->name;
-        $desc = $request->desc;
-        $head = $request->head;
-        $data = array(
-            'agency_id' => $agency_id,
-            'name' => $name,
-            'desc' => $desc,
-            'head' => $head,
-        );
-        Area::create($data);
-        //$Area = Area::where('agency_id', $agency_id)->where('name', $name)->first();
-        return $Agency;
+    {   
+
+        if($request->hasFile('uploadFile') && $request->file('uploadFile')->isValid()){
+            $filenameWithExt = $request->uploadFile->getClientOriginalName();
+            $filename = pathinfo($filenameWithExt,PATHINFO_FILENAME);
+            $extension = $request->uploadFile->getClientOriginalExtension();  
+            $fileNameToStore = $filename.'_'.time().'.'.$extension;
+            $path = $request->uploadFile->storeAs('public/files/'.auth()->user()->first_name,$fileNameToStore);
+        }
+
+        $File = new File;
+        $File->filename = $fileNameToStore;
+        $File->filetype = $extension;
+        $File->userId = $request->userId;
+        $File->areaId = $request->areaId;
+        $File->save();
+        return redirect('/files/'.$request->areaId);
     }
 
     /**

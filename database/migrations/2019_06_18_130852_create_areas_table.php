@@ -20,7 +20,7 @@ class CreateAreasTable extends Migration
             $table->string('name');
             $table->mediumText('desc');
             $table->unsignedBigInteger('head');
-            $table->foreign('head')->references('id')->on('agencies');
+            $table->foreign('head')->references('id')->on('users');
             $table->mediumText('comment')->nullable();
             $table->timestamps();
         });

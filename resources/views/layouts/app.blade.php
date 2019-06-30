@@ -63,75 +63,13 @@
           <li class="dropdown messages-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
               <i class="fa fa-envelope-o"></i>
-              <span class="label label-success">4</span>
+              <span id="unreadMessagesNumber" class="label label-success"></span>
             </a>
             <ul class="dropdown-menu">
-              <li class="header">You have 4 messages</li>
+              <li id="unreadMessagesHeader" class="header"></li>
               <li>
                 <!-- inner menu: contains the actual data -->
-                <ul class="menu">
-                  <li><!-- start message -->
-                    <a href="#">
-                      <div class="pull-left">
-                        <img src="/dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
-                      </div>
-                      <h4>
-                        Support Team
-                        <small><i class="fa fa-clock-o"></i> 5 mins</small>
-                      </h4>
-                      <p>Why not buy a new awesome theme?</p>
-                    </a>
-                  </li>
-                  <!-- end message -->
-                  <li>
-                    <a href="#">
-                      <div class="pull-left">
-                        <img src="/dist/img/user3-128x128.jpg" class="img-circle" alt="User Image">
-                      </div>
-                      <h4>
-                        AdminLTE Design Team
-                        <small><i class="fa fa-clock-o"></i> 2 hours</small>
-                      </h4>
-                      <p>Why not buy a new awesome theme?</p>
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#">
-                      <div class="pull-left">
-                        <img src="/dist/img/user4-128x128.jpg" class="img-circle" alt="User Image">
-                      </div>
-                      <h4>
-                        Developers
-                        <small><i class="fa fa-clock-o"></i> Today</small>
-                      </h4>
-                      <p>Why not buy a new awesome theme?</p>
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#">
-                      <div class="pull-left">
-                        <img src="/dist/img/user3-128x128.jpg" class="img-circle" alt="User Image">
-                      </div>
-                      <h4>
-                        Sales Department
-                        <small><i class="fa fa-clock-o"></i> Yesterday</small>
-                      </h4>
-                      <p>Why not buy a new awesome theme?</p>
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#">
-                      <div class="pull-left">
-                        <img src="/dist/img/user4-128x128.jpg" class="img-circle" alt="User Image">
-                      </div>
-                      <h4>
-                        Reviewers
-                        <small><i class="fa fa-clock-o"></i> 2 days</small>
-                      </h4>
-                      <p>Why not buy a new awesome theme?</p>
-                    </a>
-                  </li>
-                </ul>
+                <ul id="listOfMessages" class="menu"></ul>
               </li>
               <li class="footer"><a href="/messenger">See All Messages</a></li>
             </ul>
@@ -259,13 +197,13 @@
           <!-- User Account: style can be found in dropdown.less -->
           <li class="dropdown user user-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              <img src="/dist/img/user2-160x160.jpg" class="user-image" alt="User Image">
+              <img src="{{Auth::user()->profile_image}}" class="user-image" alt="User Image">
               <span class="hidden-xs">{{Auth::user()->first_name}}</span>
             </a>
             <ul class="dropdown-menu">
               <!-- User image -->
               <li class="user-header">
-                <img src="/dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
+                <img src="{{Auth::user()->profile_image}}" class="img-circle" alt="User Image">
 
                 <p>
                     @if(Auth::user()->first_name == 'Admin' OR Auth::user()->first_name == 'Admin')
@@ -321,12 +259,12 @@
             <!-- Sidebar user panel -->
             <div class="user-panel">
             <div class="pull-left image">
-                <img src="/dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
+                <img src="{{Auth::user()->profile_image}}" class="img-circle" alt="User Image">
             </div>
             <div class="pull-left info">
                 <p>
                   @if(Auth::user()->first_name == 'Admin' OR Auth::user()->first_name == 'Admin')
-                  {{Auth::user()->types}} 
+                  {{Auth::user()->first_name}} 
                   @else
                   {{Auth::user()->fullName()}}
                   @endif
@@ -382,12 +320,192 @@
     <script src="/bower_components/fastclick/lib/fastclick.js"></script>
     <!-- AdminLTE App -->
     <script src="/dist/js/adminlte.min.js"></script>
-    {{-- <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
-    <script src="/dist/js/pages/dashboard.js"></script> --}}
-    <!-- AdminLTE for demo purposes -->
     <script src="/dist/js/demo.js"></script>
     <script src="/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js"></script>
-    {{-- <script src="/dist/js/chats.js"></script> --}}
+    <script>
+    var user1,user2;
+    var count = 0;
+
+    $(document).ready(function()
+    {   
+        $('#text').val('');
+        user1 = {{Auth::user()->id}};
+        displayMessages();
+        $('div.box ul li').click(function(){
+            if (!$(this).hasClass("active")) {
+                $('li.active').removeClass("active");
+                $('div.direct-chat-msg').remove();
+                $('#chatBox').show();
+                $('#text').val('');
+                $(this).addClass("active").attr("disabled");  
+                user2 = $(this).attr('value');
+                notTyping();  
+                console.log(user2);
+                $("#text").keyup(function(e) {
+                        isTyping();
+                });
+                retrieveExistingMessages();
+                pullData(); 
+            }; 
+        });
+
+    });
+
+    function pullData()
+    {
+        retrieveChatMessages();
+        retrieveTypingStatus();
+        setTimeout(pullData,1500);
+    }
+
+    function displayMessages()
+    {  
+      console.log(user1);
+      $.get('/displayMessages', {_token:"{{csrf_token()}}",user1: user1}, function(data)
+      {
+          for (i = 0; i < data.length && i < 5; i++) { 
+            if(data[i]['unread'] == 0 && data[i]['sender'] != '{{Auth::user()->id}}'){
+              ++count;
+              var message = '<li><a href="#">'+
+                '<div class="pull-left">'+
+                '<img src="'+data[i]['profilePicture']+'" class="img-circle" alt="User Image">'+
+                '</div><h4><b>'+data[i]['user']+'</b><small>'+data[i]['timeStamp']+'</small></h4>'+
+                '<p><b>'+data[i]['message']+'</b></p></a></li>';
+                $('#listOfMessages').append(message);
+            } else {
+              var message = '<li><a href="#">'+
+                '<div class="pull-left">'+
+                '<img src="'+data[i]['profilePicture']+'" class="img-circle" alt="User Image">'+
+                '</div><h4>'+data[i]['user']+'<small>'+data[i]['timeStamp']+'</small></h4>'+
+                '<p><b>'+data[i]['message']+'</b></p></a></li>';
+                $('#listOfMessages').append(message);
+            }
+          }
+          if(count > 0){
+            $('#unreadMessagesNumber').html(count);
+            $('#unreadMessagesHeader').html('You have '+count+' new messages');            
+          } else {
+            $('#unreadMessagesHeader').html('You have no new messages'); 
+          }
+          // for (i = 0; i < data.length; i++) { 
+          // if(data[i]['user'] == ""){
+          //     var message = '<div class="direct-chat-msg right">' +
+          //     '<div class="direct-chat-info clearfix">'+
+          //     '<span class="direct-chat-name pull-right">'+data[i]['user']+'</span>'+
+          //     '<span class="direct-chat-timestamp pull-left">'+data[i]['timeStamp']+'</span>'+
+          //     '</div>'+
+          //     '<img class="direct-chat-img" src="../dist/img/user1-128x128.jpg" alt="Message User Image">'+
+          //     '<div class="direct-chat-text">'+data[i]['message']+'</div>'+
+          //     '</div>';
+          //     $('div.direct-chat-messages').append(message);
+          // }else{
+          //     var message = '<div class="direct-chat-msg">' +
+          //     '<div class="direct-chat-info clearfix">'+
+          //     '<span class="direct-chat-name pull-left">'+data[i]['user']+'</span>'+
+          //     '<span class="direct-chat-timestamp pull-right">'+data[i]['timeStamp']+'</span>'+
+          //     '</div>'+
+          //     '<img class="direct-chat-img" src="../dist/img/user1-128x128.jpg" alt="Message User Image">'+
+          //     '<div class="direct-chat-text">'+data[i]['message']+'</div>'+
+          //     '</div>';
+          //     $('div.direct-chat-messages').append(message);
+          // }
+          // }
+        });
+    }
+
+    function retrieveExistingMessages()
+    {  
+        $.post('/retrieveExistingMessages', {_token:"{{csrf_token()}}",user1: user1, user2: user2}, function(data)
+        {
+            for (i = 0; i < data.length; i++) { 
+            if(data[i]['user'] == "{{Auth::user()->first_name}}"){
+                var message = '<div class="direct-chat-msg right">' +
+                '<div class="direct-chat-info clearfix">'+
+                '<span class="direct-chat-name pull-right">'+data[i]['user']+'</span>'+
+                '<span class="direct-chat-timestamp pull-left">'+data[i]['timeStamp']+'</span>'+
+                '</div>'+
+                '<img class="direct-chat-img" src="../dist/img/user1-128x128.jpg" alt="Message User Image">'+
+                '<div class="direct-chat-text">'+data[i]['message']+'</div>'+
+                '</div>';
+                $('div.direct-chat-messages').append(message);
+            }else{
+                var message = '<div class="direct-chat-msg">' +
+                '<div class="direct-chat-info clearfix">'+
+                '<span class="direct-chat-name pull-left">'+data[i]['user']+'</span>'+
+                '<span class="direct-chat-timestamp pull-right">'+data[i]['timeStamp']+'</span>'+
+                '</div>'+
+                '<img class="direct-chat-img" src="../dist/img/user1-128x128.jpg" alt="Message User Image">'+
+                '<div class="direct-chat-text">'+data[i]['message']+'</div>'+
+                '</div>';
+                $('div.direct-chat-messages').append(message);
+            }
+            }
+        });
+    }
+
+    function retrieveChatMessages()
+    {   
+        $.post('/retrieveChatMessages', {_token:"{{csrf_token()}}",user1: user1, user2: user2}, function(data)
+        {
+            if(data.length > 0){
+                console.log(data);
+                var message = '<div class="direct-chat-msg">' +
+                '<div class="direct-chat-info clearfix">'+
+                '<span class="direct-chat-name pull-left">'+data[0]['sender']+'</span>'+
+                '<span class="direct-chat-timestamp pull-right">'+data[0]['timeStamp']+'</span>'+
+                '</div>'+
+                '<img class="direct-chat-img" src="../dist/img/user1-128x128.jpg" alt="Message User Image">'+
+                '<div class="direct-chat-text">'+data[0]['message']+'</div>'+
+                '</div>';
+                $('div.direct-chat-messages').append(message);
+            }
+        });
+    }
+
+    function retrieveTypingStatus()
+    {
+        $.post('/retrieveTypingStatus', {_token:"{{csrf_token()}}",user1: user1, user2: user2}, function(data)
+        {
+            if (data.length > 0)
+                $('#typingStatus').html(data+' is typing');
+            else
+                $('#typingStatus').html('');
+        });
+    }
+
+    function sendMessage()
+    {
+        var text = $('#text').val();
+        if (text.length > 0)
+        {
+            $.post('/sendMessage', {_token:"{{csrf_token()}}",user1: user1, user2: user2, text: text}, function(data)
+            {
+                console.log(data);
+                var message = '<div class="direct-chat-msg right">' +
+                '<div class="direct-chat-info clearfix">'+
+                '<span class="direct-chat-name pull-right">'+data['sender']+'</span>'+
+                '<span class="direct-chat-timestamp pull-left">'+data['timeStamp']+'</span>'+
+                '</div>'+
+                '<img class="direct-chat-img" src="../dist/img/user1-128x128.jpg" alt="Message User Image">'+
+                '<div class="direct-chat-text">'+data['message']+'</div>'+
+                '</div>';
+                $('div.direct-chat-messages').append(message);
+                $('#text').val('');
+                notTyping();
+            });
+        }
+    }
+
+    function isTyping()
+    {
+        $.post('/isTyping', {_token:"{{csrf_token()}}",user1: user1, user2: user2});
+    }
+
+    function notTyping()
+    {
+        $.post('/notTyping', {_token:"{{csrf_token()}}",user1: user1, user2: user2});
+    }
+    </script>
     </body>
     </html>
     

@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Chat extends Model
 {
     protected $table='chats';
+    protected $guarded = [];
 
     public function hasUser1(){
         return $this->belongsTo(User::class, 'user1', 'id');

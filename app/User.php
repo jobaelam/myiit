@@ -19,7 +19,7 @@ class User extends Authenticatable
     }
 
     public function areaAssigned(){
-        return $this->hasOne(Chat::class);
+        return $this->hasOne(Area::class, 'id', 'head');
     }
 
     public function fullName(){
@@ -32,7 +32,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'first_name', 'last_name', 'email', 'password','dept_id', 'type', 'profile_image',
     ];
 
     /**

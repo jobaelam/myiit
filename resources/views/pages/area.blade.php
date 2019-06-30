@@ -1,27 +1,13 @@
 @extends('layouts.app')
 
+@section('sidebar')
+<ul class="sidebar-menu" data-widget="tree">
+    <li><a href="/"><i class="fa fa-home"></i> <span>Home</span></a></li>
+    <li class="active"><a href="/accreditation"><i class="fa fa-book"></i> <span>Accreditation</span></a></li>
+</ul>
+@endsection
+
 @section('content')
-  <!-- Left side column. contains the logo and sidebar -->
-  <aside class="main-sidebar">
-    <!-- sidebar: style can be found in sidebar.less -->
-    <section class="sidebar">
-      <!-- Sidebar user panel -->
-      <div class="user-panel">
-        <div class="pull-left image">
-          <img src="/dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
-        </div>
-        <div class="pull-left info">
-          <p>{{ Auth::user()->first_name }} {{ Auth::user()->last_name }}</p>
-          <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
-        </div>
-      </div>
-      <ul class="sidebar-menu" data-widget="tree">
-        <li><a href="/"><i class="fa fa-home"></i> <span>Home</span></a></li>
-        <li class="active"><a href="#"><i class="fa fa-book"></i> <span>Accreditation</span></a></li>
-      </ul>
-    </section>
-    <!-- /.sidebar -->
-  </aside>
 
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
@@ -29,7 +15,7 @@
     <section class="content-header">
         <h1>
             {{$agency->name}}
-            <small>{{$agency->desc}}</small>
+            <small>Areas</small>
         </h1>
     </section>
 
@@ -54,8 +40,8 @@
                                 <tr value="{{$area->id}}" class="table-row">
                                   <td>{{$area->name}}</td>
                                   <td>{{$area->desc}}</td>
-                                  <td>{{$area->headUser}}</td>
-                                  <script>console.log('{{$area->headUser}}')</script>
+                                  <td>Prof. {{$area->headUser->first_name}} {{$area->headUser->last_name}}</td>
+                                  {{-- <script>console.log('{{$area->headUser->first_name}} {{$area->headUser->last_name}}')</script> --}}
                                 </tr>
                               @endif
                              @endforeach
@@ -124,12 +110,13 @@
         $(document).ready(function() {
         $('.table-row:has(td)').click(function() {
             var val = $(this).attr('value');
-            window.location.href="/documents/"+val;
+            console.log(val);
+             window.location.href="/files/"+val;
         });
 
         $('#myForm').submit(function(e)
         {
-            e.preventDefault();
+            //e.preventDefault();
             $('#modal-default').modal('hide');
             form = $(this).serialize();
             console.log(form);
@@ -140,13 +127,13 @@
         {
           $.post('/insertArea', form, function(data){
             console.log(data);
+            window.location.href="/areas/{{$agency->id}}";
             // var displayArea = '<tr value="'+data['id']+'" class="table-row">'+
             // '<td>'+data['name']+'</td>'+
             // '<td>{'+data['desc']+'</td>'+
             // '<td>{'+data['head']+'</td>'+
             // '<td></tr>'
             // $('table.table').append(displayArea);
-            //window.location.href="/areas/{{$agency->id}}";
           })
         } 
 });

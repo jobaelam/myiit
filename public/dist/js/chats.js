@@ -1,52 +1,66 @@
-var username,chat;
-
-$(document).ready(function()
-{
-    $("li").click(function(){
-  // If this isn't already active
-  if (!$(this).hasClass("active")) {
-    // Remove the class from anything that is active
-    $("li.active").removeClass("active");
-    // And make this active
-    $(this).addClass("active");}
-        chat = $(this).attr('value');
-    
-    pullData();
-
-    $(document).keyup(function(e) {
-        if (e.keyCode == 13)
-            sendMessage();
-        else
-            isTyping();
-    });
-
-    });
-    
-});
-
+var user,chat;
 function pullData()
 {
     retrieveChatMessages();
     retrieveTypingStatus();
-    // setTimeout(pullData,3000);
+    setTimeout(pullData,1500);
+}
+
+function retrieveExistingMessages()
+{  
+    $.post('/retrieveExistingMessages', {_token:"{{csrf_token()}}",user1: user1, user2: user2}, function(data)
+    {
+        for (i = 0; i < data.length; i++) { 
+        if(data[i]['user'] == "{{Auth::user()->first_name}}"){
+            var message = '<div class="direct-chat-msg right">' +
+            '<div class="direct-chat-info clearfix">'+
+            '<span class="direct-chat-name pull-right">'+data[i]['user']+'</span>'+
+            '<span class="direct-chat-timestamp pull-left">'+data[i]['timeStamp']+'</span>'+
+            '</div>'+
+            '<img class="direct-chat-img" src="../dist/img/user1-128x128.jpg" alt="Message User Image">'+
+            '<div class="direct-chat-text">'+data[i]['message']+'</div>'+
+            '</div>';
+            $('div.direct-chat-messages').append(message);
+        }else{
+            var message = '<div class="direct-chat-msg">' +
+            '<div class="direct-chat-info clearfix">'+
+            '<span class="direct-chat-name pull-left">'+data[i]['user']+'</span>'+
+            '<span class="direct-chat-timestamp pull-right">'+data[i]['timeStamp']+'</span>'+
+            '</div>'+
+            '<img class="direct-chat-img" src="../dist/img/user1-128x128.jpg" alt="Message User Image">'+
+            '<div class="direct-chat-text">'+data[i]['message']+'</div>'+
+            '</div>';
+            $('div.direct-chat-messages').append(message);
+        }
+        }
+    });
 }
 
 function retrieveChatMessages()
 {   
-    $.get('/retrieveChatMessages/'+chat, function(data)
+    $.post('/retrieveChatMessages', {_token:"{{csrf_token()}}",user1: user1, user2: user2}, function(data)
     {
-        // if (data.length > 0)
-        console.log(data);
-        // $('div.direct-chat-msg').append('<div class="direct-chat-text">'+data+'</div>');
+        if(data.length > 0){
+            console.log(data);
+            var message = '<div class="direct-chat-msg">' +
+            '<div class="direct-chat-info clearfix">'+
+            '<span class="direct-chat-name pull-left">'+data[0]['sender']+'</span>'+
+            '<span class="direct-chat-timestamp pull-right">'+data[0]['timeStamp']+'</span>'+
+            '</div>'+
+            '<img class="direct-chat-img" src="../dist/img/user1-128x128.jpg" alt="Message User Image">'+
+            '<div class="direct-chat-text">'+data[0]['message']+'</div>'+
+            '</div>';
+            $('div.direct-chat-messages').append(message);
+        }
     });
 }
 
 function retrieveTypingStatus()
 {
-    $.post('/retrieveTypingStatus', {username: username}, function(username)
+    $.post('/retrieveTypingStatus', {_token:"{{csrf_token()}}",user1: user1, user2: user2}, function(data)
     {
-        if (username.length > 0)
-            $('#typingStatus').html(username+' is typing');
+        if (data.length > 0)
+            $('#typingStatus').html(data+' is typing');
         else
             $('#typingStatus').html('');
     });
@@ -57,12 +71,19 @@ function sendMessage()
     var text = $('#text').val();
     if (text.length > 0)
     {
-        alert(chat+''+text);
-        $.post('/sendMessage', {chat: chat, text: text }, function(data)
+        $.post('/sendMessage', {_token:"{{csrf_token()}}",user1: user1, user2: user2, text: text}, function(data)
         {
-            // $('#chat-window').append('<br><div style="text-align: right">'+text+'</div><br>');
-            // $('#text').val('');
-            console.log(data)
+            console.log(data);
+            var message = '<div class="direct-chat-msg right">' +
+            '<div class="direct-chat-info clearfix">'+
+            '<span class="direct-chat-name pull-right">'+data['sender']+'</span>'+
+            '<span class="direct-chat-timestamp pull-left">'+data['timeStamp']+'</span>'+
+            '</div>'+
+            '<img class="direct-chat-img" src="../dist/img/user1-128x128.jpg" alt="Message User Image">'+
+            '<div class="direct-chat-text">'+data['message']+'</div>'+
+            '</div>';
+            $('div.direct-chat-messages').append(message);
+            $('#text').val('');
             notTyping();
         });
     }
@@ -70,12 +91,10 @@ function sendMessage()
 
 function isTyping()
 {
-    $.post('/isTyping', {_token:"{{csrf_token()}}",username: username},function(){
-        alert('lol');
-    });
+    $.post('/isTyping', {_token:"{{csrf_token()}}",user1: user1, user2: user2});
 }
 
 function notTyping()
 {
-    $.post('/notTyping', {username: username});
+    $.post('/notTyping', {_token:"{{csrf_token()}}",user1: user1, user2: user2});
 }
