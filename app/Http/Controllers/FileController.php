@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Area;
-use App\Agency;
-use App\User;
 use Illuminate\Http\Request;
+use App\File;
+use App\Area;
+use App\User;
 
-class AreaController extends Controller
+class FileController extends Controller
 {
-    /**
+     /**
      * Create a new controller instance.
      *
      * @return void
@@ -26,16 +26,16 @@ class AreaController extends Controller
     public function index(Request $request)
     {
         $id = $request->id;
-        $areas = Area::where(array(
-            'agency_id' => $id
+        $files = File::where(array(
+            'areaId' => $id
         ))->get();
         $data = array(
-            'title' => Agency::find($id)->name,
-            'agency' => Agency::find($id),
-            'areas' => $areas,
+            'title' => Area::find($id)->name,
+            'areas' => Area::find($id),
+            'files' => $files,
             'users' => User::all()
         );
-        return view('pages.area')->with($data);
+        return view('pages.files')->with($data);
     }
 
     /**
@@ -67,8 +67,8 @@ class AreaController extends Controller
             'head' => $head,
         );
         Area::create($data);
-        $Area = Area::where('agency_id', $agency_id)->where('name', $name)->first();
-        return $Area;
+        //$Area = Area::where('agency_id', $agency_id)->where('name', $name)->first();
+        return $Agency;
     }
 
     /**

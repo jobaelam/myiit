@@ -9,129 +9,154 @@ use App\User;
 
 class ChatController extends Controller
 {
+    public function displayMessages(Request $request){
+        $user = $request->user1;
+        $conversationExist = Chat::where('user1', $user)->orwhere('user2', $user)->orderby('created_at', 'desc')->get();
+        foreach($conversationExist as $convo){
+            $messages = Chat_Message::where('chat_id',$convo->id)->orderby('created_at', 'desc')->get();
+            foreach($messages as $message){
+                if($message->sender_id != $user){
+                    $name = User::find($message->sender_id)->first_name;
+                    $profilePicture = User::find($message->sender_id)->profile_image;
+                } else {
+                    $chatUser = Chat::where('id', $message->chat_id)->first();
+                    if($chatUser->user1 == $user){
+                        $name = User::find($chatUser->user2)->first_name;
+                        $profilePicture = User::find($chatUser->user2)->profile_image;
+                    } else {
+                         $name = User::find($chatUser->user1)->first_name;
+                         $profilePicture = User::find($chatUser->user1)->profile_image;
+                    }
+                }
+                $data[] = array(
+                    'message' => $message->message,
+                    'user' => $name,
+                    'sender' => $message->sender_id,
+                    'unread' => $message->read,
+                    'profilePicture' => $profilePicture,
+                    'timeStamp' => date('d M h:i A',strtotime($message->created_at)),
+                );
+                break;
+            }
+        }
+        return $data;
+    }
+
     public function sendMessage(Request $request)
     {
-        $user = $request->user;
-        $chat = $request->chat;
+        $sender = $request->user1;
+        $receiver = $request->user2;
         $message = $request->text;
-
-        $inuser1 = Chat::find($chat)->user1;
-
-        if($inuser1 == $user){
-            $name = User::find($inuser1)->first_name;
-        } else {
-            $name = User::find($user)->first_name;
+        $conversationExist = Chat::where([['user1', $sender],['user2', $receiver]])->orwhere([['user2', $sender],['user1', $receiver]])->first();
+        if(!$conversationExist){
+            try     
+            {
+                $conversationExist = Chat::create(array(
+                                        'user1' => $sender,
+                                        'user2' => $receiver,
+                                    ));
+            }
+            catch(\Illuminate\Database\QueryException $e){
+                // do what you want here with $e->getMessage();
+            }
         }
-        
+        Chat_Message::create(array(
+            'chat_id' => $conversationExist->id,
+            'sender_id' => $sender,
+            'message' => $message,
+        ));
+        $messageTimeStamp = Chat_Message::where('chat_id', $conversationExist->id)->orderby('created_at', 'desc')->first();
         $data = array(
-            'chat_id' => $chat,
-            'sender_id' => $user,
+            'sender' => User::find($sender)->first_name,
             'message' => $message,
-        );
-        $all = new Chat_Message();
-        $all->create($data);
-        $datas = array(
-            'user' => $name,
-            'message' => $message,
+            'timeStamp' => date('d M h:i A',strtotime($messageTimeStamp->created_at)),
         );
 
-        return $datas;
+        return $data;
     }
 
     public function isTyping(Request $request)
     {   
-        $user = $request->user;
-        $chat = $request->chat;
-        
-        $chat = Chat::find($chat);
-
-        if($chat->user1 == $user){
-            $chat->user1_is_typing = 1;
+        $user1 = $request->user1;
+        $user2 = $request->user2;
+        $conversationExist = Chat::where([['user1', $user1],['user2', $user2]])->orwhere([['user2', $user1],['user1', $user2]])->first();
+        if($conversationExist->user1 == $user1){
+            $conversationExist->user1_is_typing = 1;
         } else {
-            $chat->user2_is_typing = 1;
+            $conversationExist->user2_is_typing = 1;
         }
-        $chat->save();
+        $conversationExist->save();
     }
 
     public function notTyping(Request $request)
     {
-        $user = $request->user;
-        $chat = $request->chat;
-        
-        $chat = Chat::find($chat);
-
-        if($chat->user1 == $user){
-            $chat->user1_is_typing = 0;
+        $user1 = $request->user1;
+        $user2 = $request->user2;
+        $conversationExist = Chat::where([['user1', $user1],['user2', $user2]])->orwhere([['user2', $user1],['user1', $user2]])->first();
+        if($conversationExist->user1 == $user1){
+            $conversationExist->user1_is_typing = 0;
         } else {
-            $chat->user2_is_typing = 0;
-        };
-        $chat->save();
+            $conversationExist->user2_is_typing = 0;
+        }
+        $conversationExist->save();
     }
 
     public function retrieveChatMessages(Request $request)
     {   
-        $user = $request->user;
-        $chat = $request->chat;
-   
-        $messages = Chat_Message::where('chat_id',$chat)->where('read',false)->get();
-        foreach($messages as $message){
-        if (count($messages) > 0 AND $message->sender_id != $user)
-        {
-            $message->read = 1;
-            $messages[0]->save();       
-        $inuser1 = Chat::find($chat)->user1;
-        $user2 = Chat::find($chat)->user2;
-        if($inuser1 == $user){
-            $name = User::find($user2)->first_name;
-        } else {
-            $name = User::find($inuser1)->first_name;
-        }
-        $data[] = array(
-            'message' => $message->message,
-            'sender' => $name
-        );
-        return $data;
-        }
+        $user1 = $request->user1;
+        $user2 = $request->user2;
+        $conversationExist = Chat::where([['user1', $user1],['user2', $user2]])->orwhere([['user2', $user1],['user1', $user2]])->first();
+        $messages = Chat_Message::where('chat_id',$conversationExist->id)->where('read',false)->get();
+        if(count($messages)>0){
+            foreach($messages as $message){
+                if ($message->sender_id != $user1)
+                {
+                    $message->read = 1;
+                    $message->save();       
+                    $name = User::find($message->sender_id)->first_name;
+                    $data[] = array(
+                        'message' => $message->message,
+                        'sender' => $name,
+                        'timeStamp' => date('d M h:i A',strtotime($message->created_at)),
+                    );
+                }
+            }
+            return $data;
         }
     }
 
     public function retrieveExistingMessages(Request $request)
     {   
-        $user = $request->user;
-        $chat = $request->chat;
-        $messages = Chat_Message::where('chat_id',$chat)->get();
-        foreach($messages as $message){
-        $name = User::find($message->sender_id)->first_name;
-        $data[] = array(
-            'message' => $message->message,
-            'unread' => $message->read,
-            'user' => $name
-        );
-    
-        // return $message->chat_id;
-        // if (count($message) > 0 AND $message->sender_id != $user)
-        // {     
-
-
-        // return 'hello';
-        // }
+        $user1 = $request->user1;
+        $user2 = $request->user2;
+        $conversationExist = Chat::where([['user1', $user1],['user2', $user2]])->orwhere([['user2', $user1],['user1', $user2]])->first();
+        if($conversationExist){
+            $messages = Chat_Message::where('chat_id',$conversationExist->id)->get();
+            foreach($messages as $message){
+                $name = User::find($message->sender_id)->first_name;
+                $data[] = array(
+                    'message' => $message->message,
+                    'user' => $name,
+                    'timeStamp' => date('d M h:i A',strtotime($message->created_at)),
+                );
+            }
         }
         return $data;
     }
 
     public function retrieveTypingStatus(Request $request)
     {
-        $user = $request->user;
-        $chat = $request->chat;
-        
-        $chat = Chat::find($chat);
-
-        if($chat->user1 == $user){
-            if ($chat->user2_is_typing)
-                return $chat->hasUser2->first_name;
-        } else {
-            if ($chat->user1_is_typing)
-                return $chat->hasUser1->first_name;
+        $user1 = $request->user1;
+        $user2 = $request->user2;
+        $conversationExist = Chat::where([['user1', $user1],['user2', $user2]])->orwhere([['user2', $user1],['user1', $user2]])->first();
+        if($conversationExist){
+            if($conversationExist->user1 == $user1){
+                if ($conversationExist->user2_is_typing)
+                    return $conversationExist->hasUser2->first_name;
+            } else {
+                if ($conversationExist->user1_is_typing)
+                    return $conversationExist->hasUser1->first_name;
+            }
         }
     }
 }
