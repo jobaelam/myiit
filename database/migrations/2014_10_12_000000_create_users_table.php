@@ -37,6 +37,187 @@ class CreateUsersTable extends Migration
                 'password' => Hash::make('admin'),
                 'dept_id' => '1',
                 'type' => '1',
+                'profile_image' => 'http://via.placeholder.com/150x150',
+            )
+        );
+        //Information Technology
+        DB::table('users')->insert(
+            array(
+                'first_name' => 'Lomesindo',
+                'last_name' => 'Caparida',
+                'email' => 'caparida@gmail.com',
+                'password' => Hash::make('password'),
+                'dept_id' => '1',
+                'type' => '4',
+                'profile_image' => 'http://via.placeholder.com/150x150',
+            )
+        );
+
+        DB::table('users')->insert(
+            array(
+                'first_name' => 'Mia Amor',
+                'last_name' => 'Catindig',
+                'email' => 'catindig@gmail.com',
+                'password' => Hash::make('password'),
+                'dept_id' => '1',
+                'type' => '5',
+                'profile_image' => 'http://via.placeholder.com/150x150',
+            )
+        );
+
+        DB::table('users')->insert(
+            array(
+                'first_name' => 'January',
+                'last_name' => 'Febro',
+                'email' => 'febro@gmail.com',
+                'password' => Hash::make('password'),
+                'dept_id' => '1',
+                'type' => '5',
+                'profile_image' => 'http://via.placeholder.com/150x150',
+            )
+        );
+
+        DB::table('users')->insert(
+            array(
+                'first_name' => 'Manuel',
+                'last_name' => 'Cabido',
+                'email' => 'cabido@gmail.com',
+                'password' => Hash::make('password'),
+                'dept_id' => '1',
+                'type' => '5',
+                'profile_image' => 'http://via.placeholder.com/150x150',
+            )
+        );
+
+        DB::table('users')->insert(
+            array(
+                'first_name' => 'Manuel',
+                'last_name' => 'Cabido',
+                'email' => 'cabido@gmail.com',
+                'password' => Hash::make('password'),
+                'dept_id' => '1',
+                'type' => '5',
+                'profile_image' => 'http://via.placeholder.com/150x150',
+            )
+        );
+        //Computer Studies
+        DB::table('users')->insert(
+            array(
+                'first_name' => 'Renato',
+                'last_name' => 'Crisostomo',
+                'email' => 'crisostomo@gmail.com',
+                'password' => Hash::make('password'),
+                'dept_id' => '2',
+                'type' => '4',
+                'profile_image' => 'http://via.placeholder.com/150x150',
+            )
+        );
+
+        DB::table('users')->insert(
+            array(
+                'first_name' => 'Malikey',
+                'last_name' => 'Maulana',
+                'email' => 'maulana@gmail.com',
+                'password' => Hash::make('password'),
+                'dept_id' => '2',
+                'type' => '5',
+                'profile_image' => 'http://via.placeholder.com/150x150',
+            )
+        );
+
+        DB::table('users')->insert(
+            array(
+                'first_name' => 'Darlene Daryl',
+                'last_name' => 'Obach',
+                'email' => 'obach@gmail.com',
+                'password' => Hash::make('password'),
+                'dept_id' => '2',
+                'type' => '5',
+                'profile_image' => 'http://via.placeholder.com/150x150',
+            )
+        );
+
+        DB::table('users')->insert(
+            array(
+                'first_name' => 'Julieto',
+                'last_name' => 'Perez',
+                'email' => 'perez@gmail.com',
+                'password' => Hash::make('password'),
+                'dept_id' => '2',
+                'type' => '5',
+                'profile_image' => 'http://via.placeholder.com/150x150',
+            )
+        );
+
+        DB::table('users')->insert(
+            array(
+                'first_name' => 'Jennifer Joyce',
+                'last_name' => 'Montemayor',
+                'email' => 'montemayor@gmail.com',
+                'password' => Hash::make('password'),
+                'dept_id' => '2',
+                'type' => '5',
+                'profile_image' => 'http://via.placeholder.com/150x150',
+            )
+        );
+        //Electronics Engineering Tech
+        DB::table('users')->insert(
+            array(
+                'first_name' => 'Antonio',
+                'last_name' => 'Marajas',
+                'email' => 'marajas@gmail.com',
+                'password' => Hash::make('password'),
+                'dept_id' => '3',
+                'type' => '4',
+                'profile_image' => 'http://via.placeholder.com/150x150',
+            )
+        );
+
+        DB::table('users')->insert(
+            array(
+                'first_name' => 'Darlene Daryl',
+                'last_name' => 'Obach',
+                'email' => 'obach@gmail.com',
+                'password' => Hash::make('password'),
+                'dept_id' => '3',
+                'type' => '5',
+                'profile_image' => 'http://via.placeholder.com/150x150',
+            )
+        );
+
+        DB::table('users')->insert(
+            array(
+                'first_name' => 'Darlene Daryl',
+                'last_name' => 'Obach',
+                'email' => 'obach@gmail.com',
+                'password' => Hash::make('password'),
+                'dept_id' => '3',
+                'type' => '5',
+                'profile_image' => 'http://via.placeholder.com/150x150',
+            )
+        );
+
+        DB::table('users')->insert(
+            array(
+                'first_name' => 'Darlene Daryl',
+                'last_name' => 'Obach',
+                'email' => 'obach@gmail.com',
+                'password' => Hash::make('password'),
+                'dept_id' => '3',
+                'type' => '5',
+                'profile_image' => 'http://via.placeholder.com/150x150',
+            )
+        );
+
+        DB::table('users')->insert(
+            array(
+                'first_name' => 'Darlene Daryl',
+                'last_name' => 'Obach',
+                'email' => 'obach@gmail.com',
+                'password' => Hash::make('password'),
+                'dept_id' => '3',
+                'type' => '5',
+                'profile_image' => 'http://via.placeholder.com/150x150',
             )
         );
     }

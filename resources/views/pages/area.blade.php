@@ -28,11 +28,14 @@
                     </h3>
                 </div> --}}
                 <div class="box-body table-responsive">
-                        <table class="table table-hover">
+                        <table class="table table-hover" style="table-layout:fixed;">
                           <tr>
                             <th>Area</th>
                             <th>Description</th>
                             <th>Head</th>
+                            @if( Auth::user()->id == 1)
+                              <th width="5%">Action</th>
+                            @endif
                           </tr>
                           @if(count($areas) > 0)
                              @foreach($areas as $area)
@@ -41,7 +44,11 @@
                                   <td>{{$area->name}}</td>
                                   <td>{{$area->desc}}</td>
                                   <td>Prof. {{$area->headUser->first_name}} {{$area->headUser->last_name}}</td>
-                                  {{-- <script>console.log('{{$area->headUser->first_name}} {{$area->headUser->last_name}}')</script> --}}
+                                  @if( Auth::user()->id == 1)
+                                    <td>
+                                      <button class="del btn-xs btn-danger" hidden><i class="fa fa-remove"></i></button>
+                                    </td> 
+                                  @endif
                                 </tr>
                               @endif
                              @endforeach
@@ -55,6 +62,7 @@
                         <button type="button" class="btn btn-info pull-right" data-toggle="modal" data-target="#modal-default">
                           <i class="fa fa-plus-circle"><span> Add Area</span></i>
                         </button>
+                        <button id="edit" type="button" class="btn btn-default pull-right" style="margin-right:1rem">Edit</button>
                         @endif
                         
                 </div>
@@ -86,7 +94,7 @@
                                     <option value="" >--Select Head--</option>
                                     @foreach($users as $user)
                                     {{-- @if($area->agency_id == $agency->id) --}}
-                                        <option value="{{$user->id}}" >{{$user->fullName()}}</option>
+                                        <option value="{{$user->id}}">{{$user->fullName()}}</option>
                                     {{-- @endif --}}
                                     @endforeach
                                 </select>
@@ -108,33 +116,39 @@
 <script src="/bower_components/jquery/dist/jquery.min.js"></script>
 <script>
         $(document).ready(function() {
-        $('.table-row:has(td)').click(function() {
-            var val = $(this).attr('value');
-            console.log(val);
-             window.location.href="/files/"+val;
-        });
+          $('.table-row:has(td)').click(function() {
+              var val = $(this).attr('value');
+              console.log(val);
+               window.location.href="/files/"+val;
+          });
+          $('#edit').click(function() {
+              $('.del').toggle();
+              $(this).text(function(i, text){
+                  return text === "Edit" ? "Cancel" : "Edit";
+              })
+          });
 
-        $('#myForm').submit(function(e)
-        {
-            //e.preventDefault();
-            $('#modal-default').modal('hide');
-            form = $(this).serialize();
-            console.log(form);
-            insertArea();
-        });
+          $('#myForm').submit(function(e)
+          {
+              //e.preventDefault();
+              $('#modal-default').modal('hide');
+              form = $(this).serialize();
+              console.log(form);
+              insertArea();
+          });
 
-        function insertArea()
-        {
-          $.post('/insertArea', form, function(data){
-            console.log(data);
-            window.location.href="/areas/{{$agency->id}}";
-            // var displayArea = '<tr value="'+data['id']+'" class="table-row">'+
-            // '<td>'+data['name']+'</td>'+
-            // '<td>{'+data['desc']+'</td>'+
-            // '<td>{'+data['head']+'</td>'+
-            // '<td></tr>'
-            // $('table.table').append(displayArea);
-          })
+          function insertArea()
+          {
+            $.post('/insertArea', form, function(data){
+              console.log(data);
+              window.location.href="/areas/{{$agency->id}}";
+              // var displayArea = '<tr value="'+data['id']+'" class="table-row">'+
+              // '<td>'+data['name']+'</td>'+
+              // '<td>{'+data['desc']+'</td>'+
+              // '<td>{'+data['head']+'</td>'+
+              // '<td></tr>'
+              // $('table.table').append(displayArea);
+            })
         } 
 });
 </script>

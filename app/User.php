@@ -22,6 +22,18 @@ class User extends Authenticatable
         return $this->hasOne(Area::class, 'id', 'head');
     }
 
+    public function department(){
+        return $this->hasOne(Department::class, 'id', 'dept_id');
+    }
+
+    public function hasType(){
+        return $this->hasOne(Type::class, 'id', 'type');
+    }
+
+    public function joinOn(){
+        return date('F d, Y',strtotime($this->created_at));
+    }
+
     public function fullName(){
         return $this->first_name.' '.$this->last_name;
     }

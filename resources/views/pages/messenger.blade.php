@@ -24,12 +24,12 @@
         <div class="row">
             <div class="col-md-2">
     
-            <div class="box box-solid">
+            <div class="box box-solid collapsed-box">
                 <div class="box-header with-border">
-                <h3 class="box-title">Private</h3>
+                <h3 class="box-title">Inbox</h3>
     
                 <div class="box-tools">
-                    <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                    <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i>
                     </button>
                 </div>
                 </div>
@@ -61,7 +61,7 @@
                     </div>
                     <div class="box-body no-padding">
                     <ul class="nav nav-pills nav-stacked">
-                        <li class="active"><a href="#"> Group Chat<span class="label label-primary pull-right"></span></a></li>
+                        
                     </ul>
                     </div>
                 <!-- /.box-body -->
@@ -94,12 +94,11 @@
 
             <div id="chatBox" class="col-md-6" hidden>
             <!-- DIRECT CHAT PRIMARY -->
-            <div class="box box-primary direct-chat direct-chat-primary">
+            <div class="box table-responsive direct-chat direct-chat-primary">
                 <div id='h3name' class="box-header with-border">
                 <h3 id='h3name' class="box-title">Direct Chat</h3>
     
                 <div class="box-tools pull-right">
-                    <span data-toggle="tooltip" title="3 New Messages" class="badge bg-light-blue">3</span>
                     <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
                 </div>
                 </div>

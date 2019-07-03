@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Response;
 use App\File;
 use App\Area;
 use App\User;
@@ -42,21 +43,22 @@ class FileController extends Controller
     public function download(Request $request)
     {
         $File = File::find($request->val);
-        return $File = Storage::disk('public')->download('files/'.auth()->user()->first_name.'/'.$File['fileName']);
-        $header = ['Content-Type: application/txt'];
-        return response()->download($File,$File,$header);
-
-        $id = $request->id;
-        $files = File::where(array(
-            'areaId' => $id
-        ))->get();
-        $data = array(
-            'title' => Area::find($id)->name,
-            'areas' => Area::find($id),
-            'files' => $files,
-            'users' => User::all()
-        );
-        return view('pages.files')->with($data);
+        //return public_path();
+        $File = Storage::download('public/files/'.auth()->user()->first_name.'/'.$File['fileName']);
+        return $File;
+        //$header = ['Content-Type: application/txt'];
+        // return response()->download(public_path().'/app/public/'.auth()->user()->first_name.'/' . $File['fileName']);
+        // $id = $request->id;
+        // $files = File::where(array(
+        //     'areaId' => $id
+        // ))->get();
+        // $data = array(
+        //     'title' => Area::find($id)->name,
+        //     'areas' => Area::find($id),
+        //     'files' => $files,
+        //     'users' => User::all()
+        // );
+        // return view('pages.files')->with($data);
     }
 
     /**

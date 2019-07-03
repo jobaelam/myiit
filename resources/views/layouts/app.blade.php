@@ -39,12 +39,12 @@
   <!-- Google Font -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
 </head>
-<body class="hold-transition skin-blue sidebar-mini">
+<body class="hold-transition skin-red sidebar-mini">
 <div class="wrapper">
 
   <header class="main-header">
     <!-- Logo -->
-    <a href="index2.html" class="logo">
+    <a href="/" class="logo">
       <!-- mini logo for sidebar mini 50x50 pixels -->
       <span class="logo-mini"><b>My</b></span>
       <!-- logo for regular state and mobile devices -->
@@ -66,7 +66,9 @@
               <span id="unreadMessagesNumber" class="label label-success"></span>
             </a>
             <ul class="dropdown-menu">
-              <li id="unreadMessagesHeader" class="header"></li>
+              <li id="unreadMessagesHeader" class="header">
+                You have no message yet.
+              </li>
               <li>
                 <!-- inner menu: contains the actual data -->
                 <ul id="listOfMessages" class="menu"></ul>
@@ -114,84 +116,6 @@
                 </ul>
               </li>
               <li class="footer"><a href="#">View all</a></li>
-            </ul>
-          </li>
-          <!-- Tasks: style can be found in dropdown.less -->
-          <li class="dropdown tasks-menu">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              <i class="fa fa-flag-o"></i>
-              <span class="label label-danger">9</span>
-            </a>
-            <ul class="dropdown-menu">
-              <li class="header">You have 9 tasks</li>
-              <li>
-                <!-- inner menu: contains the actual data -->
-                <ul class="menu">
-                  <li><!-- Task item -->
-                    <a href="#">
-                      <h3>
-                        Design some buttons
-                        <small class="pull-right">20%</small>
-                      </h3>
-                      <div class="progress xs">
-                        <div class="progress-bar progress-bar-aqua" style="width: 20%" role="progressbar"
-                             aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">
-                          <span class="sr-only">20% Complete</span>
-                        </div>
-                      </div>
-                    </a>
-                  </li>
-                  <!-- end task item -->
-                  <li><!-- Task item -->
-                    <a href="#">
-                      <h3>
-                        Create a nice theme
-                        <small class="pull-right">40%</small>
-                      </h3>
-                      <div class="progress xs">
-                        <div class="progress-bar progress-bar-green" style="width: 40%" role="progressbar"
-                             aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">
-                          <span class="sr-only">40% Complete</span>
-                        </div>
-                      </div>
-                    </a>
-                  </li>
-                  <!-- end task item -->
-                  <li><!-- Task item -->
-                    <a href="#">
-                      <h3>
-                        Some task I need to do
-                        <small class="pull-right">60%</small>
-                      </h3>
-                      <div class="progress xs">
-                        <div class="progress-bar progress-bar-red" style="width: 60%" role="progressbar"
-                             aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">
-                          <span class="sr-only">60% Complete</span>
-                        </div>
-                      </div>
-                    </a>
-                  </li>
-                  <!-- end task item -->
-                  <li><!-- Task item -->
-                    <a href="#">
-                      <h3>
-                        Make beautiful transitions
-                        <small class="pull-right">80%</small>
-                      </h3>
-                      <div class="progress xs">
-                        <div class="progress-bar progress-bar-yellow" style="width: 80%" role="progressbar"
-                             aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">
-                          <span class="sr-only">80% Complete</span>
-                        </div>
-                      </div>
-                    </a>
-                  </li>
-                  <!-- end task item -->
-                </ul>
-              </li>
-              <li class="footer">
-                <a href="#">View all tasks</a>
-              </li>
             </ul>
           </li>
           <!-- User Account: style can be found in dropdown.less -->
@@ -344,8 +268,10 @@
                 $("#text").keyup(function(e) {
                         isTyping();
                 });
+                if(user2 != null){
                 retrieveExistingMessages();
                 pullData(); 
+                }
             }; 
         });
 
@@ -424,7 +350,7 @@
                 '<span class="direct-chat-name pull-right">'+data[i]['user']+'</span>'+
                 '<span class="direct-chat-timestamp pull-left">'+data[i]['timeStamp']+'</span>'+
                 '</div>'+
-                '<img class="direct-chat-img" src="../dist/img/user1-128x128.jpg" alt="Message User Image">'+
+                '<img class="direct-chat-img" src="'+data[i]['profilePicture']+'" alt="Message User Image">'+
                 '<div class="direct-chat-text">'+data[i]['message']+'</div>'+
                 '</div>';
                 $('div.direct-chat-messages').append(message);
@@ -434,7 +360,7 @@
                 '<span class="direct-chat-name pull-left">'+data[i]['user']+'</span>'+
                 '<span class="direct-chat-timestamp pull-right">'+data[i]['timeStamp']+'</span>'+
                 '</div>'+
-                '<img class="direct-chat-img" src="../dist/img/user1-128x128.jpg" alt="Message User Image">'+
+                '<img class="direct-chat-img" src="'+data[i]['profilePicture']+'" alt="Message User Image">'+
                 '<div class="direct-chat-text">'+data[i]['message']+'</div>'+
                 '</div>';
                 $('div.direct-chat-messages').append(message);
@@ -454,7 +380,7 @@
                 '<span class="direct-chat-name pull-left">'+data[0]['sender']+'</span>'+
                 '<span class="direct-chat-timestamp pull-right">'+data[0]['timeStamp']+'</span>'+
                 '</div>'+
-                '<img class="direct-chat-img" src="../dist/img/user1-128x128.jpg" alt="Message User Image">'+
+                '<img class="direct-chat-img" src="'+data[i]['profilePicture']+'" alt="Message User Image">'+
                 '<div class="direct-chat-text">'+data[0]['message']+'</div>'+
                 '</div>';
                 $('div.direct-chat-messages').append(message);
@@ -486,7 +412,7 @@
                 '<span class="direct-chat-name pull-right">'+data['sender']+'</span>'+
                 '<span class="direct-chat-timestamp pull-left">'+data['timeStamp']+'</span>'+
                 '</div>'+
-                '<img class="direct-chat-img" src="../dist/img/user1-128x128.jpg" alt="Message User Image">'+
+                '<img class="direct-chat-img" src="'+data['profilePicture']+'" alt="Message User Image">'+
                 '<div class="direct-chat-text">'+data['message']+'</div>'+
                 '</div>';
                 $('div.direct-chat-messages').append(message);

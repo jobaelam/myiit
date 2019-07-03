@@ -68,6 +68,7 @@ class ChatController extends Controller
         $messageTimeStamp = Chat_Message::where('chat_id', $conversationExist->id)->orderby('created_at', 'desc')->first();
         $data = array(
             'sender' => User::find($sender)->first_name,
+            'profilePicture' => User::find($sender)->profile_image,
             'message' => $message,
             'timeStamp' => date('d M h:i A',strtotime($messageTimeStamp->created_at)),
         );
@@ -114,10 +115,12 @@ class ChatController extends Controller
                     $message->read = 1;
                     $message->save();       
                     $name = User::find($message->sender_id)->first_name;
+                    $profilePicture = User::find($message->sender_id)->profile_image;
                     $data[] = array(
                         'message' => $message->message,
                         'sender' => $name,
                         'timeStamp' => date('d M h:i A',strtotime($message->created_at)),
+                        'profilePicture' => $profilePicture,
                     );
                 }
             }
@@ -134,10 +137,12 @@ class ChatController extends Controller
             $messages = Chat_Message::where('chat_id',$conversationExist->id)->get();
             foreach($messages as $message){
                 $name = User::find($message->sender_id)->first_name;
+                $profilePicture = User::find($message->sender_id)->profile_image;
                 $data[] = array(
                     'message' => $message->message,
                     'user' => $name,
                     'timeStamp' => date('d M h:i A',strtotime($message->created_at)),
+                    'profilePicture' => $profilePicture,
                 );
             }
         }

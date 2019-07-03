@@ -26,13 +26,25 @@ class CreateTypesTable extends Migration
 
         DB::table('types')->insert(
             array(
-                'name' => 'Faculty',
+                'name' => 'Dean',
             )
         );
 
         DB::table('types')->insert(
             array(
-                'name' => 'Staff',
+                'name' => 'Assistant Dean',
+            )
+        );
+
+        DB::table('types')->insert(
+            array(
+                'name' => 'Chairperson',
+            )
+        );
+
+        DB::table('types')->insert(
+            array(
+                'name' => 'Faculty',
             )
         );
     }

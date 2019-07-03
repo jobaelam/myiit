@@ -17,21 +17,20 @@
     Accreditaion
     <small>Agency</small>
     </h1>
-    <ol class="breadcrumb">
-    <li><a href="/"><i class="fa fa-home"></i> Home</a></li>
-    <li><i class="fa fa-book"></i> Accreditation</li>
-    </ol>
 </section>
 
 <!-- Main content -->
 <section class="content">
     <div class="box">
         <div class="box-body table-responsive">
-                <table class="table table-hover">
+                <table class="table table-hover" style="table-layout:fixed;">
                   <tr>
                     <th>Agencies</th>
                     <th>Description</th>
                     <th style="width: 25%">Status</th>
+                    @if( Auth::user()->id == 1)
+                      <th width=5%>Action</th>
+                    @endif
                   </tr>
                   @if(count($agencies) > 0)
                      @foreach($agencies as $agency)
@@ -43,6 +42,11 @@
                                 <div class="progress-bar progress-bar-success" style="width: {{$agency->status}}%"></div>
                             </div>
                         </td>
+                        @if( Auth::user()->id == 1)
+                          <td>
+                            <button class="del btn-xs btn-danger" hidden><i class="fa fa-remove"></i></button>
+                          </td> 
+                        @endif
                       </tr>
                      @endforeach
                   @else
@@ -54,6 +58,7 @@
                 <button type="button" class="btn btn-info pull-right" data-toggle="modal" data-target="#modal-default">
                   <i class="fa fa-plus-circle"><span> Add Agency</span></i>
                 </button>
+                <button id="edit" type="button" class="btn btn-default pull-right" style="margin-right:1rem">Edit</button>
                 @endif
         </div>
          
@@ -105,6 +110,20 @@
 <script src="/bower_components/jquery/dist/jquery.min.js"></script>
 <script>
       $(document).ready(function() {
+        $('#edit').click(function() {
+            $row = $('.table-row:has(td)');
+            if($row.attr('disabled')){
+              $row.removeAttr('disabled');
+            }else{
+              $row.attr('disabled','disabled');
+            }
+            $('.del').toggle();
+            $('.table-row:has(td)').disabled;
+            $(this).text(function(i, text){
+                return text === "Edit" ? "Cancel" : "Edit";
+            })
+        });
+
         $('.table-row:has(td)').click(function() 
         {
             var val = $(this).attr('value');
