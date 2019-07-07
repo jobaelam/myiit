@@ -29,6 +29,7 @@ Route::any('/retrieveTypingStatus', 'ChatController@retrieveTypingStatus');
 Route::any('/insertAgency', 'AgenciesController@store');
 Route::any('/areas/{id}', 'AreaController@index');
 Route::any('/insertArea', 'AreaController@store');
+Route::any('/showAreaHead', 'AreaController@showAreaHead');
 Route::any('/files/{id}', 'FileController@index');
 Route::any('/insertFile', 'FileController@store');
 Route::any('/downloadFile', 'FileController@download');

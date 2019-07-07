@@ -89,16 +89,31 @@
                                 <input id="desc" name="desc" type="textArea" class="form-control" placeholder="Description">
                             </div>
                             <div class="form-group">                  
+                                <label for="head">Department</label>
+                                <select name="dept" id="dept" class="form-control @error('dept') is-invalid @enderror">
+                                    <option value="" disabled selected>--Select Department--</option>
+                                    @foreach($departments as $dept)
+                                        <option value="{{$dept->id}}">{{$dept->name}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="form-group">                  
+                                <label for="head">Head</label>
+                                <select name="head" id="head" class="form-control @error('head') is-invalid @enderror">
+                                    <option value="" disabled selected>--Select Head--</option>
+                                </select>
+                            </div>
+                            {{-- <div class="form-group">                  
                                 <label for="head">Select Area Head</label>
                                 <select name="head" id="head" class="form-control @error('head') is-invalid @enderror">
                                     <option value="" >--Select Head--</option>
                                     @foreach($users as $user)
-                                    {{-- @if($area->agency_id == $agency->id) --}}
+                                      @if($user->type == 5)
                                         <option value="{{$user->id}}">{{$user->fullName()}}</option>
-                                    {{-- @endif --}}
+                                      @endif
                                     @endforeach
                                 </select>
-                            </div>
+                            </div> --}}
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
                                 <input type="submit" class="btn btn-primary pull-right" value="Save">
@@ -118,14 +133,29 @@
         $(document).ready(function() {
           $('.table-row:has(td)').click(function() {
               var val = $(this).attr('value');
-              console.log(val);
                window.location.href="/files/"+val;
           });
+
           $('#edit').click(function() {
               $('.del').toggle();
               $(this).text(function(i, text){
                   return text === "Edit" ? "Cancel" : "Edit";
               })
+          });
+
+          $('#dept').change(function(e)
+          {
+              $('#head').empty();
+              var department = $(this).val();
+              $.get('/showAreaHead',{department:department},function(data)
+              {
+                $('#head').append('<option value="" disabled selected>--Select Head--</option>');
+                  for(var i = 0; data.length > i; i++){
+                    if(data[i]['id'] != 1){                    
+                      $('#head').append('<option value="'+data[i]['id']+'" >'+data[i]['first_name']+' '+data[i]['last_name']+'</option>');
+                    }
+                  }
+              });
           });
 
           $('#myForm').submit(function(e)
@@ -142,12 +172,6 @@
             $.post('/insertArea', form, function(data){
               console.log(data);
               window.location.href="/areas/{{$agency->id}}";
-              // var displayArea = '<tr value="'+data['id']+'" class="table-row">'+
-              // '<td>'+data['name']+'</td>'+
-              // '<td>{'+data['desc']+'</td>'+
-              // '<td>{'+data['head']+'</td>'+
-              // '<td></tr>'
-              // $('table.table').append(displayArea);
             })
         } 
 });

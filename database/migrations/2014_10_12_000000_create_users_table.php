@@ -79,9 +79,9 @@ class CreateUsersTable extends Migration
 
         DB::table('users')->insert(
             array(
-                'first_name' => 'Manuel',
-                'last_name' => 'Cabido',
-                'email' => 'cabido@gmail.com',
+                'first_name' => 'Haron Hakeen',
+                'last_name' => 'Lua',
+                'email' => 'lua@gmail.com',
                 'password' => Hash::make('password'),
                 'dept_id' => '1',
                 'type' => '5',
@@ -175,9 +175,9 @@ class CreateUsersTable extends Migration
 
         DB::table('users')->insert(
             array(
-                'first_name' => 'Darlene Daryl',
-                'last_name' => 'Obach',
-                'email' => 'obach@gmail.com',
+                'first_name' => 'Rolando',
+                'last_name' => 'Galucan',
+                'email' => 'galucan@gmail.com',
                 'password' => Hash::make('password'),
                 'dept_id' => '3',
                 'type' => '5',
@@ -187,9 +187,9 @@ class CreateUsersTable extends Migration
 
         DB::table('users')->insert(
             array(
-                'first_name' => 'Darlene Daryl',
-                'last_name' => 'Obach',
-                'email' => 'obach@gmail.com',
+                'first_name' => 'Alexander',
+                'last_name' => 'Gaw',
+                'email' => 'gaw@gmail.com',
                 'password' => Hash::make('password'),
                 'dept_id' => '3',
                 'type' => '5',
@@ -199,9 +199,9 @@ class CreateUsersTable extends Migration
 
         DB::table('users')->insert(
             array(
-                'first_name' => 'Darlene Daryl',
-                'last_name' => 'Obach',
-                'email' => 'obach@gmail.com',
+                'first_name' => 'Ofelia',
+                'last_name' => 'Mendoza',
+                'email' => 'mendoza@gmail.com',
                 'password' => Hash::make('password'),
                 'dept_id' => '3',
                 'type' => '5',
@@ -211,9 +211,9 @@ class CreateUsersTable extends Migration
 
         DB::table('users')->insert(
             array(
-                'first_name' => 'Darlene Daryl',
-                'last_name' => 'Obach',
-                'email' => 'obach@gmail.com',
+                'first_name' => 'Michael',
+                'last_name' => 'Nabua',
+                'email' => 'nabua@gmail.com',
                 'password' => Hash::make('password'),
                 'dept_id' => '3',
                 'type' => '5',

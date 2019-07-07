@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Area;
 use App\Agency;
 use App\User;
+use App\Department;
 use Illuminate\Http\Request;
 
 class AreaController extends Controller
@@ -33,7 +34,8 @@ class AreaController extends Controller
             'title' => Agency::find($id)->name,
             'agency' => Agency::find($id),
             'areas' => $areas,
-            'users' => User::all()
+            'users' => User::all(),
+            'departments' => Department::all()
         );
         return view('pages.area')->with($data);
     }
@@ -114,5 +116,12 @@ class AreaController extends Controller
     public function destroy(Area $area)
     {
         //
+    }
+
+    public function showAreaHead(Request $request)
+    {
+        $department = $request->department;
+        $user = User::where('dept_id', $department)->get();
+        return $user;
     }
 }
