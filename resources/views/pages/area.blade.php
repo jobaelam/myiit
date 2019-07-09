@@ -22,35 +22,41 @@
     <!-- Main content -->
     <section class="content">
             <div class="box">
-                {{-- <div class="box-header with-border">
-                    <h3 class="box-title">
-                        Agencies
-                    </h3>
-                </div> --}}
+                <div class="box-header with-border">
+                  <select name="department" id="department" class="form-control" style="width: auto;">
+                    <option value="">View All Area</option>
+                    @foreach($departments as $dept)
+                        <option value="{{$dept->id}}">{{$dept->name}}</option>
+                    @endforeach
+                  </select>
+                </div>
                 <div class="box-body table-responsive">
-                        <table class="table table-hover" style="table-layout:fixed;">
+                        <table id="area" class="table table-hover" style="table-layout:fixed;">
                           <tr>
                             <th>Area</th>
-                            <th>Description</th>
+                            <th>Department</th>
                             <th>Head</th>
                             @if( Auth::user()->id == 1)
                               <th width="5%">Action</th>
                             @endif
                           </tr>
-                          @if(count($areas) > 0)
-                             @foreach($areas as $area)
-                              @if($area->agency_id == $agency->id)
-                                <tr value="{{$area->id}}" class="table-row">
-                                  <td>{{$area->name}}</td>
-                                  <td>{{$area->desc}}</td>
-                                  <td>Prof. {{$area->headUser->first_name}} {{$area->headUser->last_name}}</td>
+                          @if(count($areaEntries) > 0)
+                             @foreach($areaEntries as $areaEntry)
+                                <tr value="{{$areaEntry->id}}" class="table-row">
+                                  <td>{{$areaEntry->hasArea->name}}</td>
+                                  <script>console.log('{{$areaEntry->hasArea->name}}')</script>
+                                  <td>{{$areaEntry->hasDepartment->name}}</td>
+                                  @if($areaEntry->head == null)
+                                    <td>Not Yet Assigned</td>
+                                  @else
+                                    <td>Prof. {{$areaEntry->headUser->first_name}} {{$areaEntry->headUser->last_name}}</td>
+                                  @endif
                                   @if( Auth::user()->id == 1)
                                     <td>
                                       <button class="del btn-xs btn-danger" hidden><i class="fa fa-remove"></i></button>
                                     </td> 
                                   @endif
                                 </tr>
-                              @endif
                              @endforeach
                           @else
                           <tr><td>No Areas Available</td></tr>
@@ -88,9 +94,9 @@
                                 <label for="desc">Description</label>
                                 <input id="desc" name="desc" type="textArea" class="form-control" placeholder="Description">
                             </div>
-                            <div class="form-group">                  
+                            {{-- <div class="form-group">                  
                                 <label for="head">Department</label>
-                                <select name="dept" id="dept" class="form-control @error('dept') is-invalid @enderror">
+                                <select name="department" id="department" class="form-control @error('dept') is-invalid @enderror">
                                     <option value="" disabled selected>--Select Department--</option>
                                     @foreach($departments as $dept)
                                         <option value="{{$dept->id}}">{{$dept->name}}</option>
@@ -101,17 +107,6 @@
                                 <label for="head">Head</label>
                                 <select name="head" id="head" class="form-control @error('head') is-invalid @enderror">
                                     <option value="" disabled selected>--Select Head--</option>
-                                </select>
-                            </div>
-                            {{-- <div class="form-group">                  
-                                <label for="head">Select Area Head</label>
-                                <select name="head" id="head" class="form-control @error('head') is-invalid @enderror">
-                                    <option value="" >--Select Head--</option>
-                                    @foreach($users as $user)
-                                      @if($user->type == 5)
-                                        <option value="{{$user->id}}">{{$user->fullName()}}</option>
-                                      @endif
-                                    @endforeach
                                 </select>
                             </div> --}}
                             <div class="modal-footer">
@@ -143,24 +138,50 @@
               })
           });
 
-          $('#dept').change(function(e)
+          $('#department').change(function(e)
           {
-              $('#head').empty();
+              $('#area').empty();
               var department = $(this).val();
-              $.get('/showAreaHead',{department:department},function(data)
+              var agency = {{$agency->id}};
+              console.log(department,agency);
+              $.get('/showArea',{department:department, agency: agency},function(data)
               {
-                $('#head').append('<option value="" disabled selected>--Select Head--</option>');
-                  for(var i = 0; data.length > i; i++){
-                    if(data[i]['id'] != 1){                    
-                      $('#head').append('<option value="'+data[i]['id']+'" >'+data[i]['first_name']+' '+data[i]['last_name']+'</option>');
-                    }
-                  }
+                if({{Auth::user()->id}} == 1){
+                var display = '<th width="5%">Action</th></tr>';
+                } else {
+                var display = '</tr>';
+                }
+                $('#area').append('<tr><th>Area</th><th>Department</th><th>Head</th>'+display);   
+                console.log(data);
+                if(data.length >= 0){
+                  console.log(data);
+                  // for(var i = 0; i < data.length; i++){
+                  //   console.log(data[i]['head']);
+                    // if(data[i]['head'] == null){
+                    //   var head = '<td>Not Yet Assigned</td>';
+                    // } else{
+                    //   var head = '<td>Prof. '+data[i]['head']['first_name']+' '+data[i]['id']['head']['last_name']+'</td>'
+                    // }
+
+                  //   // if({{Auth::user()->id}} == 1){
+                  //   //   var action = '<td><button class="del btn-xs btn-danger" hidden><i class="fa fa-remove"></i></button></td></tr>';
+                  // }
+
+                  //   var display = '<tr value="'+data[i]['id']+'" class="table-row">'
+                  //   '<td>'+data[i]['area']+'</td>'+
+                  //   '<td>'+data[i]['department']+'</td>'+head;
+                  //   $('#area').append(display);
+                  // }
+                }      
+                // else
+                //   $('#area').append('<tr><td>No Areas Available</td></tr>');
+                // }
               });
           });
 
           $('#myForm').submit(function(e)
           {
-              //e.preventDefault();
+              e.preventDefault();
               $('#modal-default').modal('hide');
               form = $(this).serialize();
               console.log(form);
@@ -171,7 +192,7 @@
           {
             $.post('/insertArea', form, function(data){
               console.log(data);
-              window.location.href="/areas/{{$agency->id}}";
+              //window.location.href="/areas/{{$agency->id}}";
             })
         } 
 });
