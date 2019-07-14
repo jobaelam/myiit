@@ -29,7 +29,7 @@
                     <th>Description</th>
                     <th style="width: 25%">Status</th>
                     @if( Auth::user()->id == 1)
-                      <th width=5%>Action</th>
+                      <th width=10%>Action</th>
                     @endif
                   </tr>
                   @if(count($agencies) > 0)
@@ -44,7 +44,8 @@
                         </td>
                         @if( Auth::user()->id == 1)
                           <td>
-                            <button class="del btn-xs btn-danger" hidden><i class="fa fa-remove"></i></button>
+                            <button type="button" class="del btn-xsm btn-danger pull-right" style="margin-right:1rem">Delete</button>
+                            <button type="button" class="edit btn-xsm btn-default pull-right" style="margin-right:1rem">Edit</button>
                           </td> 
                         @endif
                       </tr>
@@ -55,15 +56,14 @@
                 </table>
                 <hr style="padding: 0px; margin: 0px; padding-bottom: 10px">
                 @if( Auth::user()->id == 1)
-                <button type="button" class="btn btn-info pull-right" data-toggle="modal" data-target="#modal-default">
-                  <i class="fa fa-plus-circle"><span> Add Agency</span></i>
-                </button>
-                <button id="edit" type="button" class="btn btn-default pull-right" style="margin-right:1rem">Edit</button>
+                  <button type="button" class="btn btn-info pull-right" data-toggle="modal" data-target="#add-agency">
+                    <i class="fa fa-plus-circle"><span> Add Agency</span></i>
+                  </button>
                 @endif
         </div>
          
       </div>
-    <div class="modal fade" id="modal-default">
+    <div class="modal fade" id="add-agency">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
@@ -72,7 +72,7 @@
             <h4 class="modal-title">Agency Details</h4>
           </div>
           <div class="modal-body">      
-            <form action="/accreditation" method="POST" id="myForm">
+            <form action="" method="POST" id="addForm">
                 @csrf
                 <div class="form-group">                  
                   <label for="name">Agency</label>
@@ -103,63 +103,137 @@
       </div>
       <!-- /.modal-dialog -->
     </div>
+    <div class="modal fade" id="edit-agency">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Edit Details</h4>
+          </div>
+          <div class="modal-body">      
+            <form action="" method="POST" id="editForm">
+                @csrf
+                <input type="hidden" name="editId" id="editId" value="">
+                <div class="form-group">                  
+                  <label for="editName">Agency</label>
+                  <input id="editName" name="editName" type="text" class="form-control" value="">
+                </div>
+                @error('editName')
+                    <span class="invalid-feedback" role="alert">
+                        <strong>{{ $message }}</strong>
+                    </span>
+                @enderror
+                <div class="form-group">                  
+                  <label for="editDesc">Description</label>
+                  <input id="editDesc" name="editDesc" type="textArea" class="form-control" value="">
+                </div>
+                @error('editDesc')
+                    <span class="invalid-feedback" role="alert">
+                        <strong>{{ $message }}</strong>
+                    </span>
+                @enderror
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+                  <input type="submit" class="btn btn-primary pull-right" value="Save Changes">
+                </div>
+            </form>              
+          </div>
+        </div>
+        <!-- /.modal-content -->
+      </div>
+      <!-- /.modal-dialog -->
+    </div>
+    <div class="modal fade" id="delete-agency">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span></button>
+          </div>
+          <div class="modal-body">      
+            <form action="" method="POST" id="deleteForm">
+                @csrf
+                <input type="hidden" name="deleteId" id="deleteId" value="">
+                <h3 id="deleteMessage"></h3>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+                  <input type="submit" class="btn btn-danger pull-right" value="Delete">
+                </div>
+            </form>              
+          </div>
+        </div>
+        <!-- /.modal-content -->
+      </div>
+      <!-- /.modal-dialog -->
+    </div>
 </section>
 <!-- /.content -->
 </div>
 <!-- /.content-wrapper -->
 <script src="/bower_components/jquery/dist/jquery.min.js"></script>
 <script>
+      var editClicked, deleteClicked;
       $(document).ready(function() {
-        $('#edit').click(function() {
-            $row = $('.table-row:has(td)');
-            if($row.attr('disabled')){
-              $row.removeAttr('disabled');
-            }else{
-              $row.attr('disabled','disabled');
-            }
-            $('.del').toggle();
-            $('.table-row:has(td)').disabled;
-            $(this).text(function(i, text){
-                return text === "Edit" ? "Cancel" : "Edit";
-            })
+        $('.edit').click(function() {
+          editClicked = true;
         });
+
+        $('.del').click(function(){
+          deleteClicked = true;
+        })
 
         $('.table-row:has(td)').click(function() 
         {
-            var val = $(this).attr('value');
-             console.log(val);
-            window.location.href="/areas/"+val;
+            var rowId = $(this).attr('value');
+            var editName = $(this).find('td:eq(0)').text();
+            var editDesc = $(this).find('td:eq(1)').text();
+            if(editClicked){
+              $('#editId').val(rowId);
+              $('#editName').val(editName);
+              $('#editDesc').val(editDesc);
+              $('#edit-agency').modal();
+              editClicked = false;
+            } else if(deleteClicked){
+              $('#deleteId').val(rowId);
+              $('#deleteMessage').html('Do you want to delete "'+editName+'"?');
+              $('#delete-agency').modal();
+              deleteClicked = false;
+            }else {
+              window.location.href="/areas/"+rowId;
+            }
         });
 
-        $('#myForm').submit(function(e)
+        $('#deleteForm').submit(function(e)
         {
             e.preventDefault();
-            $('#modal-default').modal('hide');
-            $('#notAvailable').remove();
-            form = $(this).serialize();
-            if (form == "") {
-                alert("Enter a Valid Input");
-                return false;
-            }else{
-            insertAgency();
-            };
+            var deleteForm = $(this).serialize();
+            $.post('/deleteAgency', deleteForm, function(data){
+              window.location.href="accreditation";
+            })
         });
 
-        function insertAgency()
+        $('#editForm').submit(function()
         {
-          $.post('/insertAgency', form, function(data){
-            console.log(data);
-            window.location.href="accreditation";
-            // var displayAgency = '<tr value="'+data['id']+'" class="table-row">'+
-            // '<td>'+data['name']+'</td>'+
-            // '<td>'+data['desc']+'</td>'+
-            // '<td>'+
-            // '<div class="progress progress-xs">'+
-            // '<div class="progress-bar progress-bar-success" style="width: '+data['status']+'%"></div>'+
-            // '</div></td></tr>'
-            // $('table.table').append(displayAgency);
-          })
-        } 
+            var editForm = $(this).serialize();
+            $.post('/editAgency', editForm, function(){
+              window.location.href="accreditation";
+            })
+        });
+
+        $('#addForm').submit(function(e)
+        {
+            e.preventDefault();
+            $('#notAvailable').remove();
+            var addForm = $(this).serialize();
+            if ($('#name').val() == '' || $('#desc').val() == '') {
+                alert("Enter a Valid Input");
+            }else{
+              $.post('/insertAgency', addForm, function(){
+                window.location.href="accreditation";
+              })
+            };
+        });
       });
 
 </script>

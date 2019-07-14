@@ -27,6 +27,8 @@ Route::any('/notTyping', 'ChatController@notTyping');
 Route::any('/retrieveExistingMessages', 'ChatController@retrieveExistingMessages');
 Route::any('/retrieveTypingStatus', 'ChatController@retrieveTypingStatus');
 Route::any('/insertAgency', 'AgenciesController@store');
+Route::any('/editAgency', 'AgenciesController@update');
+Route::any('/deleteAgency', 'AgenciesController@destroy');
 Route::any('/areas/{id}', 'AreaController@index');
 Route::any('/insertArea', 'AreaController@store');
 Route::any('/showAreaHead', 'AreaController@showAreaHead');

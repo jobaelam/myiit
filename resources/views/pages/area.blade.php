@@ -8,7 +8,7 @@
 @endsection
 
 @section('content')
-
+ 
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
@@ -40,16 +40,16 @@
                               <th width="5%">Action</th>
                             @endif
                           </tr>
-                          @if(count($areaEntries) > 0)
-                             @foreach($areaEntries as $areaEntry)
-                                <tr value="{{$areaEntry->id}}" class="table-row">
-                                  <td>{{$areaEntry->hasArea->name}}</td>
-                                  <script>console.log('{{$areaEntry->hasArea->name}}')</script>
-                                  <td>{{$areaEntry->hasDepartment->name}}</td>
-                                  @if($areaEntry->head == null)
+                          @if(count($areas) > 0)
+                             @foreach($areas as $area)
+                                <tr value="{{$area->id}}" class="table-row">
+                                  <td>{{$area->hasArea->name}}</td>
+                                  <script>console.log('{{$area->hasArea->name}}')</script>
+                                  <td>{{$area->hasDepartment->name}}</td>
+                                  @if($area->head == null)
                                     <td>Not Yet Assigned</td>
                                   @else
-                                    <td>Prof. {{$areaEntry->headUser->first_name}} {{$areaEntry->headUser->last_name}}</td>
+                                    <td>Prof. {{$area->headUser->first_name}} {{$area->headUser->last_name}}</td>
                                   @endif
                                   @if( Auth::user()->id == 1)
                                     <td>

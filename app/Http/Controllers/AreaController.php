@@ -26,7 +26,7 @@ class AreaController extends Controller
      */
     public function index(Request $request)
     {
-        $id = $request->id;
+        $id = $request->id; 
         $areas = Area::where(array(
             'agency_id' => $id
         ))->get();

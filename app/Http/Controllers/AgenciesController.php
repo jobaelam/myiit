@@ -57,8 +57,6 @@ class AgenciesController extends Controller
         );
         $Agency = new Agency();
         $Agency->create($data);
-        $Agency = Agency::where('name', $name)->where('desc', $desc)->first();
-        return $Agency;
     }
 
     /**
@@ -90,9 +88,16 @@ class AgenciesController extends Controller
      * @param  \App\Agency  $agency
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Agency $agency)
+    public function update(Request $request)
     {
-        //
+        $editId = $request->editId;
+        $editName = $request->editName;
+        $editDesc = $request->editDesc;
+
+        Agency::find($editId)->update(array(
+            'name' => $editName,
+            'desc' => $editDesc
+        ));
     }
 
     /**
@@ -101,8 +106,8 @@ class AgenciesController extends Controller
      * @param  \App\Agency  $agency
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Agency $agency)
+    public function destroy(Request $request)
     {
-        //
+        Agency::find($request->deleteId)->delete();
     }
 }
