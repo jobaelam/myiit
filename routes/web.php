@@ -13,6 +13,7 @@
 
 
 Route::get('/', 'PagesController@index');
+Route::get('/accreditation/{agencyId}', 'PagesController@departments');
 Route::resource('accreditation','AgenciesController');
 Route::get('/profile', 'PagesController@profile');
 Auth::routes();
@@ -29,9 +30,11 @@ Route::any('/retrieveTypingStatus', 'ChatController@retrieveTypingStatus');
 Route::any('/insertAgency', 'AgenciesController@store');
 Route::any('/editAgency', 'AgenciesController@update');
 Route::any('/deleteAgency', 'AgenciesController@destroy');
-Route::any('/areas/{id}', 'AreaController@index');
+Route::any('/accreditation/{agency}/department/{department}/areas', 'AreaController@index');
 Route::any('/insertArea', 'AreaController@store');
-Route::any('/showAreaHead', 'AreaController@showAreaHead');
+Route::any('/editArea', 'AreaController@edit');
+Route::any('/editAreaHead', 'AreaController@update');
+Route::any('/deleteArea', 'AreaController@destroy');
 Route::any('/files/{id}', 'FileController@index');
 Route::any('/insertFile', 'FileController@store');
 Route::any('/downloadFile', 'FileController@download');

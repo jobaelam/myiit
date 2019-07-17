@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Auth;
 use App\User;
 use App\Chat;
 use App\Chat_Message;
+use App\College;
+use App\Department;
 
 class PagesController extends Controller
 {
@@ -37,6 +39,15 @@ class PagesController extends Controller
         );
         
         return view('pages.messenger')->with($data);
+    }
+
+    public function departments(Request $request){
+        $data = array(
+            'departments' => Department::all(),
+            'chairPersons' => User::where('type',4)->get(),
+            'agency' => $request->agencyId
+        );
+        return view('pages.departments')->with($data);
     }
 
     public function profile(){

@@ -44,8 +44,8 @@
                         </td>
                         @if( Auth::user()->id == 1)
                           <td>
-                            <button type="button" class="del btn-xsm btn-danger pull-right" style="margin-right:1rem">Delete</button>
-                            <button type="button" class="edit btn-xsm btn-default pull-right" style="margin-right:1rem">Edit</button>
+                            <button type="button" class="edit btn-xsm btn-default"  style="width: 45%">Edit</button>
+                            <button type="button" class="del btn-xsm btn-danger"  style="width: 50%">Delete</button>
                           </td> 
                         @endif
                       </tr>
@@ -61,7 +61,6 @@
                   </button>
                 @endif
         </div>
-         
       </div>
     <div class="modal fade" id="add-agency">
       <div class="modal-dialog">
@@ -200,8 +199,13 @@
               $('#delete-agency').modal();
               deleteClicked = false;
             }else {
-              window.location.href="/areas/"+rowId;
-            }
+              if('{{Auth::user()->type}}' == 1){
+                //window.location.href="agency/"+rowId+"/colleges";
+                window.location.href="/accreditation/"+rowId;
+              } else if('{{Auth::user()->type}}' == 4 || '{{Auth::user()->type}}' == 5){
+                window.location.href="/accreditation/"+rowId+"/department/"+{{Auth::user()->dept_id}}+"/areas";
+              }
+            } 
         });
 
         $('#deleteForm').submit(function(e)
@@ -235,6 +239,5 @@
             };
         });
       });
-
 </script>
 @endsection

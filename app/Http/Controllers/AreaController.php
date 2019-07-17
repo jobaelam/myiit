@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Area;
+use App\AccessArea;
 use App\Agency;
 use App\User;
 use App\Department;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AreaController extends Controller
 {
@@ -26,17 +28,20 @@ class AreaController extends Controller
      */
     public function index(Request $request)
     {
-        $id = $request->id; 
-        $areas = Area::where(array(
-            'agency_id' => $id
-        ))->get();
+        $agency = $request->agency; 
+        $department = $request->department;
+        $areas = array();
+        $access = AccessArea::where('departmentId', $department)->distinct()->get();
         $data = array(
-            'title' => Agency::find($id)->name,
-            'agency' => Agency::find($id),
+            'title' => Agency::find($agency)->name,
+            'agency' => Agency::find($agency),
             'areas' => $areas,
             'users' => User::all(),
-            'departments' => Department::all()
+            'department' => Department::find($department),
+            'departments' => Department::all(),
+            'access' => $access,
         );
+
         return view('pages.area')->with($data);
     }
 
@@ -58,19 +63,23 @@ class AreaController extends Controller
      */
     public function store(Request $request)
     {
-        $agency_id = $request->agency_id;
+        $agency_id = $request->agencyId;
         $name = $request->name;
         $desc = $request->desc;
-        $head = $request->head;
         $data = array(
             'agency_id' => $agency_id,
             'name' => $name,
             'desc' => $desc,
-            'head' => $head,
         );
-        Area::create($data);
-        $Area = Area::where('agency_id', $agency_id)->where('name', $name)->first();
-        return $Area;
+        $area = Area::create($data)->id;
+        $departments = Department::all(); 
+        foreach($departments as $department){
+            $datas = array(
+                'areaId' => $area,
+                'departmentId' => $department->id,
+            );
+            AccessArea::create($datas);
+        }
     }
 
     /**
@@ -90,9 +99,16 @@ class AreaController extends Controller
      * @param  \App\Area  $area
      * @return \Illuminate\Http\Response
      */
-    public function edit(Area $area)
+    public function edit(Request $request)
     {
-        //
+        $editId = $request->editId;
+        $editName = $request->editName;
+        $editDesc = $request->editDesc;
+        $access = AccessArea::find($editId)->first()->areaId;
+        Area::find($access)->update(array(
+            'name' => $editName,
+            'desc' => $editDesc
+        ));
     }
 
     /**
@@ -102,9 +118,13 @@ class AreaController extends Controller
      * @param  \App\Area  $area
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Area $area)
+    public function update(Request $request)
     {
-        //
+        $editId = $request->editHeadId;
+        $editHead = $request->editHead;
+        AccessArea::find($editId)->update(array(
+            'head' => $editHead
+        ));
     }
 
     /**
@@ -120,8 +140,7 @@ class AreaController extends Controller
 
     public function showAreaHead(Request $request)
     {
-        $department = $request->department;
-        $user = User::where('dept_id', $department)->get();
-        return $user;
+        // $access = AccessArea::find($request->deleteId)->first()->id;
+        // Area::find($access)->delete();
     }
 }

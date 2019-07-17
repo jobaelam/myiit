@@ -8,7 +8,14 @@ class Area extends Model
 {
     protected $guarded = [];
 
-    public function headUser(){
-        return $this->belongsTo(User::class, 'head', 'id');
+    public function hasAccess(){
+        return $this->hasMany(AccessArea::class, 'areaId', 'id');
+    }
+    public function hasHead(){
+        return $this->hasOne(AccessArea::class, 'areaId', 'id');
+    }
+
+    public function hasAgency(){
+        return $this->belongsto(Agency::class, 'agency_id', 'id');
     }
 }
