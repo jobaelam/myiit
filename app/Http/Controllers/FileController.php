@@ -10,6 +10,7 @@ use App\Area;
 use App\AccessArea;
 use App\User;
 use App\FileViewType;
+use App\Parameter;
 
 class FileController extends Controller
 {
@@ -31,17 +32,18 @@ class FileController extends Controller
     {
         $department = $request->department;
         $areaAccess = $request->area;
+        $parameter = $request->parameter;
         $agency = $request->agency;
         $files = File::where(array(
-            'areaId' => $areaAccess
+            'parameterId' => $parameter
         ))->get();
         $data = array(
-            'title' => Area::find(AccessArea::find($areaAccess)->areaId)->name,
-            'areas' => Area::find(AccessArea::find($areaAccess)->areaId),
+            'area' => AccessArea::find($areaAccess),
+            'access' => Area::find(AccessArea::find($areaAccess)->areaId),
             'files' => $files,
             'department' => $department,
             'agency' => $agency,
-            'access' => $areaAccess,
+            'parameter' => Parameter::find($parameter),
             'type' => FileViewType::all(),
             'users' => User::all()
         );
@@ -101,9 +103,9 @@ class FileController extends Controller
         $File->viewType = $request->view;
         $File->viewApprove = false;
         $File->userId = $request->userId;
-        $File->areaId = $request->access;
+        $File->parameterId = $request->parameter;
         $File->save();
-        return redirect('/accreditation/'.$request->agency.'/department/'.AccessArea::find($request->access)->departmentId.'/area/'.$request->access.'/files');
+        return redirect('/accreditation/'.$request->agency.'/department/'.AccessArea::find(Parameter::find($request->parameter)->accessId)->departmentId.'/area/'.$request->access.'/parameters/'.$request->parameter.'/files');
     }
 
     /**

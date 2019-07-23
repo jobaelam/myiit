@@ -15,6 +15,9 @@ class CreateParametersTable extends Migration
     {
         Schema::create('parameters', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->unsignedBigInteger('accessId');
+            $table->foreign('accessId')->references('id')->on('access_areas');
+            $table->string('name');
             $table->timestamps();
         });
     }

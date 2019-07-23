@@ -48,7 +48,7 @@ class CreateUsersTable extends Migration
                 'email' => 'caparida@gmail.com',
                 'password' => Hash::make('password'),
                 'dept_id' => '1',
-                'type' => '4',
+                'type' => '2',
                 'profile_image' => 'http://via.placeholder.com/150x150',
             )
         );
@@ -60,7 +60,7 @@ class CreateUsersTable extends Migration
                 'email' => 'catindig@gmail.com',
                 'password' => Hash::make('password'),
                 'dept_id' => '1',
-                'type' => '5',
+                'type' => '4',
                 'profile_image' => 'http://via.placeholder.com/150x150',
             )
         );

@@ -339,6 +339,61 @@
         });
     }
 
+    function displayRequest()
+    {  
+      console.log(user1);
+      $.get('/displayRequest', {_token:"{{csrf_token()}}",user: user1}, function(data)
+      {
+          for (i = 0; i < data.length && i < 5; i++) { 
+            if(data[i]['unread'] == 0 && data[i]['sender'] != '{{Auth::user()->id}}'){
+              ++count;
+              var message = '<li><a href="#">'+
+                '<div class="pull-left">'+
+                '<img src="'+data[i]['profilePicture']+'" class="img-circle" alt="User Image">'+
+                '</div><h4><b>'+data[i]['user']+'</b><small>'+data[i]['timeStamp']+'</small></h4>'+
+                '<p><b>'+data[i]['message']+'</b></p></a></li>';
+                $('#listOfMessages').append(message);
+            } else {
+              var message = '<li><a href="#">'+
+                '<div class="pull-left">'+
+                '<img src="'+data[i]['profilePicture']+'" class="img-circle" alt="User Image">'+
+                '</div><h4>'+data[i]['user']+'<small>'+data[i]['timeStamp']+'</small></h4>'+
+                '<p><b>'+data[i]['message']+'</b></p></a></li>';
+                $('#listOfMessages').append(message);
+            }
+          }
+          if(count > 0){
+            $('#unreadMessagesNumber').html(count);
+            $('#unreadMessagesHeader').html('You have '+count+' new messages');            
+          } else {
+            $('#unreadMessagesHeader').html('You have no new messages'); 
+          }
+          // for (i = 0; i < data.length; i++) { 
+          // if(data[i]['user'] == ""){
+          //     var message = '<div class="direct-chat-msg right">' +
+          //     '<div class="direct-chat-info clearfix">'+
+          //     '<span class="direct-chat-name pull-right">'+data[i]['user']+'</span>'+
+          //     '<span class="direct-chat-timestamp pull-left">'+data[i]['timeStamp']+'</span>'+
+          //     '</div>'+
+          //     '<img class="direct-chat-img" src="../dist/img/user1-128x128.jpg" alt="Message User Image">'+
+          //     '<div class="direct-chat-text">'+data[i]['message']+'</div>'+
+          //     '</div>';
+          //     $('div.direct-chat-messages').append(message);
+          // }else{
+          //     var message = '<div class="direct-chat-msg">' +
+          //     '<div class="direct-chat-info clearfix">'+
+          //     '<span class="direct-chat-name pull-left">'+data[i]['user']+'</span>'+
+          //     '<span class="direct-chat-timestamp pull-right">'+data[i]['timeStamp']+'</span>'+
+          //     '</div>'+
+          //     '<img class="direct-chat-img" src="../dist/img/user1-128x128.jpg" alt="Message User Image">'+
+          //     '<div class="direct-chat-text">'+data[i]['message']+'</div>'+
+          //     '</div>';
+          //     $('div.direct-chat-messages').append(message);
+          // }
+          // }
+        });
+    }
+
     function retrieveExistingMessages()
     {  
         $.post('/retrieveExistingMessages', {_token:"{{csrf_token()}}",user1: user1, user2: user2}, function(data)

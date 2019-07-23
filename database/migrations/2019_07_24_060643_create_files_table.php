@@ -18,12 +18,12 @@ class CreateFilesTable extends Migration
             $table->string('fileName');
             $table->string('fileType');
             $table->string('viewType');
-            $table->unsignedBigInteger('viewApproved');
+            $table->unsignedBigInteger('viewApprove');
             $table->foreign('viewApprove')->references('id')->on('file_view_types');
             $table->unsignedBigInteger('userId');
             $table->foreign('userId')->references('id')->on('users');
-            $table->unsignedBigInteger('areaId');
-            $table->foreign('areaId')->references('id')->on('areas');
+            $table->unsignedBigInteger('parameterId');
+            $table->foreign('parameterId')->references('id')->on('parameters');
             $table->timestamps();
         });
     }

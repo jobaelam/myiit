@@ -78,13 +78,13 @@
                           
                         </table>
                         <hr style="padding: 0px; margin: 0px; padding-bottom: 10px">
-                        @if( Auth::user()->id == 1)
+                        @if(Auth::user()->id == 1)
                           <a href="/accreditation/{{$agency->id}}" class="btn btn-default"><i class="fa fa-arrow-left"><span> Return</span></i></a>
                           <button type="button" class="btn btn-primary pull-right" data-toggle="modal" data-target="#add-area">
                             <i class="fa fa-circle-plus"><span> Add Area</span></i></button>
                         @else
                           <a href="/accreditation/" class="btn btn-default"><i class="fa fa-arrow-left"><span> Return</span></i></a>
-                        @endif 
+                        @endif
                         <button type="button" class="btn btn-default pull-right" data-toggle="modal" data-target="#departments">
                             <i class="fa fa-list-ul"><span> Departments</span></i></button>
                 </div>
@@ -103,7 +103,7 @@
                         <input type="hidden" name="agencyId" value="{{$agency->id}}">
                         <div class="form-group">                  
                           <label for="name">Area</label>
-                          <input id="name" name="name" type="text" class="form-control" placeholder="Agency Name">
+                          <input id="name" name="name" type="text" class="form-control" placeholder="Area Name">
                         </div>
                         @error('name')
                             <span class="invalid-feedback" role="alert">
@@ -327,7 +327,7 @@
             }else {
               if(assigned == 'true' && request != 'Request'){
                 if(request != 'Waiting'){
-                  window.location.href="area/"+rowId+"/files/";
+                  window.location.href="area/"+rowId+"/parameters/";
                 }
               }
             } 

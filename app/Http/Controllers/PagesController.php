@@ -53,4 +53,8 @@ class PagesController extends Controller
     public function profile(){
         return view('pages.profile');
     }
+
+    public function displayRequest(Request $request){
+        return $request->user;
+    }
 }
