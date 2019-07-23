@@ -23,8 +23,8 @@
 <section class="content">
     <div class="box">
         <div class="box-body table-responsive">
-                <table class="table table-hover" style="table-layout:fixed;">
-                  <tr>
+                <table class="table table-hover table-bordered" style="table-layout:fixed;">
+                  <tr class="active">
                     <th>Agencies</th>
                     <th>Description</th>
                     <th style="width: 25%">Status</th>

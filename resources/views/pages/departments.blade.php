@@ -23,7 +23,7 @@
     <div class="box">
         <div class="box-body table-responsive">
                 <table class="table table-hover" style="table-layout:fixed;">
-                  <tr>
+                  <tr class="active">
                     <th>Departments</th>
                     <th>Chairperson</th>
                   </tr>
@@ -31,7 +31,7 @@
 	                 <tr value="{{$department->id}}" class="table-row">
 	                    <td>{{$department->name}}</td>
 	                    <td>
-	                    	Prof. {{$chairPersons->where('dept_id', $department->id)->first()->first_name}} {{$chairPersons->where('dept_id', $department->id)->first()->first_name}}
+	                    	Prof. {{$chairPersons->where('dept_id', $department->id)->first()->first_name}} {{$chairPersons->where('dept_id', $department->id)->first()->last_name}}
 	                    </td>
 	                 </tr>
                  @endforeach

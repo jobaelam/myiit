@@ -7,7 +7,9 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Response;
 use App\File;
 use App\Area;
+use App\AccessArea;
 use App\User;
+use App\FileViewType;
 
 class FileController extends Controller
 {
@@ -27,14 +29,20 @@ class FileController extends Controller
      */
     public function index(Request $request)
     {
-        $id = $request->id;
+        $department = $request->department;
+        $areaAccess = $request->area;
+        $agency = $request->agency;
         $files = File::where(array(
-            'areaId' => $id
+            'areaId' => $areaAccess
         ))->get();
         $data = array(
-            'title' => Area::find($id)->name,
-            'areas' => Area::find($id),
+            'title' => Area::find(AccessArea::find($areaAccess)->areaId)->name,
+            'areas' => Area::find(AccessArea::find($areaAccess)->areaId),
             'files' => $files,
+            'department' => $department,
+            'agency' => $agency,
+            'access' => $areaAccess,
+            'type' => FileViewType::all(),
             'users' => User::all()
         );
         return view('pages.files')->with($data);
@@ -79,7 +87,6 @@ class FileController extends Controller
      */
     public function store(Request $request)
     {   
-
         if($request->hasFile('uploadFile') && $request->file('uploadFile')->isValid()){
             $filenameWithExt = $request->uploadFile->getClientOriginalName();
             $filename = pathinfo($filenameWithExt,PATHINFO_FILENAME);
@@ -91,10 +98,12 @@ class FileController extends Controller
         $File = new File;
         $File->filename = $fileNameToStore;
         $File->filetype = $extension;
+        $File->viewType = $request->view;
+        $File->viewApprove = false;
         $File->userId = $request->userId;
-        $File->areaId = $request->areaId;
+        $File->areaId = $request->access;
         $File->save();
-        return redirect('/files/'.$request->areaId);
+        return redirect('/accreditation/'.$request->agency.'/department/'.AccessArea::find($request->access)->departmentId.'/area/'.$request->access.'/files');
     }
 
     /**

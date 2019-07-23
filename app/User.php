@@ -18,8 +18,8 @@ class User extends Authenticatable
         return $this->hasMany(Chat::class);
     }
 
-    public function areaAssigned(){
-        return $this->hasOne(Area::class, 'id', 'head');
+    public function hasAccess(){
+        return $this->hasOne(AccessArea::class, 'id', 'head');
     }
 
     public function department(){

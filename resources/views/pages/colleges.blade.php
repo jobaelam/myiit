@@ -24,7 +24,7 @@
     <div class="box">
         <div class="box-body table-responsive">
                 <table class="table table-hover" style="table-layout:fixed;">
-                  <tr>
+                  <tr class="active">
                     <th>Colleges</th>
                     <th>No. Department/s</th>
                   </tr>

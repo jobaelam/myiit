@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Area;
+use App\AreaView;
 use App\AccessArea;
 use App\Agency;
 use App\User;
@@ -40,6 +41,7 @@ class AreaController extends Controller
             'department' => Department::find($department),
             'departments' => Department::all(),
             'access' => $access,
+            'areaView' => AreaView::where('user', Auth::user()->id)->get(),
         );
 
         return view('pages.area')->with($data);
@@ -142,5 +144,17 @@ class AreaController extends Controller
     {
         // $access = AccessArea::find($request->deleteId)->first()->id;
         // Area::find($access)->delete();
+    }
+
+    public function request(Request $request){
+        $access = $request->access;
+        $user = $request->user;
+        $view = new AreaView;
+        $view->accessId = $access;
+        $view->viewType = 0;
+        $view->user = $user;
+        $view->isApproved = false;
+        $view->save();
+        // return redirect('/accreditation/'.$request->agency.'/department/'.$request->department.'/areas');
     }
 }

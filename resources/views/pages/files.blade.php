@@ -33,7 +33,7 @@
                             <th>Name</th>
                             <th width="10%">Type</th>
                             <th width="10%">Date Added</th>
-                            <th width="5%">Action</th>
+                            <th width="10%">Action</th>
                           </tr>
                           @if(count($files) > 0)
                              @foreach($files as $file)
@@ -45,8 +45,8 @@
                                   <td>
                                     
                                     @if(Auth::user()->id == 1 OR $areas->head == Auth::user()->id)
-                                      <button class="download btn-xs btn-deafult centered"><i class="fa fa-download"></i></button>
-                                      <button class="delete btn-xs btn-danger centered"><i class="fa fa-remove" data-toggle="modal" data-target="#modal-remove"></i></button>
+                                      <button type="button" class="edit btn-xsm btn-default"  style="width: 45%">Edit</button>
+                                      <button type="button" class="del btn-xsm btn-danger"  style="width: 50%">Delete</button>
                                     @else
                                       <button class="request btn-xs btn-warning centered">Request</button>
                                     @endif
@@ -59,7 +59,7 @@
                           @endif
                         </table>
                         <hr style="padding: 0px; margin: 0px; padding-bottom: 10px">
-                        <a href="/areas/{{$areas->id}}" class="btn btn-default"><i class="fa fa-arrow-left"><span> Return</span></i></a>
+                        <a href="/accreditation/{{$agency}}/department/{{$department}}/areas" class="btn btn-default"><i class="fa fa-arrow-left"><span> Return</span></i></a>
                         <button type="button" class="btn btn-info pull-right" data-toggle="modal" data-target="#modal-default">
                           <i class="fa fa-plus-circle"><span> Upload File</span></i>
                         </button>                        
@@ -76,11 +76,19 @@
                   <div class="modal-body">
                         <form action="/insertFile" method="POST" id="myForm" enctype="multipart/form-data">
                             @csrf
-                            <input name="areaId" type="hidden" value="{{$areas->id}}">
+                            <input name="access" type="hidden" value="{{$access}}">
+                            <input name="agency" type="hidden" value="{{$agency}}">
                             <input name="userId" type="hidden" value="{{Auth::user()->id}}">
                             <div class="form-group">                  
                                 <label for="file">Upload File</label>
                                 <input type="file" name="uploadFile">
+                            </div>
+                            <div class="form-group">
+                              <select name='view'>
+                                @foreach($type as $types)
+                                  <option value="{{$types->id}}">{{$types->name}}</option>
+                                @endforeach
+                              </select>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
@@ -120,18 +128,15 @@
   $(document).ready(function() {
     $('.table-row:has(td)').click(function() {
         var val = $(this).attr('value');
-        $.post('/downloadFile', {_token:"{{csrf_token()}}",val: val}, function(data){
-        console.log(data);
-        //window.location.href="/areas/{{$areas->id}}";
-      })
+        $.post('/downloadFile', {_token:"{{csrf_token()}}",val: val})
     });
 
-    $('#edit').click(function() {
-        $('.del').toggle();
-        $(this).text(function(i, text){
-            return text === "Edit" ? "Cancel" : "Edit";
-        })
-    });
+    // $('#edit').click(function() {
+    //     $('.del').toggle();
+    //     $(this).text(function(i, text){
+    //         return text === "Edit" ? "Cancel" : "Edit";
+    //     })
+    // });
 
     $('.request').click(function(){
       console.log('request');

@@ -14,8 +14,7 @@
     <!-- Content Header (Page header) -->
     <section class="content-header">
         <h1>
-            {{$agency->name}}
-            <small>{{$department->name}}</small>
+            Parameters
         </h1>
     </section>
 
@@ -25,29 +24,13 @@
                 <div class="box-body table-responsive">
                         <table id="area" class="table table-hover" style="table-layout:fixed;">
                           <tr class="active">
-                            <th>Area</th>
-                            <th>Description</th>
-                            <th>Head</th>
+                            <th>Name</th>
                             <th width=10%>Action</th>
                           </tr>
                              @forelse($access as $entry)                            
                               @if($entry->hasArea->hasAgency->id == $agency->id)
                                 <tr value="{{$entry->id}}" class="table-row">
                                   <td>{{$entry->hasArea->name}}</td>
-                                  <td>{{$entry->hasArea->desc}}</td>
-                                  @if($entry->head == null)
-                                    <td class="assigned" style="display:none;">false</td>
-                                    <td> 
-                                      Not Yet Assigned
-                                  @else
-                                    <td class="assigned" style="display:none;">true</td>
-                                    <td>
-                                      {{$entry->headUser->first_name}} {{$entry->headUser->last_name}} 
-                                  @endif
-                                    @if(Auth::user()->id == 1)
-                                      <button type="button" class="update" style="border: none;">Edit</button>
-                                    @endif
-                                    </td>
                                   <td>
                                     @if(Auth::user()->id == 1 OR Auth::user()->type == 2 OR Auth::user()->type == 3)
                                       <button type="button" class="edit btn-xsm btn-default"  style="width: 45%">Edit</button>
@@ -73,7 +56,7 @@
                                 </tr>
                               @endif
                              @empty
-                              <tr><td>No Areas Available</td></tr>
+                              <tr><td>No Parameters Available</td></tr>
                              @endforelse
                           
                         </table>
@@ -327,7 +310,7 @@
             }else {
               if(assigned == 'true' && request != 'Request'){
                 if(request != 'Waiting'){
-                  window.location.href="area/"+rowId+"/files/";
+                  window.location.href="areas/"+rowId+"/parameters/";
                 }
               }
             } 
