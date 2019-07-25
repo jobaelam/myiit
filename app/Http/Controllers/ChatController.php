@@ -6,11 +6,13 @@ use Illuminate\Http\Request;
 use App\Chat_Message;
 use App\Chat;
 use App\User;
+use App\AccessArea;
 
 class ChatController extends Controller
 {
     public function displayMessages(Request $request){
         $user = $request->user1;
+        $data = null;
         $conversationExist = Chat::where('user1', $user)->orwhere('user2', $user)->orderby('created_at', 'desc')->get();
         foreach($conversationExist as $convo){
             $messages = Chat_Message::where('chat_id',$convo->id)->orderby('created_at', 'desc')->get();

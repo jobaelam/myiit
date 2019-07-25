@@ -4,6 +4,10 @@
 <ul class="sidebar-menu" data-widget="tree">
     <li><a href="/"><i class="fa fa-home"></i> <span>Home</span></a></li>
     <li class="active"><a href="/accreditation"><i class="fa fa-book"></i> <span>Accreditation</span></a></li>
+    <li><a href="/messenger"><i class="fa fa-inbox"></i> <span>Message</span></a></li>
+    @if($request != null OR Auth::user()->id == 1 OR Auth::user()->id == 2 OR Auth::user()->id == 3)
+    <li><a href="/request"><i class="fa fa-flag"></i> <span>Requests</span></a></li>
+    @endif
 </ul>
 @endsection
 
@@ -22,19 +26,23 @@
 <section class="content">
     <div class="box">
         <div class="box-body table-responsive">
-                <table class="table table-hover" style="table-layout:fixed;">
-                  <tr class="active">
-                    <th>Departments</th>
-                    <th>Chairperson</th>
-                  </tr>
-                 @foreach($departments as $department)
-	                 <tr value="{{$department->id}}" class="table-row">
-	                    <td>{{$department->name}}</td>
-	                    <td>
-	                    	Prof. {{$chairPersons->where('dept_id', $department->id)->first()->first_name}} {{$chairPersons->where('dept_id', $department->id)->first()->last_name}}
-	                    </td>
-	                 </tr>
-                 @endforeach
+                <table class="table table-bordered table-hover unselectable" style="table-layout:fixed;">
+                  <thead>
+                    <tr class="active" disabled>
+                      <th>Departments</th>
+                      <th>Chairperson</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                   @foreach($departments as $department)
+                     <tr value="{{$department->id}}" class="table-row">
+                        <td>{{$department->name}}</td>
+                        <td>
+                          Prof. {{$chairPersons->where('dept_id', $department->id)->first()->first_name}} {{$chairPersons->where('dept_id', $department->id)->first()->last_name}}
+                        </td>
+                     </tr>
+                   @endforeach
+                  </tbody>
                 </table>
                 <hr style="padding: 0px; margin: 0px; padding-bottom: 10px">
                 @if( Auth::user()->id == 1)
@@ -51,10 +59,12 @@
 <script src="/bower_components/jquery/dist/jquery.min.js"></script>
 <script>
       $(document).ready(function() {
+        $('.table').DataTable();
+
         $('.table-row:has(td)').click(function() 
         {
             var rowId = $(this).attr('value');
-            window.location.href="/accreditation/"+{{$agency}}+"/department/"+rowId+"/areas";
+            window.location.href={{$agency}}+"/department/"+rowId+"/areas";
         });
         });
 </script>

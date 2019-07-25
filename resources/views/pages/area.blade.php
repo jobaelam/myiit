@@ -4,6 +4,10 @@
 <ul class="sidebar-menu" data-widget="tree">
     <li><a href="/"><i class="fa fa-home"></i> <span>Home</span></a></li>
     <li class="active"><a href="/accreditation"><i class="fa fa-book"></i> <span>Accreditation</span></a></li>
+    <li><a href="/messenger"><i class="fa fa-inbox"></i> <span>Message</span></a></li>
+    @if($request != null OR Auth::user()->id == 1 OR Auth::user()->id == 2 OR Auth::user()->id == 3)
+    <li><a href="/request"><i class="fa fa-flag"></i> <span>Requests</span></a></li>
+    @endif
 </ul>
 @endsection
 
@@ -23,13 +27,17 @@
     <section class="content">
             <div class="box">
                 <div class="box-body table-responsive">
-                        <table id="area" class="table table-hover" style="table-layout:fixed;">
-                          <tr class="active">
+                        <table id="areaTable" class="table table-bordered table-hover unselectable align-middle" style="table-layout:fixed;">
+                          <thead>
+                          <tr class="active" disabled>
                             <th>Area</th>
                             <th>Description</th>
                             <th>Head</th>
                             <th width=10%>Action</th>
+                            <th style="display:none;"></th>
                           </tr>
+                          </thead>
+                          <tbody>
                              @forelse($access as $entry)                            
                               @if($entry->hasArea->hasAgency->id == $agency->id)
                                 <tr value="{{$entry->id}}" class="table-row">
@@ -50,8 +58,8 @@
                                     </td>
                                   <td>
                                     @if(Auth::user()->id == 1 OR Auth::user()->type == 2 OR Auth::user()->type == 3)
-                                      <button type="button" class="edit btn-xsm btn-default"  style="width: 45%">Edit</button>
-                                      <button type="button" class="del btn-xsm btn-danger"  style="width: 50%">Delete</button>
+                                      <button type="button" class="edit btn btn-group btn-default btn-s">Edit</button>
+                                      <button type="button" class="del btn btn-group btn-danger btn-s">Delete</button>
                                     @elseif($entry->departmentId == Auth::user()->dept_id AND Auth::user()->type == 4 OR $entry->head == Auth::user()->id)
                                     @elseif($entry->head == null)
 
@@ -60,13 +68,14 @@
                                         @if($view->accessId == $entry->id AND $view->isApproved == 1)
                                           @break
                                         @elseif($view->accessId == $entry->id AND $view->isApproved == 0)
-                                          <button class="request btn-xs btn-success" disabled style="width: 100%">Waiting</button>
+                                          <button class="request btn btn-block btn-success btn-s" disabled style="width: 100%">Pending</button>
                                           @break
                                         @else
-                                          <button class="request btn-xs btn-warning" style="width: 100%">Request</button>
+                                          <button class="request btn btn-block btn-warning btn-s" style="width: 100%">Request</button>
+                                          @break
                                         @endif
                                       @empty
-                                        <button class="request btn-xs btn-warning" style="width: 100%">Request</button>
+                                        <button class="request btn btn-block btn-warning btn-s" style="width: 100%">Request</button>
                                       @endforelse
                                     @endif
                                   </td>
@@ -75,18 +84,23 @@
                              @empty
                               <tr><td>No Areas Available</td></tr>
                              @endforelse
-                          
+                          </tbody>
                         </table>
                         <hr style="padding: 0px; margin: 0px; padding-bottom: 10px">
                         @if(Auth::user()->id == 1)
                           <a href="/accreditation/{{$agency->id}}" class="btn btn-default"><i class="fa fa-arrow-left"><span> Return</span></i></a>
-                          <button type="button" class="btn btn-primary pull-right" data-toggle="modal" data-target="#add-area">
+                          <button type="button" class="btn btn-group btn-primary pull-right" data-toggle="modal" data-target="#add-area">
                             <i class="fa fa-circle-plus"><span> Add Area</span></i></button>
                         @else
                           <a href="/accreditation/" class="btn btn-default"><i class="fa fa-arrow-left"><span> Return</span></i></a>
                         @endif
-                        <button type="button" class="btn btn-default pull-right" data-toggle="modal" data-target="#departments">
-                            <i class="fa fa-list-ul"><span> Departments</span></i></button>
+                        @foreach($access as $area)
+                          @if($area->head == Auth::user()->id OR Auth::user()->id == 1 OR Auth::user()->id == 2 OR Auth::user()->id == 3 OR Auth::user()->id == 4)
+                            <button type="button" class="btn btn-group btn-default pull-right" data-toggle="modal" data-target="#departments">
+                              <i class="fa fa-list-ul"><span> Departments</span></i></button>
+                            @break
+                          @endif
+                        @endforeach
                 </div>
             </div>
             <div class="modal fade" id="add-area">
@@ -249,7 +263,6 @@
                             <option disabled selected>{{$department->name}}</option>
                             @foreach($departments as $dept)
                               @if($dept->id != $department->id)
-                                <script type="text/javascript">console.log({{$dept->id}})</script>
                                 <option value="{{$dept->id}}">{{$dept->name}}</option>
                               @endif
                             @endforeach
@@ -278,6 +291,7 @@
 <script>
       var editClicked, deleteClicked, updateClicked, requestClicked;
       $(document).ready(function() {
+        $('#areaTable').DataTable();
         $('.edit').click(function() {
           editClicked = true;
         });
@@ -303,7 +317,6 @@
             var assigned = $(this).find('.assigned').text();
             var request = $(this).find('.request').text();
             if(editClicked){
-              console.log(rowId);
               $('#editId').val(rowId);
               $('#editName').val(editName);
               $('#editDesc').val(editDesc);
@@ -326,8 +339,8 @@
               requestClicked = false;
             }else {
               if(assigned == 'true' && request != 'Request'){
-                if(request != 'Waiting'){
-                  window.location.href="area/"+rowId+"/parameters/";
+                if(request != 'Pending'){
+                  window.location.href="areas/"+rowId+"/parameters";
                 }
               }
             } 
@@ -347,7 +360,6 @@
             e.preventDefault();
             var editForm = $(this).serialize();
             $.post('/editAreaHead', editForm, function(data){
-              console.log(data);
               window.location.href="/accreditation/"+{{$agency->id}}+"/department/"+{{$department->id}}+"/areas";
             })
         });
@@ -356,7 +368,6 @@
         {
             e.preventDefault();
             var select = $('#curHead').val();
-            console.log(select);
             window.location.href="/accreditation/"+{{$agency->id}}+"/department/"+select+"/areas";
         });
 
@@ -371,7 +382,6 @@
 
         $('#addForm').submit(function(e)
         {
-
             e.preventDefault();
             $('#notAvailable').remove();
             var addForm = $(this).serialize();

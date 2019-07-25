@@ -13,18 +13,21 @@
 
 
 Route::get('/', 'PagesController@index');
+Route::get('/request', 'PagesController@request');
 Route::get('/accreditation/{agencyId}', 'PagesController@departments');
 Route::resource('accreditation','AgenciesController');
 Route::get('/profile', 'PagesController@profile');
-Route::any('/accreditation/{agency}/department/{department}/area/{access}/parameters', 'ParameterController@index');
+Route::any('/accreditation/{agency}/department/{department}/areas/{access}/parameters', 'ParameterController@index');
 Route::any('/insertParameter', 'ParameterController@store');
 Route::any('/editParameter', 'ParameterController@update');
 Route::any('/deleteParameter', 'ParameterController@destroy');
-Auth::routes();
+Route::any('/displayRequest', 'PagesController@displayRequest');
+Route::any('/approveRequest', 'PagesController@approveRequest');
+Auth::routes(); 
 //Route::get('/home', 'HomeController@index')->name('home'); 
-Route::get('/contacts', 'ContactsController@get');
+// Route::get('/contacts', 'ContactsController@get');
 Route::get('/messenger', 'PagesController@messenger');
-Route::get('/displayMessages', 'ChatController@displayMessages');
+Route::any('/displayMessages', 'ChatController@displayMessages');
 Route::any('/sendMessage', 'ChatController@sendMessage');
 Route::any('/isTyping','ChatController@isTyping');
 Route::any('/retrieveChatMessages', 'ChatController@retrieveChatMessages');
@@ -40,6 +43,8 @@ Route::any('/editArea', 'AreaController@edit');
 Route::any('/requestArea', 'AreaController@request');
 Route::any('/editAreaHead', 'AreaController@update');
 Route::any('/deleteArea', 'AreaController@destroy');
-Route::any('/accreditation/{agency}/department/{department}/area/{area}/parameters/{parameter}/files', 'FileController@index');
+Route::any('/accreditation/{agency}/department/{department}/areas/{area}/parameters/{parameter}/files', 'FileController@index');
 Route::any('/insertFile', 'FileController@store');
+Route::any('/openFile', 'FileController@show');
+Route::any('/deleteFile', 'FileController@destroy');
 Route::any('/downloadFile', 'FileController@download');

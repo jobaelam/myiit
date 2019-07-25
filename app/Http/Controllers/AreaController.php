@@ -42,6 +42,7 @@ class AreaController extends Controller
             'departments' => Department::all(),
             'access' => $access,
             'areaView' => AreaView::where('user', Auth::user()->id)->get(),
+            'request' => AccessArea::where('head', Auth::user()->id)->first()
         );
 
         return view('pages.area')->with($data);

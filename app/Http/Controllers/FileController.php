@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Auth;
 use App\File;
 use App\Area;
 use App\AccessArea;
@@ -45,7 +46,8 @@ class FileController extends Controller
             'agency' => $agency,
             'parameter' => Parameter::find($parameter),
             'type' => FileViewType::all(),
-            'users' => User::all()
+            'users' => User::all(),
+            'request' => AccessArea::where('head', Auth::user()->id)->first()
         );
         return view('pages.files')->with($data);
     }
@@ -94,7 +96,7 @@ class FileController extends Controller
             $filename = pathinfo($filenameWithExt,PATHINFO_FILENAME);
             $extension = $request->uploadFile->getClientOriginalExtension();  
             $fileNameToStore = $filename.'_'.time().'.'.$extension;
-            $path = $request->uploadFile->storeAs('public/files/'.auth()->user()->first_name,$fileNameToStore);
+            $path = $request->uploadFile->storeAs('public/files/',$fileNameToStore);
         }
 
         $File = new File;
@@ -114,9 +116,9 @@ class FileController extends Controller
      * @param  \App\Area  $area
      * @return \Illuminate\Http\Response
      */
-    public function show(Area $area)
+    public function show(Request $request)
     {
-        //
+        return File::find($request->file)->fileName;
     }
 
     /**
@@ -148,8 +150,8 @@ class FileController extends Controller
      * @param  \App\Area  $area
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Area $area)
+    public function destroy(Request $request)
     {
-        //
+        File::find($request->file)->delete();
     }
 }

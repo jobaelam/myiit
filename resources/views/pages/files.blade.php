@@ -4,6 +4,10 @@
 <ul class="sidebar-menu" data-widget="tree">
     <li><a href="/"><i class="fa fa-home"></i> <span>Home</span></a></li>
     <li class="active"><a href="/accreditation"><i class="fa fa-book"></i> <span>Accreditation</span></a></li>
+    <li><a href="/messenger"><i class="fa fa-inbox"></i> <span>Message</span></a></li>
+    @if($request != null OR Auth::user()->id == 1 OR Auth::user()->id == 2 OR Auth::user()->id == 3)
+    <li><a href="/request"><i class="fa fa-flag"></i> <span>Requests</span></a></li>
+    @endif
 </ul>
 @endsection
 
@@ -22,59 +26,62 @@
     <!-- Main content -->
     <section class="content">
             <div class="box">
-                {{-- <div class="box-header with-border">
-                    <h3 class="box-title">
-                        Agencies
-                    </h3>
-                </div> --}}
                 <div class="box-body table-responsive">
-                        <table class="table table-hover" style="table-layout:fixed;">
-                          <tr class="active">
-                            <th>Name</th>
-                            <th width="10%">View</th>
-                            <th width="10%">Type</th>
-                            <th width="10%">Date Added</th>
-                            <th width="10%">Action</th>
-                          </tr>
-                          @if(count($files) > 0)
-                             @foreach($files as $file)
-                              @if($file->viewType == 2 OR $area->head == Auth::user()->id OR Auth::user()->id == 1)
+                        <table class="table table-bordered table-hover unselectable align-middle" style="table-layout:fixed;">
+                          <thead>
+                            <tr class="active" disabled>
+                              <th>Name</th>
+                              <th width="10%">Type</th>
+                              <th width="10%">Date Added</th>
+                              <th width="10%">Action</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                               @foreach($files as $file)
+                                @if($file->viewType == 2 OR $area->head == Auth::user()->id OR Auth::user()->id == 1 OR Auth::user()->id == 2 OR Auth::user()->id == 3 OR Auth::user()->id == 4)
+                                    <tr class="table-row">
+                                      <td>{{$file->fileName}}</td>
+                                      <td>{{$file->fileType}}</td>
+                                      <td>{{date('M d, Y',strtotime($file->created_at))}}</td>
+                                      <td>
+                                        @if(Auth::user()->id == 1 OR $area->head == Auth::user()->id OR Auth::user()->id == 2 OR Auth::user()->id == 3 OR Auth::user()->id == 4)
+                                          <button type="button" value="{{$file->id}}" class="open btn btn-group btn-default btn-s">Open</button>
+                                          <button type="button" value="{{$file->id}}" class="del btn btn-group btn-danger btn-s">Delete</button>
+                                        @else
+                                          <button type="button" value="{{$file->id}}" class="request btn-xs btn-warning" style="width: 100%">Request</button>
+                                        @endif
+                                      </td> 
+                                    </tr>
+                                @elseif($file->viewType == 3 AND $area->departmentId == Auth::user()->dept_id OR Auth::user()->id == 1)
                                   <tr value="{{$file->id}}" class="table-row">
-                                    <td>{{$file->fileName}}</td>
-                                    <td>{{$file->viewType}}</td>
-                                    <td>{{$file->fileType}}</td>
-                                    <td>{{date('M d, Y',strtotime($file->created_at))}}</td>
-                                    <td>
-                                      @if(Auth::user()->id == 1 OR $area->head == Auth::user()->id)
-                                        <button type="button" class="download btn-xsm btn-default"  style="width: 55%">Download</button>
-                                        <button type="button" class="del btn-xsm btn-danger"  style="width: 40%">Delete</button>
-                                      @else
-                                        <button class="request btn-xs btn-warning" style="width: 100%">Request</button>
-                                      @endif
-                                    </td> 
+                                      <td>{{$file->fileName}}</td>
+                                      <td>{{$file->fileType}}</td>
+                                      <td>{{date('M d, Y',strtotime($file->created_at))}}</td>
+                                      <td>
+                                        
+                                      </td> 
                                   </tr>
-                              @elseif($file->viewType == 3 AND $area->departmentId == Auth::user()->dept_id)
-                                <tr value="{{$file->id}}" class="table-row">
-                                    <td>{{$file->fileName}}</td>
-                                    <td>{{$file->fileType}}</td>
-                                    <td>{{date('M d, Y',strtotime($file->created_at))}}</td>
-                                    <td>
-                                      
-                                    </td> 
-                                </tr>
-                              @else
-                                
-                              @endif
-                             @endforeach
-                          @else
-                          <tr><td>No File Available</td></tr>
-                          @endif
+                                @elseif($file->viewType = 1 AND Auth::user()->id == 1 OR $area->head == Auth::user()->id)
+                                  <tr class="table-row">
+                                      <td>{{$file->fileName}}</td>
+                                      <td>{{$file->fileType}}</td>
+                                      <td>{{date('M d, Y',strtotime($file->created_at))}}</td>
+                                      <td>
+                                          <button type="button" value="{{$file->id}}" class="open btn btn-group btn-default btn-s">Open</button>
+                                          <button type="button" value="{{$file->id}}" class="del btn btn-group btn-danger btn-s">Delete</button>
+                                      </td> 
+                                    </tr>
+                                @endif
+                               @endforeach
+                          </tbody>
                         </table>
                         <hr style="padding: 0px; margin: 0px; padding-bottom: 10px">
-                        <a href="/accreditation/{{$agency}}/department/{{$department}}/area/{{$area->id}}/parameters" class="btn btn-default"><i class="fa fa-arrow-left"><span> Return</span></i></a>
-                        <button type="button" class="btn btn-info pull-right" data-toggle="modal" data-target="#modal-default">
-                          <i class="fa fa-plus-circle"><span> Upload File</span></i>
-                        </button>                        
+                        <a href="/accreditation/{{$agency}}/department/{{$department}}/areas/{{$area->id}}/parameters" class="btn btn-default"><i class="fa fa-arrow-left"><span> Return</span></i></a>
+                        @if($area->head == Auth::user()->id OR Auth::user()->id == 1 OR Auth::user()->id == 2 OR Auth::user()->id == 3 OR Auth::user()->id == 4 AND Auth::user()->dept_id == $department)
+                          <button type="button" class="btn btn-info pull-right" data-toggle="modal" data-target="#modal-default">
+                            <i class="fa fa-plus-circle"><span> Upload File</span></i>
+                          </button>
+                        @endif
                 </div>                 
             </div>
             <div class="modal fade" id="modal-default">
@@ -97,7 +104,7 @@
                                 <input type="file" name="uploadFile">
                             </div>
                             <div class="form-group">
-                              <select name='view'>
+                              <select name='view' class="form-contol">
                                 @foreach($type as $types)
                                   <option value="{{$types->id}}">{{$types->name}}</option>
                                 @endforeach
@@ -112,38 +119,6 @@
                 </div>
                 <!-- /.modal-content -->
                  </div>
-              <!-- /.modal-dialog -->
-            </div>
-            <div class="modal fade" id="edit-file">
-              <div class="modal-dialog">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                      <span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title">Edit Parameter Name</h4>
-                  </div>
-                  <div class="modal-body">      
-                    <form action="" method="POST" id="editForm">
-                        @csrf
-                        <input type="hidden" name="editId" id="editId" value="">
-                        <div class="form-group">                  
-                          <label for="editName">Name</label>
-                          <input id="editName" name="editName" type="text" class="form-control" value="">
-                        </div>
-                        @error('editName')
-                            <span class="invalid-feedback" role="alert">
-                                <strong>{{ $message }}</strong>
-                            </span>
-                        @enderror
-                        <div class="modal-footer">
-                          <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
-                          <input type="submit" class="btn btn-primary pull-right" value="Save Changes">
-                        </div>
-                    </form>              
-                  </div>
-                </div>
-                <!-- /.modal-content -->
-              </div>
               <!-- /.modal-dialog -->
             </div>
             <div class="modal fade" id="delete-file">
@@ -181,100 +156,24 @@
     //         return text === "Edit" ? "Cancel" : "Edit";
     //     })
     // });
+    $('.table').DataTable();
 
-    // $('.edit').click(function() {
-    //       editClicked = true;
-    //     });
-        var deleteClicked, updateClicked, requestClicked;
-        $('.del').click(function(){
-          deleteClicked = true;
-        })
+    $('.open').click(function() {
+      var open = $(this).val();
+      $.get('/openFile', {file:open, access: "{{$area->id}}"},function(data){
+        // window.open('/storage/files/'+data);
+        window.open('http://docs.google.com/gview?url=https://myiit.pagekite.me/storage/files/'+data+'&embedded=true/');
+      })
+    })
 
-        $('.update').click(function(){
-          updateClicked = true;
-        })
-
-        $('.request').click(function(){
-          requestClicked = true;
-        })
-
-        $('.table-row:has(td)').click(function() 
-        {
-            var rowId = $(this).attr('value');
-            var editName = $(this).find('td:eq(0)').text();
-            var request = $(this).find('.request').text();
-            // if(editClicked){
-            //   console.log(rowId);
-            //   $('#editId').val(rowId);
-            //   $('#editName').val(editName);
-            //   $('#edit-file').modal();
-            //   editClicked = false;
-            // } else 
-            if(deleteClicked){
-              $('#deleteId').val(rowId);
-              $('#deleteMessage').html('Do you want to delete "'+editName+'"?');
-              $('#delete-file').modal();
-              deleteClicked = false;
-            }else if(requestClicked){
-               $.post('/requestArea', {_token:"{{csrf_token()}}",access: rowId, user:'{{Auth::user()->id}}',department: '{{$department}}', agency: '{{$agency}}'}, function(data){
-                window.location.href="/accreditation/"+{{$agency}}+"/department/"+{{$department}}+"/areas";
-               })
-              requestClicked = false;
-            }else {
-                  window.location.href="area/"+rowId+"/parameters/";
-            } 
-        });
-
-        $('#deleteForm').submit(function(e)
-        {
-            e.preventDefault();
-            var deleteForm = $(this).serialize();
-            $.post('/deleteArea', deleteForm, function(data){
-              //window.location.href="/accreditation/"+{{$agency}}+"/department/"+{{$department}}+"/areas";
-            })
-        });
-
-        $('#updateHead').submit(function(e)
-        {
-            e.preventDefault();
-            var editForm = $(this).serialize();
-            $.post('/editAreaHead', editForm, function(data){
-              console.log(data);
-              window.location.href="/accreditation/"+{{$agency}}+"/department/"+{{$department}}+"/areas";
-            })
-        });
-
-        $('#listDepartments').submit(function(e)
-        {
-            e.preventDefault();
-            var select = $('#curHead').val();
-            console.log(select);
-            window.location.href="/accreditation/"+{{$agency}}+"/department/"+select+"/areas";
-        });
-
-        // $('#editForm').submit(function(e)
-        // {
-        //     e.preventDefault();
-        //     var editForm = $(this).serialize();
-        //     $.post('/editArea', editForm, function(data){
-        //       window.location.href="/accreditation/"+{{$agency}}+"/department/"+{{$department}}+"/areas";
-        //     })
-        // });
-
-        $('#addForm').submit(function(e)
-        {
-
-            e.preventDefault();
-            $('#notAvailable').remove();
-            var addForm = $(this).serialize();
-            if ($('#name').val() == '' || $('#desc').val() == '') {
-                alert("Enter a Valid Input");
-            }else{
-              $.post('/insertArea', addForm, function(data){
-                window.location.href="/accreditation/"+{{$agency}}+"/department/"+{{$department}}+"/area/"+{{$area->id}}+"/parameters/"+{{$parameter->id}}+"/files";
-              })
-            };
-        });
+    $('.del').click(function() {
+      $('#delete-file').modal();
+      // var del = $(this).val();
+      // $.get('/deleteFile', {file:del, access: "{{$area->id}}"},function(data){
+      //   console.log(data);
+      //   document.location.reload(true)
+      // })
+    })  
   });
 </script>
 @endsection

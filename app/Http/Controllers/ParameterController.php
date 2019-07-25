@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use App\Area;
 use App\AreaView;
 use App\AccessArea;
@@ -10,6 +11,7 @@ use App\Agency;
 use App\User;
 use App\Department;
 use App\Parameter;
+
 
 class ParameterController extends Controller
 {
@@ -40,6 +42,7 @@ class ParameterController extends Controller
             'department' => Department::find($department),
             'access' => AccessArea::find($access),
             'parameters' => Parameter::where('accessId', $access)->get(),
+            'request' => AccessArea::where('head', Auth::user()->id)->first()
         );
 
         return view('pages.parameter')->with($data);

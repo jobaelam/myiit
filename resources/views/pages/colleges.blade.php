@@ -4,6 +4,7 @@
 <ul class="sidebar-menu" data-widget="tree">
     <li><a href="/"><i class="fa fa-home"></i> <span>Home</span></a></li>
     <li class="active"><a href="/accreditation"><i class="fa fa-book"></i> <span>Accreditation</span></a></li>
+    <li><a href="/messenger"><i class="fa fa-inbox"></i> <span>Message</span></a></li>
 </ul>
 @endsection
 
@@ -23,8 +24,8 @@
 <section class="content">
     <div class="box">
         <div class="box-body table-responsive">
-                <table class="table table-hover" style="table-layout:fixed;">
-                  <tr class="active">
+                <table class="table table-bordered table-hover unselectable" style="table-layout:fixed;">
+                  <tr class="active" disabled>
                     <th>Colleges</th>
                     <th>No. Department/s</th>
                   </tr>

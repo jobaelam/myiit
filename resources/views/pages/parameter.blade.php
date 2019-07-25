@@ -4,6 +4,10 @@
 <ul class="sidebar-menu" data-widget="tree">
     <li><a href="/"><i class="fa fa-home"></i> <span>Home</span></a></li>
     <li class="active"><a href="/accreditation"><i class="fa fa-book"></i> <span>Accreditation</span></a></li>
+    <li><a href="/messenger"><i class="fa fa-inbox"></i> <span>Message</span></a></li>
+    @if($request != null OR Auth::user()->id == 1 OR Auth::user()->id == 2 OR Auth::user()->id == 3)
+    <li><a href="/request"><i class="fa fa-flag"></i> <span>Requests</span></a></li>
+    @endif
 </ul>
 @endsection
 
@@ -22,28 +26,36 @@
     <section class="content">
             <div class="box">
                 <div class="box-body table-responsive">
-                        <table id="area" class="table table-hover" style="table-layout:fixed;">
-                          <tr class="active">
-                            <th>Name</th>
-                            <th width=10%>Action</th>
-                          </tr>
-                             @forelse($parameters as $parameter)                            
+                        <table id="area" class="table table-bordered table-hover unselectable align-middle" style="table-layout:fixed;">
+                          <thead>
+                            <tr class="active" disabled>
+                              <th>Name</th>
+                              @if(count($parameters) > 0)
+                                @if(Auth::user()->id == 1 OR Auth::user()->type == 2 OR Auth::user()->type == 3 OR $access->head == Auth::user()->id)
+                                  <th width=10%>Action</th>
+                                @endif
+                              @endif
+                            </tr>
+                          </thead>
+                          <tbody>
+                            @forelse($parameters as $parameter)                            
                                 <tr value="{{$parameter->id}}" class="table-row">
                                   <td>{{$parameter->name}}</td>
-                                  <td>
-                                    @if(Auth::user()->id == 1 OR Auth::user()->type == 2 OR Auth::user()->type == 3 OR $access->head == Auth::user()->id)
-                                      <button type="button" class="edit btn-xsm btn-default"  style="width: 45%">Edit</button>
-                                      <button type="button" class="del btn-xsm btn-danger"  style="width: 50%">Delete</button>
-                                    @endif
-                                  </td>
+                                  
+                                  @if(Auth::user()->id == 1 OR Auth::user()->type == 2 OR Auth::user()->type == 3 OR $access->head == Auth::user()->id)
+                                    <td>
+                                      <button type="button" class="edit btn btn-group btn-default btn-s">Edit</button>
+                                      <button type="button" class="del btn btn-group btn-danger btn-s">Delete</button>
+                                    </td>
+                                  @endif
                                 </tr>
                              @empty
                               <tr><td>No Parameters Available</td></tr>
                              @endforelse
-                          
-                        </table>
+                          </tbody>
+                        </table>s
                         <hr style="padding: 0px; margin: 0px; padding-bottom: 10px">
-                        @if(Auth::user()->id == 1 OR $access->head == Auth::user()->id)
+                        @if($department->id = Auth::user()->dept_id AND Auth::user()->id == 4 OR Auth::user()->id == 3 OR Auth::user()->id == 2 OR Auth::user()->id == 1 OR $access->head == Auth::user()->id)
                           <a href="/accreditation/{{$agency->id}}/department/{{$department->id}}/areas" class="btn btn-default"><i class="fa fa-arrow-left"><span> Return</span></i></a>
                           <button type="button" class="btn btn-primary pull-right" data-toggle="modal" data-target="#add-parameter">
                             <i class="fa fa-circle-plus"><span> Add Parameter</span></i></button>
@@ -146,6 +158,7 @@
 <script>
       var editClicked, deleteClicked, updateClicked, requestClicked;
       $(document).ready(function() {
+        $('.table').DataTable();
         $('.edit').click(function() {
           editClicked = true;
         });
@@ -170,7 +183,7 @@
               $('#delete-parameter').modal();
               deleteClicked = false;
             }else {
-                  window.location.href="parameters/"+rowId+"/files";
+                  window.location.href="/accreditation/"+{{$agency->id}}+"/department/"+{{$department->id}}+"/areas/"+{{$access->id}}+"/parameters/"+rowId+"/files";
             } 
         });
 
@@ -179,7 +192,7 @@
             e.preventDefault();
             var deleteForm = $(this).serialize();
             $.post('/deleteParameter', deleteForm, function(data){
-              window.location.href="/accreditation/"+{{$agency->id}}+"/department/"+{{$department->id}}+"/area/"+{{$access->id}}+"/parameters";
+              window.location.href="/accreditation/"+{{$agency->id}}+"/department/"+{{$department->id}}+"/areas/"+{{$access->id}}+"/parameters";
             })
         });
 
@@ -188,7 +201,7 @@
             e.preventDefault();
             var editForm = $(this).serialize();
             $.post('/editParameter', editForm, function(data){
-              window.location.href="/accreditation/"+{{$agency->id}}+"/department/"+{{$department->id}}+"/area/"+{{$access->id}}+"/parameters";
+              window.location.href="/accreditation/"+{{$agency->id}}+"/department/"+{{$department->id}}+"/areas/"+{{$access->id}}+"/parameters";
             })
         });
 
@@ -202,7 +215,7 @@
                 alert("Enter a Valid Input");
             }else{
               $.post('/insertParameter', addForm, function(data){
-                window.location.href="/accreditation/"+{{$agency->id}}+"/department/"+{{$department->id}}+"/area/"+{{$access->id}}+"/parameters";
+                window.location.href="/accreditation/"+{{$agency->id}}+"/department/"+{{$department->id}}+"/areas/"+{{$access->id}}+"/parameters";
               })
             };
         });

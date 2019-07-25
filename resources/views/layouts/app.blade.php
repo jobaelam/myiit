@@ -8,6 +8,7 @@
   <!-- Tell the browser to be responsive to screen width -->
   <meta name="csrf-token" content="{{ csrf_token() }}" />
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+  <link rel="stylesheet" type="text/css" href="/css/unselectable.css">
   <!-- Bootstrap 3.3.7 -->
   <link rel="stylesheet" href="/bower_components/bootstrap/dist/css/bootstrap.min.css">
   <!-- Font Awesome -->
@@ -28,6 +29,8 @@
   <link rel="stylesheet" href="/bower_components/bootstrap-daterangepicker/daterangepicker.css">
   <!-- bootstrap wysihtml5 - text editor -->
   <link rel="stylesheet" href="/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
+  <!-- DataTables -->
+  <link rel="stylesheet" href="/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css">
 
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
   <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -80,37 +83,16 @@
           <li class="dropdown notifications-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
               <i class="fa fa-bell-o"></i>
-              <span class="label label-warning">10</span>
+              <span class="requestCount label label-warning"></span>
             </a>
             <ul class="dropdown-menu">
-              <li class="header">You have 10 notifications</li>
+              <li class="header">You have <span class="requestCount">0</span> notifications</li>
               <li>
                 <!-- inner menu: contains the actual data -->
                 <ul class="menu">
                   <li>
                     <a href="#">
                       <i class="fa fa-users text-aqua"></i> 5 new members joined today
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#">
-                      <i class="fa fa-warning text-yellow"></i> Very long description here that may not fit into the
-                      page and may cause design problems
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#">
-                      <i class="fa fa-users text-red"></i> 5 new members joined
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#">
-                      <i class="fa fa-shopping-cart text-green"></i> 25 sales made
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#">
-                      <i class="fa fa-user text-red"></i> You changed your username
                     </a>
                   </li>
                 </ul>
@@ -240,6 +222,9 @@
     <script src="/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js"></script>
     <!-- Slimscroll -->
     <script src="/bower_components/jquery-slimscroll/jquery.slimscroll.min.js"></script>
+    <!-- DataTables -->
+    <script src="/bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
+    <script src="/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
     <!-- FastClick -->
     <script src="/bower_components/fastclick/lib/fastclick.js"></script>
     <!-- AdminLTE App -->
@@ -255,6 +240,7 @@
         $('#text').val('');
         user1 = {{Auth::user()->id}};
         displayMessages();
+        displayRequest();
         $('div.box ul li').click(function(){
             if (!$(this).hasClass("active")) {
                 $('li.active').removeClass("active");
@@ -286,7 +272,6 @@
 
     function displayMessages()
     {  
-      console.log(user1);
       $.get('/displayMessages', {_token:"{{csrf_token()}}",user1: user1}, function(data)
       {
           for (i = 0; i < data.length && i < 5; i++) { 
@@ -313,84 +298,41 @@
           } else {
             $('#unreadMessagesHeader').html('You have no new messages'); 
           }
-          // for (i = 0; i < data.length; i++) { 
-          // if(data[i]['user'] == ""){
-          //     var message = '<div class="direct-chat-msg right">' +
-          //     '<div class="direct-chat-info clearfix">'+
-          //     '<span class="direct-chat-name pull-right">'+data[i]['user']+'</span>'+
-          //     '<span class="direct-chat-timestamp pull-left">'+data[i]['timeStamp']+'</span>'+
-          //     '</div>'+
-          //     '<img class="direct-chat-img" src="../dist/img/user1-128x128.jpg" alt="Message User Image">'+
-          //     '<div class="direct-chat-text">'+data[i]['message']+'</div>'+
-          //     '</div>';
-          //     $('div.direct-chat-messages').append(message);
-          // }else{
-          //     var message = '<div class="direct-chat-msg">' +
-          //     '<div class="direct-chat-info clearfix">'+
-          //     '<span class="direct-chat-name pull-left">'+data[i]['user']+'</span>'+
-          //     '<span class="direct-chat-timestamp pull-right">'+data[i]['timeStamp']+'</span>'+
-          //     '</div>'+
-          //     '<img class="direct-chat-img" src="../dist/img/user1-128x128.jpg" alt="Message User Image">'+
-          //     '<div class="direct-chat-text">'+data[i]['message']+'</div>'+
-          //     '</div>';
-          //     $('div.direct-chat-messages').append(message);
-          // }
-          // }
         });
     }
 
     function displayRequest()
     {  
-      console.log(user1);
       $.get('/displayRequest', {_token:"{{csrf_token()}}",user: user1}, function(data)
       {
-          for (i = 0; i < data.length && i < 5; i++) { 
-            if(data[i]['unread'] == 0 && data[i]['sender'] != '{{Auth::user()->id}}'){
-              ++count;
-              var message = '<li><a href="#">'+
-                '<div class="pull-left">'+
-                '<img src="'+data[i]['profilePicture']+'" class="img-circle" alt="User Image">'+
-                '</div><h4><b>'+data[i]['user']+'</b><small>'+data[i]['timeStamp']+'</small></h4>'+
-                '<p><b>'+data[i]['message']+'</b></p></a></li>';
-                $('#listOfMessages').append(message);
-            } else {
-              var message = '<li><a href="#">'+
-                '<div class="pull-left">'+
-                '<img src="'+data[i]['profilePicture']+'" class="img-circle" alt="User Image">'+
-                '</div><h4>'+data[i]['user']+'<small>'+data[i]['timeStamp']+'</small></h4>'+
-                '<p><b>'+data[i]['message']+'</b></p></a></li>';
-                $('#listOfMessages').append(message);
-            }
-          }
-          if(count > 0){
-            $('#unreadMessagesNumber').html(count);
-            $('#unreadMessagesHeader').html('You have '+count+' new messages');            
-          } else {
-            $('#unreadMessagesHeader').html('You have no new messages'); 
-          }
-          // for (i = 0; i < data.length; i++) { 
-          // if(data[i]['user'] == ""){
-          //     var message = '<div class="direct-chat-msg right">' +
-          //     '<div class="direct-chat-info clearfix">'+
-          //     '<span class="direct-chat-name pull-right">'+data[i]['user']+'</span>'+
-          //     '<span class="direct-chat-timestamp pull-left">'+data[i]['timeStamp']+'</span>'+
-          //     '</div>'+
-          //     '<img class="direct-chat-img" src="../dist/img/user1-128x128.jpg" alt="Message User Image">'+
-          //     '<div class="direct-chat-text">'+data[i]['message']+'</div>'+
-          //     '</div>';
-          //     $('div.direct-chat-messages').append(message);
-          // }else{
-          //     var message = '<div class="direct-chat-msg">' +
-          //     '<div class="direct-chat-info clearfix">'+
-          //     '<span class="direct-chat-name pull-left">'+data[i]['user']+'</span>'+
-          //     '<span class="direct-chat-timestamp pull-right">'+data[i]['timeStamp']+'</span>'+
-          //     '</div>'+
-          //     '<img class="direct-chat-img" src="../dist/img/user1-128x128.jpg" alt="Message User Image">'+
-          //     '<div class="direct-chat-text">'+data[i]['message']+'</div>'+
-          //     '</div>';
-          //     $('div.direct-chat-messages').append(message);
-          // }
-          // }
+        if(data.length > 0)
+        for(var i = 0;data.length > i; i++){
+          $('.requestCount').html(data.length);
+        }
+        //   for (i = 0; i < data.length && i < 5; i++) { 
+        //     if(data[i]['unread'] == 0 && data[i]['sender'] != '{{Auth::user()->id}}'){
+        //       ++count;
+        //       var message = '<li><a href="#">'+
+        //         '<div class="pull-left">'+
+        //         '<img src="'+data[i]['profilePicture']+'" class="img-circle" alt="User Image">'+
+        //         '</div><h4><b>'+data[i]['user']+'</b><small>'+data[i]['timeStamp']+'</small></h4>'+
+        //         '<p><b>'+data[i]['message']+'</b></p></a></li>';
+        //         $('#listOfMessages').append(message);
+        //     } else {
+        //       var message = '<li><a href="#">'+
+        //         '<div class="pull-left">'+
+        //         '<img src="'+data[i]['profilePicture']+'" class="img-circle" alt="User Image">'+
+        //         '</div><h4>'+data[i]['user']+'<small>'+data[i]['timeStamp']+'</small></h4>'+
+        //         '<p><b>'+data[i]['message']+'</b></p></a></li>';
+        //         $('#listOfMessages').append(message);
+        //     }
+        //   }
+        //   if(count > 0){
+        //     $('#unreadMessagesNumber').html(count);
+        //     $('#unreadMessagesHeader').html('You have '+count+' new messages');            
+        //   } else {
+        //     $('#unreadMessagesHeader').html('You have no new messages'); 
+        //   }
         });
     }
 

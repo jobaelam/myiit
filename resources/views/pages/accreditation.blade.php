@@ -4,6 +4,10 @@
 <ul class="sidebar-menu" data-widget="tree">
     <li><a href="/"><i class="fa fa-home"></i> <span>Home</span></a></li>
     <li class="active"><a href="/accreditation"><i class="fa fa-book"></i> <span>Accreditation</span></a></li>
+    <li><a href="/messenger"><i class="fa fa-inbox"></i> <span>Message</span></a></li>
+    @if($request != null OR Auth::user()->id == 1 OR Auth::user()->id == 2 OR Auth::user()->id == 3)
+    <li><a href="/request"><i class="fa fa-flag"></i> <span>Requests</span></a></li>
+    @endif
 </ul>
 @endsection
 
@@ -23,36 +27,40 @@
 <section class="content">
     <div class="box">
         <div class="box-body table-responsive">
-                <table class="table table-hover table-bordered" style="table-layout:fixed;">
-                  <tr class="active">
-                    <th>Agencies</th>
-                    <th>Description</th>
-                    <th style="width: 25%">Status</th>
-                    @if( Auth::user()->id == 1)
-                      <th width=10%>Action</th>
-                    @endif
-                  </tr>
-                  @if(count($agencies) > 0)
-                     @foreach($agencies as $agency)
-                     <tr value="{{$agency->id}}" class="table-row">
-                        <td>{{$agency->name}}</td>
-                        <td>{{$agency->desc}}</td>
-                        <td>
-                            <div class="progress progress-xs">
-                                <div class="progress-bar progress-bar-success" style="width: {{$agency->status}}%"></div>
-                            </div>
-                        </td>
-                        @if( Auth::user()->id == 1)
+                <table class="table table-hover table-bordered unselectable align-middle" style="table-layout:fixed;">
+                  <thead>
+                    <tr class="active">
+                      <th>Agencies</th>
+                      <th>Description</th>
+                      <th style="width: 25%">Status</th>
+                      @if( Auth::user()->id == 1)
+                        <th width=10%>Action</th>
+                      @endif
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @if(count($agencies) > 0)
+                       @foreach($agencies as $agency)
+                       <tr value="{{$agency->id}}" class="table-row">
+                          <td>{{$agency->name}}</td>
+                          <td>{{$agency->desc}}</td>
                           <td>
-                            <button type="button" class="edit btn-xsm btn-default"  style="width: 45%">Edit</button>
-                            <button type="button" class="del btn-xsm btn-danger"  style="width: 50%">Delete</button>
-                          </td> 
-                        @endif
-                      </tr>
-                     @endforeach
-                  @else
-                      <tr id="notAvailable"><td>No Agency Available</td></tr>
-                  @endif
+                              <div class="progress progress-xs">
+                                  <div class="progress-bar progress-bar-success" style="width: {{$agency->status}}%"></div>
+                              </div>
+                          </td>
+                          @if( Auth::user()->id == 1)
+                            <td>
+                              <button type="button" class="edit btn btn-default btn-s">Edit</button>
+                              <button type="button" class="del btn btn-danger btn-s">Delete</button>
+                            </td> 
+                          @endif
+                        </tr>
+                       @endforeach
+                    @else
+                        <tr id="notAvailable"><td>No Agency Available</td></tr>
+                    @endif
+                  </tbody>
                 </table>
                 <hr style="padding: 0px; margin: 0px; padding-bottom: 10px">
                 @if( Auth::user()->id == 1)
@@ -174,6 +182,7 @@
 <script>
       var editClicked, deleteClicked;
       $(document).ready(function() {
+        $('.table').DataTable();
         $('.edit').click(function() {
           editClicked = true;
         });

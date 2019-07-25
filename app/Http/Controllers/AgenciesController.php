@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Agency;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use App\AccessArea;
 
 class AgenciesController extends Controller
 {
@@ -25,7 +27,8 @@ class AgenciesController extends Controller
     {
         $data = array(
             'title' => 'Accreditation Agencies',
-            'agencies' => Agency::all()
+            'agencies' => Agency::all(),
+            'request' => AccessArea::where('head', Auth::user()->id)->first()
         );
         return view('pages.accreditation')->with($data);
     }
