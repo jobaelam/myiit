@@ -11,6 +11,10 @@ use App\College;
 use App\Department;
 use App\AccessArea;
 use App\AreaView;
+use App\FileView;
+use App\File;
+use App\Parameter;
+
 
 class PagesController extends Controller
 {
@@ -65,12 +69,22 @@ class PagesController extends Controller
     }
 
     public function request(){
-        $access = AccessArea::where('head', Auth::user()->id)->first();
-        if(Auth::user()->id == 1){
+        
+        if(Auth::user()->type == 1 OR Auth::user()->type == 2 OR Auth::user()->type == 3){
             $data = array(
                 'request' => AreaView::all()
             );
+        }elseif(Auth::user()->type == 4){
+            $access = AccessArea::where('departmentId', Auth::user()->dept_id)->get();
+            foreach($access as $ass){
+                $datas[] = AreaView::where('accessId', $ass->id)->first();
+            };
+            $data = array(
+                'request' => $datas
+            );
+            
         }else{
+            $access = AccessArea::where('head', Auth::user()->id)->first();
             $data = array(
                 'request' => AreaView::where('accessId', $access->id)->get()
             );
@@ -78,18 +92,38 @@ class PagesController extends Controller
         return view('pages.request')->with($data);
     }
 
+    public function requestFile(){
+            $data = array(
+                'request' => FileView::all()
+            );
+        return view('pages.requestfile')->with($data);
+    }
+
     public function displayRequest(Request $request){
-        $access = AccessArea::where('head',$request->user)->first();
-        if($access != null)
-            $data = AreaView::where([['accessId', $access->id],['isApproved', 0]])->get();
-        else
+        if(Auth::user()->type == 1 OR Auth::user()->type == 2 OR Auth::user()->type == 3){
+            $area = AreaView::all();
+            $file = FileView::all();
+        }elseif($access != null){
+            $access = AccessArea::where('head',$request->user)->first();
+            $parameter = Parameter::where('accessId', $access->id)->first();
+            $fileview = File::where('parameterId', $parameter->id)->first();
+            $area = AreaView::where([['accessId', $access->id],['isApproved', 0]])->get();
+            $file = FileView::where([['fileId', $fileview->id],['isApproved', 0]])->get();
+        }else{
             $data = null;
-        return $data;
+        }
+        return array($area,$file);
     }
 
     public function approveRequest(Request $request){
         AreaView::find($request->req)->update(array(
             'isApproved' => 1
+        ));
+    }
+
+    public function declineRequest(Request $request){
+        AreaView::find($request->req)->update(array(
+            'isApproved' => 2
         ));
     }
 }

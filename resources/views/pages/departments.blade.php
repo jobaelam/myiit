@@ -59,8 +59,6 @@
 <script src="/bower_components/jquery/dist/jquery.min.js"></script>
 <script>
       $(document).ready(function() {
-        $('.table').DataTable();
-
         $('.table-row:has(td)').click(function() 
         {
             var rowId = $(this).attr('value');

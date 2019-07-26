@@ -97,7 +97,7 @@
                   </li>
                 </ul>
               </li>
-              <li class="footer"><a href="#">View all</a></li>
+              <li class="footer"><a href="/request">View all</a></li>
             </ul>
           </li>
           <!-- User Account: style can be found in dropdown.less -->
@@ -237,6 +237,7 @@
 
     $(document).ready(function()
     {   
+        $('.table').DataTable();
         $('#text').val('');
         user1 = {{Auth::user()->id}};
         displayMessages();
@@ -305,35 +306,17 @@
     {  
       $.get('/displayRequest', {_token:"{{csrf_token()}}",user: user1}, function(data)
       {
-        if(data.length > 0)
-        for(var i = 0;data.length > i; i++){
-          $('.requestCount').html(data.length);
-        }
-        //   for (i = 0; i < data.length && i < 5; i++) { 
-        //     if(data[i]['unread'] == 0 && data[i]['sender'] != '{{Auth::user()->id}}'){
-        //       ++count;
-        //       var message = '<li><a href="#">'+
-        //         '<div class="pull-left">'+
-        //         '<img src="'+data[i]['profilePicture']+'" class="img-circle" alt="User Image">'+
-        //         '</div><h4><b>'+data[i]['user']+'</b><small>'+data[i]['timeStamp']+'</small></h4>'+
-        //         '<p><b>'+data[i]['message']+'</b></p></a></li>';
-        //         $('#listOfMessages').append(message);
-        //     } else {
-        //       var message = '<li><a href="#">'+
-        //         '<div class="pull-left">'+
-        //         '<img src="'+data[i]['profilePicture']+'" class="img-circle" alt="User Image">'+
-        //         '</div><h4>'+data[i]['user']+'<small>'+data[i]['timeStamp']+'</small></h4>'+
-        //         '<p><b>'+data[i]['message']+'</b></p></a></li>';
-        //         $('#listOfMessages').append(message);
-        //     }
+        //console.log(data.length);
+        // if(data.length > 0)
+        //   for(var j = 0;data[0].length > j; j++){
+        //      console.log(data[0].length);
         //   }
-        //   if(count > 0){
-        //     $('#unreadMessagesNumber').html(count);
-        //     $('#unreadMessagesHeader').html('You have '+count+' new messages');            
-        //   } else {
-        //     $('#unreadMessagesHeader').html('You have no new messages'); 
+        //   for(var j = 0;data[1].length > j; j++){
+        //      console.log(data[1].length);
+        //      var file = data[1][j].length;
         //   }
-        });
+          $('.requestCount').html(data[0].length + data[1].length);
+      });
     }
 
     function retrieveExistingMessages()

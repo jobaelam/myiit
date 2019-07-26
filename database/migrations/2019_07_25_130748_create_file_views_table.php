@@ -17,8 +17,6 @@ class CreateFileViewsTable extends Migration
             $table->bigIncrements('id');
             $table->unsignedBigInteger('fileId');
             $table->foreign('fileId')->references('id')->on('files');
-            $table->unsignedBigInteger('viewType');
-            $table->foreign('viewType')->references('id')->on('view_types');
             $table->unsignedBigInteger('user');
             $table->foreign('user')->references('id')->on('users');
             $table->boolean('isApproved')->default(false);

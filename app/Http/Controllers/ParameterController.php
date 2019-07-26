@@ -39,7 +39,7 @@ class ParameterController extends Controller
             'title' => Agency::find($agency)->name,
             'agency' => Agency::find($agency),
             'area' => Area::where(AccessArea::find($access)->areaId),
-            'department' => Department::find($department),
+            'department' => $department,
             'access' => AccessArea::find($access),
             'parameters' => Parameter::where('accessId', $access)->get(),
             'request' => AccessArea::where('head', Auth::user()->id)->first()

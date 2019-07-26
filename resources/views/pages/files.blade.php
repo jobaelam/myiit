@@ -38,46 +38,48 @@
                           </thead>
                           <tbody>
                                @foreach($files as $file)
-                                @if($file->viewType == 2 OR $area->head == Auth::user()->id OR Auth::user()->id == 1 OR Auth::user()->id == 2 OR Auth::user()->id == 3 OR Auth::user()->id == 4)
+                                @if($file->viewType == 3 AND Auth::user()->dept_id == $department OR $file->viewType == 1 AND Auth::user()->dept_id == $department AND (Auth::user()->type == 1 OR $area->head == Auth::user()->id OR Auth::user()->type == 2 OR Auth::user()->type == 3 OR Auth::user()->type == 4))
                                     <tr class="table-row">
                                       <td>{{$file->fileName}}</td>
                                       <td>{{$file->fileType}}</td>
                                       <td>{{date('M d, Y',strtotime($file->created_at))}}</td>
                                       <td>
-                                        @if(Auth::user()->id == 1 OR $area->head == Auth::user()->id OR Auth::user()->id == 2 OR Auth::user()->id == 3 OR Auth::user()->id == 4)
                                           <button type="button" value="{{$file->id}}" class="open btn btn-group btn-default btn-s">Open</button>
                                           <button type="button" value="{{$file->id}}" class="del btn btn-group btn-danger btn-s">Delete</button>
-                                        @else
-                                          <button type="button" value="{{$file->id}}" class="request btn-xs btn-warning" style="width: 100%">Request</button>
-                                        @endif
                                       </td> 
                                     </tr>
-                                @elseif($file->viewType == 3 AND $area->departmentId == Auth::user()->dept_id OR Auth::user()->id == 1)
-                                  <tr value="{{$file->id}}" class="table-row">
-                                      <td>{{$file->fileName}}</td>
-                                      <td>{{$file->fileType}}</td>
-                                      <td>{{date('M d, Y',strtotime($file->created_at))}}</td>
-                                      <td>
-                                        
-                                      </td> 
-                                  </tr>
-                                @elseif($file->viewType = 1 AND Auth::user()->id == 1 OR $area->head == Auth::user()->id)
+                                @elseif($file->viewType == 2 OR Auth::user()->type == 1)
                                   <tr class="table-row">
                                       <td>{{$file->fileName}}</td>
                                       <td>{{$file->fileType}}</td>
                                       <td>{{date('M d, Y',strtotime($file->created_at))}}</td>
                                       <td>
+                                        @if(Auth::user()->type == 1 OR $area->head == Auth::user()->id OR Auth::user()->type == 2 OR Auth::user()->type == 3 OR Auth::user()->type == 4 AND $department == Auth::user()->dept_id)
                                           <button type="button" value="{{$file->id}}" class="open btn btn-group btn-default btn-s">Open</button>
                                           <button type="button" value="{{$file->id}}" class="del btn btn-group btn-danger btn-s">Delete</button>
+                                        @else
+                                          @if(in_array($file->id, $fileView))
+                                            @foreach($views as $view)
+                                              @if($view->fileId == $file->id AND $view->isApproved == 1)
+                                                <button type="button" value="{{$file->id}}" class="open btn btn-group btn-default btn-s">Open</button>
+                                                <button type="button" value="{{$file->id}}" class="del btn btn-group btn-danger btn-s">Delete</button>
+                                              @elseif($view->fileId == $file->id AND $view->isApproved == 0)
+                                                <button class="request btn btn-block btn-success btn-s" disabled style="width: 100%">Pending</button>
+                                              @endif
+                                            @endforeach
+                                          @else
+                                            <button value="{{$file->id}}" class="request btn btn-block btn-warning btn-s" style="width: 100%">Request</button>
+                                          @endif
+                                        @endif
                                       </td> 
-                                    </tr>
+                                  </tr>
                                 @endif
                                @endforeach
                           </tbody>
                         </table>
                         <hr style="padding: 0px; margin: 0px; padding-bottom: 10px">
                         <a href="/accreditation/{{$agency}}/department/{{$department}}/areas/{{$area->id}}/parameters" class="btn btn-default"><i class="fa fa-arrow-left"><span> Return</span></i></a>
-                        @if($area->head == Auth::user()->id OR Auth::user()->id == 1 OR Auth::user()->id == 2 OR Auth::user()->id == 3 OR Auth::user()->id == 4 AND Auth::user()->dept_id == $department)
+                        @if($area->head == Auth::user()->id OR Auth::user()->type == 1 OR Auth::user()->type == 2 OR Auth::user()->type == 3 OR Auth::user()->type == 4 AND Auth::user()->dept_id == $department)
                           <button type="button" class="btn btn-info pull-right" data-toggle="modal" data-target="#modal-default">
                             <i class="fa fa-plus-circle"><span> Upload File</span></i>
                           </button>
@@ -156,7 +158,13 @@
     //         return text === "Edit" ? "Cancel" : "Edit";
     //     })
     // });
-    $('.table').DataTable();
+    $('.request').click(function() {
+      var file = $(this).val();
+      console.log(file);
+      $.post('/requestFile', {_token:"{{csrf_token()}}",file: file, user:'{{Auth::user()->id}}'}, function(data){
+        window.location.reload();
+      })
+    })
 
     $('.open').click(function() {
       var open = $(this).val();

@@ -17,8 +17,6 @@ class CreateAreaViewsTable extends Migration
             $table->bigIncrements('id');
             $table->unsignedBigInteger('accessId');
             $table->foreign('accessId')->references('id')->on('access_areas');
-            $table->unsignedBigInteger('viewType');
-            $table->foreign('viewType')->references('id')->on('view_types');
             $table->unsignedBigInteger('user');
             $table->foreign('user')->references('id')->on('users');
             $table->boolean('isApproved')->default(false);

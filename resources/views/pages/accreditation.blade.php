@@ -57,8 +57,6 @@
                           @endif
                         </tr>
                        @endforeach
-                    @else
-                        <tr id="notAvailable"><td>No Agency Available</td></tr>
                     @endif
                   </tbody>
                 </table>
@@ -182,7 +180,6 @@
 <script>
       var editClicked, deleteClicked;
       $(document).ready(function() {
-        $('.table').DataTable();
         $('.edit').click(function() {
           editClicked = true;
         });

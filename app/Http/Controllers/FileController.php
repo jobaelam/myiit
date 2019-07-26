@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Auth;
 use App\File;
+use App\FileView;
 use App\Area;
 use App\AccessArea;
 use App\User;
@@ -31,6 +32,14 @@ class FileController extends Controller
      */
     public function index(Request $request)
     {
+        $filesView = FileView::where('user', Auth::user()->id)->distinct()->get('fileId');
+        if(count($filesView) > 0){
+            foreach($filesView as $file){
+                $fileView[] = $file->fileId; 
+            };
+        }else{
+            $fileView = array();
+        }
         $department = $request->department;
         $areaAccess = $request->area;
         $parameter = $request->parameter;
@@ -47,30 +56,11 @@ class FileController extends Controller
             'parameter' => Parameter::find($parameter),
             'type' => FileViewType::all(),
             'users' => User::all(),
+            'fileView' => $fileView,
+            'views' => FileView::where('user', Auth::user()->id)->get(),
             'request' => AccessArea::where('head', Auth::user()->id)->first()
         );
         return view('pages.files')->with($data);
-    }
-
-    public function download(Request $request)
-    {
-        $File = File::find($request->val);
-        //return public_path();
-        $File = Storage::download('public/files/'.auth()->user()->first_name.'/'.$File['fileName']);
-        return $File;
-        //$header = ['Content-Type: application/txt'];
-        // return response()->download(public_path().'/app/public/'.auth()->user()->first_name.'/' . $File['fileName']);
-        // $id = $request->id;
-        // $files = File::where(array(
-        //     'areaId' => $id
-        // ))->get();
-        // $data = array(
-        //     'title' => Area::find($id)->name,
-        //     'areas' => Area::find($id),
-        //     'files' => $files,
-        //     'users' => User::all()
-        // );
-        // return view('pages.files')->with($data);
     }
 
     /**
@@ -103,11 +93,10 @@ class FileController extends Controller
         $File->filename = $fileNameToStore;
         $File->filetype = $extension;
         $File->viewType = $request->view;
-        $File->viewApprove = false;
         $File->userId = $request->userId;
         $File->parameterId = $request->parameter;
         $File->save();
-        return redirect('/accreditation/'.$request->agency.'/department/'.AccessArea::find(Parameter::find($request->parameter)->accessId)->departmentId.'/area/'.$request->access.'/parameters/'.$request->parameter.'/files');
+        return redirect('/accreditation/'.$request->agency.'/department/'.AccessArea::find(Parameter::find($request->parameter)->accessId)->departmentId.'/areas/'.$request->access.'/parameters/'.$request->parameter.'/files');
     }
 
     /**
@@ -153,5 +142,16 @@ class FileController extends Controller
     public function destroy(Request $request)
     {
         File::find($request->file)->delete();
+    }
+
+    public function request(Request $request){
+        $file = $request->file;
+        $user = $request->user;
+        $view = new FileView;
+        $view->fileId = $file;
+        $view->user = $user;
+        $view->isApproved = false;
+        $view->save();
+        // return redirect('/accreditation/'.$request->agency.'/department/'.$request->department.'/areas');
     }
 }

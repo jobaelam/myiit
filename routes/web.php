@@ -14,6 +14,7 @@
 
 Route::get('/', 'PagesController@index');
 Route::get('/request', 'PagesController@request');
+Route::get('/request/file', 'PagesController@requestFile');
 Route::get('/accreditation/{agencyId}', 'PagesController@departments');
 Route::resource('accreditation','AgenciesController');
 Route::get('/profile', 'PagesController@profile');
@@ -23,6 +24,7 @@ Route::any('/editParameter', 'ParameterController@update');
 Route::any('/deleteParameter', 'ParameterController@destroy');
 Route::any('/displayRequest', 'PagesController@displayRequest');
 Route::any('/approveRequest', 'PagesController@approveRequest');
+Route::any('/declineRequest', 'PagesController@declineRequest');
 Auth::routes(); 
 //Route::get('/home', 'HomeController@index')->name('home'); 
 // Route::get('/contacts', 'ContactsController@get');
@@ -48,3 +50,4 @@ Route::any('/insertFile', 'FileController@store');
 Route::any('/openFile', 'FileController@show');
 Route::any('/deleteFile', 'FileController@destroy');
 Route::any('/downloadFile', 'FileController@download');
+Route::any('/requestFile', 'FileController@request');

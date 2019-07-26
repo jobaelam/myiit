@@ -27,7 +27,7 @@
     <section class="content">
             <div class="box">
                 <div class="box-body table-responsive">
-                        <table id="areaTable" class="table table-bordered table-hover unselectable align-middle" style="table-layout:fixed;">
+                        <table class="table table-bordered table-hover unselectable align-middle" style="table-layout:fixed;">
                           <thead>
                           <tr class="active" disabled>
                             <th>Area</th>
@@ -60,23 +60,21 @@
                                     @if(Auth::user()->id == 1 OR Auth::user()->type == 2 OR Auth::user()->type == 3)
                                       <button type="button" class="edit btn btn-group btn-default btn-s">Edit</button>
                                       <button type="button" class="del btn btn-group btn-danger btn-s">Delete</button>
-                                    @elseif($entry->departmentId == Auth::user()->dept_id AND Auth::user()->type == 4 OR $entry->head == Auth::user()->id)
+                                    @elseif($entry->departmentId == Auth::user()->dept_id AND (Auth::user()->type == 4 OR $entry->head == Auth::user()->id))
                                     @elseif($entry->head == null)
 
                                     @else
-                                      @forelse($areaView as $view)
-                                        @if($view->accessId == $entry->id AND $view->isApproved == 1)
-                                          @break
-                                        @elseif($view->accessId == $entry->id AND $view->isApproved == 0)
-                                          <button class="request btn btn-block btn-success btn-s" disabled style="width: 100%">Pending</button>
-                                          @break
+                                        @if(in_array($entry->id, $areaView) OR $areaView == null)
+                                          @foreach($views as $view)
+                                            @if($view->accessId == $entry->id AND $view->isApproved == 1)
+                                              <button type="button" class="open btn btn-block btn-success btn-s" disabled>Verified</button>
+                                            @elseif($view->accessId == $entry->id AND $view->isApproved == 0)
+                                              <button class="request btn btn-block btn-info btn-s" disabled style="width: 100%">Pending</button>
+                                            @endif
+                                          @endforeach
                                         @else
-                                          <button class="request btn btn-block btn-warning btn-s" style="width: 100%">Request</button>
-                                          @break
+                                          <button value="{{$entry->id}}" class="request btn btn-block btn-warning btn-s" style="width: 100%">Request</button>
                                         @endif
-                                      @empty
-                                        <button class="request btn btn-block btn-warning btn-s" style="width: 100%">Request</button>
-                                      @endforelse
                                     @endif
                                   </td>
                                 </tr>
@@ -291,7 +289,6 @@
 <script>
       var editClicked, deleteClicked, updateClicked, requestClicked;
       $(document).ready(function() {
-        $('#areaTable').DataTable();
         $('.edit').click(function() {
           editClicked = true;
         });
@@ -333,8 +330,8 @@
               $('#update-head').modal();
               updateClicked = false;
             }else if(requestClicked){
-               $.post('/requestArea', {_token:"{{csrf_token()}}",access: rowId, user:'{{Auth::user()->id}}',department: '{{$department}}', agency: '{{$agency}}'}, function(data){
-                window.location.href="/accreditation/"+{{$agency->id}}+"/department/"+{{$department->id}}+"/areas";
+               $.post('/requestArea', {_token:"{{csrf_token()}}",access: rowId, user:'{{Auth::user()->id}}'}, function(data){
+                window.location.reload();
                })
               requestClicked = false;
             }else {
@@ -351,7 +348,7 @@
             e.preventDefault();
             var deleteForm = $(this).serialize();
             $.post('/deleteArea', deleteForm, function(data){
-              //window.location.href="/accreditation/"+{{$agency->id}}+"/department/"+{{$department->id}}+"/areas";
+              window.location.reload();
             })
         });
 
@@ -360,7 +357,7 @@
             e.preventDefault();
             var editForm = $(this).serialize();
             $.post('/editAreaHead', editForm, function(data){
-              window.location.href="/accreditation/"+{{$agency->id}}+"/department/"+{{$department->id}}+"/areas";
+              window.location.reload();
             })
         });
 
@@ -376,7 +373,7 @@
             e.preventDefault();
             var editForm = $(this).serialize();
             $.post('/editArea', editForm, function(data){
-              window.location.href="/accreditation/"+{{$agency->id}}+"/department/"+{{$department->id}}+"/areas";
+              window.location.reload();
             })
         });
 
@@ -389,7 +386,7 @@
                 alert("Enter a Valid Input");
             }else{
               $.post('/insertArea', addForm, function(data){
-                window.location.href="/accreditation/"+{{$agency->id}}+"/department/"+{{$department->id}}+"/areas";
+                window.location.reload();
               })
             };
         });

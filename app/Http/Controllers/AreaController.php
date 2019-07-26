@@ -29,6 +29,14 @@ class AreaController extends Controller
      */
     public function index(Request $request)
     {
+        $areasView = AreaView::where('user', Auth::user()->id)->distinct()->get('accessId');
+        if(count($areasView) > 0){
+            foreach($areasView as $area){
+                $areaView[] = $area->accessId; 
+            };
+        }else{
+            $areaView = array();
+        }
         $agency = $request->agency; 
         $department = $request->department;
         $areas = array();
@@ -41,7 +49,8 @@ class AreaController extends Controller
             'department' => Department::find($department),
             'departments' => Department::all(),
             'access' => $access,
-            'areaView' => AreaView::where('user', Auth::user()->id)->get(),
+            'areaView' => $areaView,
+            'views' => AreaView::where('user', Auth::user()->id)->get(),
             'request' => AccessArea::where('head', Auth::user()->id)->first()
         );
 

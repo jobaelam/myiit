@@ -6,7 +6,19 @@
         <li><a href="/accreditation"><i class="fa fa-book"></i> <span>Accreditation</span></a></li>
         <li><a href="/messenger"><i class="fa fa-inbox"></i> <span>Message</span></a></li>
         @if($request != null OR Auth::user()->id == 1 OR Auth::user()->id == 2 OR Auth::user()->id == 3)
-        <li class="active"><a href="/request"><i class="fa fa-flag"></i> <span>Requests</span></a></li>
+        <li class="active treeview open">
+          <a href="#">
+            <i class="fa fa-hourglass-o"></i> <span>Requests</span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+          </a>
+          <ul class="treeview-menu">
+            <li class="active"><a href="/request"><i class="fa fa-flag"></i> Area</a></li>
+            <li><a href="/request/file"><i class="fa fa-files-o"></i> File</a></li>
+          </ul>
+        </li>
+        <li>
         @endif
     </ul>
 @endsection
@@ -18,7 +30,7 @@
         <!-- Content Header (Page header) -->
         <section class="content-header">
             <h1>
-                Requests
+                Area Requests
             </h1>
             <ol class="breadcrumb">
                 <li><a href="#"><i class="fa fa-home"></i> Home</a></li>
@@ -33,23 +45,32 @@
                         <thead>
                             <tr class="active" disabled>
                             <th>Requests</th>
+                            @if(Auth::user()->type == 1)
+                                <th>Department</th>
+                            @endif
+                            <th width="20%">Date</th>
                             <th width="10%">Action</th>
                             </tr>
                         </thead>
                         <tbody>
-                         @forelse($request as $req)
-                            @if($req->isApproved == 0)
-                             <tr class="table-row">
-                                <td><b>Prof. {{$req->hasUser->first_name}} {{$req->hasUser->last_name}}</b> request to access <b>{{$req->access->hasArea->name}}</b></td>
-                                <td>
-                                      <button type="button" value="{{$req->id}}" class="approve btn btn-default btn-s">Accept</button>
-                                      <button type="button" value="{{$req->id}}" class="decline btn btn-danger btn-s">Decline</button>      
-                                </td>
-                             </tr>
+                         @foreach($request as $req)
+                            @if($req != null)
+                                @if($req->isApproved == 0)
+                                 <tr class="table-row">
+                                    <td><b>Prof. {{$req->hasUser->first_name}} {{$req->hasUser->last_name}}</b> request to access <b>{{$req->access->hasArea->name}}</b>
+                                    @if(Auth::user()->type == 1)
+                                        <td>{{$req->access->hasDepartment->name}}</td>
+                                    @endif
+                                    </td>
+                                    <td>{{$req->created_at}}</td>
+                                    <td>
+                                          <button type="button" value="{{$req->id}}" class="approve btn btn-default btn-s">Accept</button>
+                                          <button type="button" value="{{$req->id}}" class="decline btn btn-danger btn-s">Decline</button>      
+                                    </td>
+                                 </tr>
+                                @endif
                             @endif
-                         @empty
-                            <tr><td>No Pending Request</td></tr>
-                         @endforelse
+                         @endforeach
                          </tbody>
                         </table>
                         <hr style="padding: 0px; margin: 0px; padding-bottom: 10px">
@@ -69,6 +90,13 @@
         $('.approve').click(function() {
             var req = $(this).val();
             $.get('/approveRequest', {req: req}, function(){
+                window.location.href="/request";
+            })
+        })
+
+        $('.decline').click(function() {
+            var req = $(this).val();
+            $.get('/declineRequest', {req: req}, function(){
                 window.location.href="/request";
             })
         })
