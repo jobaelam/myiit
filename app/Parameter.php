@@ -11,4 +11,12 @@ class Parameter extends Model
     public function hasAccess(){
         return $this->belongsTo(AccessArea::class, 'accessId', 'id');
     }
+
+    public function hasName(){
+        return $this->belongsTo(ParameterName::class, 'nameId', 'id');
+    }
+
+    public function hasFiles(){
+        return $this->hasMany(File::class, 'parameterId', 'id');
+    }
 }

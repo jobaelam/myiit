@@ -100,17 +100,18 @@ class PagesController extends Controller
     }
 
     public function displayRequest(Request $request){
+        $access = AccessArea::where('head',$request->user)->first();
         if(Auth::user()->type == 1 OR Auth::user()->type == 2 OR Auth::user()->type == 3){
             $area = AreaView::all();
             $file = FileView::all();
         }elseif($access != null){
-            $access = AccessArea::where('head',$request->user)->first();
             $parameter = Parameter::where('accessId', $access->id)->first();
             $fileview = File::where('parameterId', $parameter->id)->first();
             $area = AreaView::where([['accessId', $access->id],['isApproved', 0]])->get();
             $file = FileView::where([['fileId', $fileview->id],['isApproved', 0]])->get();
         }else{
-            $data = null;
+            $area = array();
+            $file = array();
         }
         return array($area,$file);
     }
@@ -123,6 +124,18 @@ class PagesController extends Controller
 
     public function declineRequest(Request $request){
         AreaView::find($request->req)->update(array(
+            'isApproved' => 2
+        ));
+    }
+
+    public function approveRequestFile(Request $request){
+        FileView::find($request->req)->update(array(
+            'isApproved' => 1
+        ));
+    }
+
+    public function declineRequestFile(Request $request){
+        FileView::find($request->req)->update(array(
             'isApproved' => 2
         ));
     }

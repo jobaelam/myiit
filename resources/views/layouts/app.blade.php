@@ -83,7 +83,7 @@
           <li class="dropdown notifications-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
               <i class="fa fa-bell-o"></i>
-              <span class="requestCount label label-warning"></span>
+              {{-- <span class="requestCount label label-warning"></span> --}}
             </a>
             <ul class="dropdown-menu">
               <li class="header">You have <span class="requestCount">0</span> notifications</li>
@@ -92,7 +92,7 @@
                 <ul class="menu">
                   <li>
                     <a href="#">
-                      <i class="fa fa-users text-aqua"></i> 5 new members joined today
+                      {{-- <i class="fa fa-users text-aqua"></i> 5 new members joined today --}}
                     </a>
                   </li>
                 </ul>
@@ -237,7 +237,9 @@
 
     $(document).ready(function()
     {   
-        $('.table').DataTable();
+        $('.table').DataTable({
+          "order": [],
+        });
         $('#text').val('');
         user1 = {{Auth::user()->id}};
         displayMessages();

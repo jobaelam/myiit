@@ -5,8 +5,19 @@
     <li><a href="/"><i class="fa fa-home"></i> <span>Home</span></a></li>
     <li class="active"><a href="/accreditation"><i class="fa fa-book"></i> <span>Accreditation</span></a></li>
     <li><a href="/messenger"><i class="fa fa-inbox"></i> <span>Message</span></a></li>
-    @if($request != null OR Auth::user()->id == 1 OR Auth::user()->id == 2 OR Auth::user()->id == 3)
-    <li><a href="/request"><i class="fa fa-flag"></i> <span>Requests</span></a></li>
+    @if($request != null OR Auth::user()->id == 1 OR Auth::user()->id == 2 OR Auth::user()->id == 3 OR Auth::user()->id == 4)
+    <li class="treeview">
+      <a href="#">
+        <i class="fa fa-hourglass-o"></i> <span>Requests</span>
+        <span class="pull-right-container">
+          <i class="fa fa-angle-left pull-right"></i>
+        </span>
+      </a>
+      <ul class="treeview-menu">
+        <li><a href="/request"><i class="fa fa-flag"></i> Area</a></li>
+        <li><a href="/request/file"><i class="fa fa-files-o"></i> File</a></li>
+      </ul>
+    </li>
     @endif
 </ul>
 @endsection
@@ -38,8 +49,9 @@
                           </tr>
                           </thead>
                           <tbody>
-                             @forelse($access as $entry)                            
+                             @foreach($access as $entry)                            
                               @if($entry->hasArea->hasAgency->id == $agency->id)
+                              <script type="text/javascript">console.log('{{$entry->departmentId}} {{Auth::user()->dept_id}}')</script>
                                 <tr value="{{$entry->id}}" class="table-row">
                                   <td>{{$entry->hasArea->name}}</td>
                                   <td>{{$entry->hasArea->desc}}</td>
@@ -52,7 +64,7 @@
                                     <td>
                                       {{$entry->headUser->first_name}} {{$entry->headUser->last_name}} 
                                   @endif
-                                    @if(Auth::user()->id == 1)
+                                    @if(Auth::user()->id == 1 OR Auth::user()->type == 2 OR Auth::user()->type == 3 OR Auth::user()->id == 4)
                                       <button type="button" class="update" style="border: none;">Edit</button>
                                     @endif
                                     </td>
@@ -62,9 +74,8 @@
                                       <button type="button" class="del btn btn-group btn-danger btn-s">Delete</button>
                                     @elseif($entry->departmentId == Auth::user()->dept_id AND (Auth::user()->type == 4 OR $entry->head == Auth::user()->id))
                                     @elseif($entry->head == null)
-
                                     @else
-                                        @if(in_array($entry->id, $areaView) OR $areaView == null)
+                                        @if(in_array($entry->id, $areaView) OR $areaView != null)
                                           @foreach($views as $view)
                                             @if($view->accessId == $entry->id AND $view->isApproved == 1)
                                               <button type="button" class="open btn btn-block btn-success btn-s" disabled>Verified</button>
@@ -79,9 +90,7 @@
                                   </td>
                                 </tr>
                               @endif
-                             @empty
-                              <tr><td>No Areas Available</td></tr>
-                             @endforelse
+                             @endforeach
                           </tbody>
                         </table>
                         <hr style="padding: 0px; margin: 0px; padding-bottom: 10px">

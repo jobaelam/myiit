@@ -5,8 +5,19 @@
     <li><a href="/"><i class="fa fa-home"></i> <span>Home</span></a></li>
     <li class="active"><a href="/accreditation"><i class="fa fa-book"></i> <span>Accreditation</span></a></li>
     <li><a href="/messenger"><i class="fa fa-inbox"></i> <span>Message</span></a></li>
-    @if($request != null OR Auth::user()->id == 1 OR Auth::user()->id == 2 OR Auth::user()->id == 3)
-    <li><a href="/request"><i class="fa fa-flag"></i> <span>Requests</span></a></li>
+    @if($request != null OR Auth::user()->id == 1 OR Auth::user()->id == 2 OR Auth::user()->id == 3 OR Auth::user()->id == 4)
+    <li class="treeview">
+      <a href="#">
+        <i class="fa fa-hourglass-o"></i> <span>Requests</span>
+        <span class="pull-right-container">
+          <i class="fa fa-angle-left pull-right"></i>
+        </span>
+      </a>
+      <ul class="treeview-menu">
+        <li><a href="/request"><i class="fa fa-flag"></i> Area</a></li>
+        <li><a href="/request/file"><i class="fa fa-files-o"></i> File</a></li>
+      </ul>
+    </li>
     @endif
 </ul>
 @endsection
@@ -18,7 +29,7 @@
     <!-- Content Header (Page header) -->
     <section class="content-header">
         <h1>
-            {{$parameter->name}}
+            {{$benchmark->hasName->name}}
             <small>Files</small>
         </h1>
     </section>
@@ -78,7 +89,7 @@
                           </tbody>
                         </table>
                         <hr style="padding: 0px; margin: 0px; padding-bottom: 10px">
-                        <a href="/accreditation/{{$agency}}/department/{{$department}}/areas/{{$area->id}}/parameters" class="btn btn-default"><i class="fa fa-arrow-left"><span> Return</span></i></a>
+                        <a href="/accreditation/{{$agency}}/department/{{$department}}/areas/{{$area->id}}/parameters/{{$parameter}}/bench" class="btn btn-default"><i class="fa fa-arrow-left"><span> Return</span></i></a>
                         @if($area->head == Auth::user()->id OR Auth::user()->type == 1 OR Auth::user()->type == 2 OR Auth::user()->type == 3 OR Auth::user()->type == 4 AND Auth::user()->dept_id == $department)
                           <button type="button" class="btn btn-info pull-right" data-toggle="modal" data-target="#modal-default">
                             <i class="fa fa-plus-circle"><span> Upload File</span></i>
@@ -97,7 +108,8 @@
                   <div class="modal-body">
                         <form action="/insertFile" method="POST" id="myForm" enctype="multipart/form-data">
                             @csrf
-                            <input name="parameter" type="hidden" value="{{$parameter->id}}">
+                            <input name="benchmark" type="hidden" value="{{$benchmark->id}}">
+                            <input name="parameter" type="hidden" value="{{$parameter}}">
                             <input name="agency" type="hidden" value="{{$agency}}">
                             <input name="access" type="hidden" value="{{$area->id}}">
                             <input name="userId" type="hidden" value="{{Auth::user()->id}}">
@@ -175,12 +187,12 @@
     })
 
     $('.del').click(function() {
-      $('#delete-file').modal();
-      // var del = $(this).val();
-      // $.get('/deleteFile', {file:del, access: "{{$area->id}}"},function(data){
-      //   console.log(data);
-      //   document.location.reload(true)
-      // })
+      // $('#delete-file').modal();
+      var del = $(this).val();
+      $.get('/deleteFile', {file:del, access: "{{$area->id}}"},function(data){
+        console.log(data);
+        document.location.reload(true)
+      })
     })  
   });
 </script>

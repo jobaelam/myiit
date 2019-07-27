@@ -11,6 +11,7 @@ use App\FileView;
 use App\Area;
 use App\AccessArea;
 use App\User;
+use App\Benchmark;
 use App\FileViewType;
 use App\Parameter;
 
@@ -43,9 +44,10 @@ class FileController extends Controller
         $department = $request->department;
         $areaAccess = $request->area;
         $parameter = $request->parameter;
+        $benchmark = $request->benchmark;
         $agency = $request->agency;
         $files = File::where(array(
-            'parameterId' => $parameter
+            'benchmarkId' => $benchmark,
         ))->get();
         $data = array(
             'area' => AccessArea::find($areaAccess),
@@ -53,7 +55,8 @@ class FileController extends Controller
             'files' => $files,
             'department' => $department,
             'agency' => $agency,
-            'parameter' => Parameter::find($parameter),
+            'parameter' => $parameter,
+            'benchmark' => Benchmark::find($benchmark),
             'type' => FileViewType::all(),
             'users' => User::all(),
             'fileView' => $fileView,
@@ -94,9 +97,9 @@ class FileController extends Controller
         $File->filetype = $extension;
         $File->viewType = $request->view;
         $File->userId = $request->userId;
-        $File->parameterId = $request->parameter;
+        $File->benchmarkId = $request->benchmark;
         $File->save();
-        return redirect('/accreditation/'.$request->agency.'/department/'.AccessArea::find(Parameter::find($request->parameter)->accessId)->departmentId.'/areas/'.$request->access.'/parameters/'.$request->parameter.'/files');
+        return redirect('/accreditation/'.$request->agency.'/department/'.AccessArea::find(Parameter::find($request->parameter)->accessId)->departmentId.'/areas/'.$request->access.'/parameters/'.$request->parameter.'/bench/'.$request->benchmark.'/files');
     }
 
     /**

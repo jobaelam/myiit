@@ -11,6 +11,9 @@ use App\Agency;
 use App\User;
 use App\Department;
 use App\Parameter;
+use App\ParameterName;
+use App\File;
+use App\Benchmark;
 
 
 class ParameterController extends Controller
@@ -42,10 +45,29 @@ class ParameterController extends Controller
             'department' => $department,
             'access' => AccessArea::find($access),
             'parameters' => Parameter::where('accessId', $access)->get(),
-            'request' => AccessArea::where('head', Auth::user()->id)->first()
+            'request' => AccessArea::where('head', Auth::user()->id)->first(),
         );
 
         return view('pages.parameter')->with($data);
+    }
+
+        public function bench(Request $request)
+    {
+        $agency = $request->agency; 
+        $department = $request->department;
+        $access = $request->access;
+        $parameter = $request->parameter;
+        $data = array(
+            'title' => Agency::find($agency)->name,
+            'agency' => Agency::find($agency),
+            'department' => $department,
+            'access' => AccessArea::find($access),
+            'parameters' => Parameter::find($parameter)->first(),
+            'bench' => Benchmark::where('parameterId', $parameter)->get(),
+            'request' => AccessArea::where('head', Auth::user()->id)->first(),
+        );
+
+        return view('pages.bench')->with($data);
     }
 
         /**
@@ -58,11 +80,19 @@ class ParameterController extends Controller
     {   
     	$access = $request->accessId;
     	$name = $request->name;
-
-    	Parameter::create(array(
+    	$params = Parameter::create(array(
     		'accessId' => $access,
-    		'name' => $name
-    	));
+    		'name' => $name,
+    	))->id;
+
+        $parameterName = ParameterName::all();
+        foreach($parameterName as $names){
+            $benchmark = array(
+                'parameterId' => $access,
+                'nameId' => $names->id
+            );
+            Benchmark::create($benchmark);
+        }
     }
 
     /**

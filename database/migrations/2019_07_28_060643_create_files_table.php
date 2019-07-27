@@ -21,8 +21,8 @@ class CreateFilesTable extends Migration
             $table->foreign('viewType')->references('id')->on('file_view_types');
             $table->unsignedBigInteger('userId');
             $table->foreign('userId')->references('id')->on('users');
-            $table->unsignedBigInteger('parameterId');
-            $table->foreign('parameterId')->references('id')->on('parameters');
+            $table->unsignedBigInteger('benchmarkId');
+            $table->foreign('benchmarkId')->references('id')->on('parameters');
             $table->timestamps();
         });
     }

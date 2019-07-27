@@ -73,7 +73,6 @@
                          @endforeach
                          </tbody>
                         </table>
-                        <hr style="padding: 0px; margin: 0px; padding-bottom: 10px">
                 </div>
               </div>
         </section>
@@ -83,10 +82,7 @@
     <!-- jQuery 3 -->
     <script src="/bower_components/jquery/dist/jquery.min.js"></script>
     <script>
-        $(document).ready(function() {
-            $('.table').DataTable();
-        })
-
+    $(document).ready(function() {
         $('.approve').click(function() {
             var req = $(this).val();
             $.get('/approveRequest', {req: req}, function(){
@@ -100,5 +96,6 @@
                 window.location.href="/request";
             })
         })
+    })
     </script>
 @endsection

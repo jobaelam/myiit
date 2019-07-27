@@ -6,8 +6,7 @@
         <li><a href="/accreditation"><i class="fa fa-book"></i> <span>Accreditation</span></a></li>
         <li><a href="/messenger"><i class="fa fa-inbox"></i> <span>Message</span></a></li>
         @if($request != null OR Auth::user()->id == 1 OR Auth::user()->id == 2 OR Auth::user()->id == 3 OR Auth::user()->id == 4)
-        <li class="active treeview menu-open">
-          <li class="active treeview open">
+        <li class="active treeview open">
           <a href="#">
             <i class="fa fa-hourglass-o"></i> <span>Requests</span>
             <span class="pull-right-container">
@@ -19,7 +18,6 @@
             <li class="active"><a href="/request/file"><i class="fa fa-files-o"></i> File</a></li>
           </ul>
         </li>
-        <li>
         @endif
     </ul>
 @endsection
@@ -64,7 +62,7 @@
                              <tr class="table-row">
                                 <td><b>Prof. {{$req->hasUser->first_name}} {{$req->hasUser->last_name}}</b> request to access file <b>{{$req->hasFile->fileName}}</b> 
                                 @if(Auth::user()->type == 1 OR Auth::user()->type == 2 OR Auth::user()->type == 3 OR Auth::user()->type == 4)
-                                    in Parameter <b>{{$req->hasFile->hasParameter->name}}</b>
+                                    in Parameter <b>{{$req->hasFile->hasParameter->hasName->name}}</b>
                                     <td>{{$req->hasFile->hasParameter->hasAccess->headUser->first_name}} {{$req->hasFile->hasParameter->hasAccess->headUser->last_name}}</td>
                                     <td>{{$req->hasFile->hasParameter->hasAccess->hasArea->name}}</td>
                                     @if(Auth::user()->type == 1 OR Auth::user()->type == 2 OR Auth::user()->type == 3)
@@ -99,7 +97,6 @@
                          @endforeach
                          </tbody>
                         </table>
-                        <hr style="padding: 0px; margin: 0px; padding-bottom: 10px">
                 </div>
               </div>
         </section>
@@ -109,22 +106,20 @@
     <!-- jQuery 3 -->
     <script src="/bower_components/jquery/dist/jquery.min.js"></script>
     <script>
-        $(document).ready(function() {
-            $('.table').DataTable();
-        })
-
+    $(document).ready(function() {
         $('.approve').click(function() {
             var req = $(this).val();
-            $.get('/approveRequest', {req: req}, function(){
-                window.location.href="/request";
+            $.get('/approveRequestFile', {req: req}, function(){
+                window.location.reload();
             })
         })
 
         $('.decline').click(function() {
             var req = $(this).val();
-            $.get('/declineRequest', {req: req}, function(){
-                window.location.href="/request";
+            $.get('/declineRequestFile', {req: req}, function(){
+                window.location.reload();
             })
         })
+    })
     </script>
 @endsection

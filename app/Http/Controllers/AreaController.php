@@ -8,6 +8,8 @@ use App\AccessArea;
 use App\Agency;
 use App\User;
 use App\Department;
+use App\Parameter;
+use App\ParameterName;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -75,16 +77,13 @@ class AreaController extends Controller
      */
     public function store(Request $request)
     {
-        $agency_id = $request->agencyId;
-        $name = $request->name;
-        $desc = $request->desc;
         $data = array(
-            'agency_id' => $agency_id,
-            'name' => $name,
-            'desc' => $desc,
+            'agency_id' => $request->agencyId,
+            'name' => $name = $request->name,
+            'desc' => $request->desc,
         );
         $area = Area::create($data)->id;
-        $departments = Department::all(); 
+        $departments = Department::all();
         foreach($departments as $department){
             $datas = array(
                 'areaId' => $area,
@@ -161,7 +160,6 @@ class AreaController extends Controller
         $user = $request->user;
         $view = new AreaView;
         $view->accessId = $access;
-        $view->viewType = 0;
         $view->user = $user;
         $view->isApproved = false;
         $view->save();
