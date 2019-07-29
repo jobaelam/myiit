@@ -117,21 +117,15 @@
                     @else
                     {{Auth::user()->fullName()}}
                     @endif
-                  <small>{{Auth::user()->email}}</small>
+                  @if(Auth::user()->id != 1)
+                  <small>{{Auth::user()->hasType->name}}</small>
+                  @endif
                 </p>
               </li>
               <!-- Menu Body -->
               <li class="user-body">
-                <div class="row">
-                  <div class="col-xs-4 text-center">
-                    <a href="#">Followers</a>
-                  </div>
-                  <div class="col-xs-4 text-center">
-                    <a href="#">Sales</a>
-                  </div>
-                  <div class="col-xs-4 text-center">
-                    <a href="#">Friends</a>
-                  </div>
+                <div class="text-center">
+                  <button class="btn btn-block btn-default" disabled><i class="fa fa-envelope"></i> {{Auth::user()->email}}</button>
                 </div>
                 <!-- /.row -->
               </li>

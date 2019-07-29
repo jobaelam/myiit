@@ -12,7 +12,8 @@
 */
 
 
-Route::get('/', 'PagesController@index');
+//Route::get('/', 'PagesController@index');
+Route::resource('/','AgenciesController');
 Route::get('/request', 'PagesController@request');
 Route::get('/request/file', 'PagesController@requestFile');
 Route::get('/accreditation/{agencyId}', 'PagesController@departments');

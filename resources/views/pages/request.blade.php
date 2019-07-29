@@ -2,10 +2,10 @@
 
 @section('sidebar')
     <ul class="sidebar-menu" data-widget="tree">
-        <li><a href="/"><i class="fa fa-home"></i> <span>Home</span></a></li>
+        {{-- <li><a href="/"><i class="fa fa-home"></i> <span>Home</span></a></li> --}}
         <li><a href="/accreditation"><i class="fa fa-book"></i> <span>Accreditation</span></a></li>
         <li><a href="/messenger"><i class="fa fa-inbox"></i> <span>Message</span></a></li>
-        @if($request != null OR Auth::user()->id == 1 OR Auth::user()->id == 2 OR Auth::user()->id == 3)
+        @if($request != null OR Auth::user()->type == 1 OR Auth::user()->type == 2 OR Auth::user()->type == 3 OR Auth::user()->type == 4)
         <li class="active treeview open">
           <a href="#">
             <i class="fa fa-hourglass-o"></i> <span>Requests</span>
@@ -19,6 +19,13 @@
           </ul>
         </li>
         <li>
+        @endif
+        @if(Auth::user()->type == 1)
+        <li>
+          <a href="#">
+            <i class="fa fa-list"></i> <span>Logs</span>
+          </a>
+        </li>
         @endif
     </ul>
 @endsection

@@ -2,10 +2,10 @@
 
 @section('sidebar')
 <ul class="sidebar-menu" data-widget="tree">
-    <li><a href="/"><i class="fa fa-home"></i> <span>Home</span></a></li>
+    {{-- <li><a href="/"><i class="fa fa-home"></i> <span>Home</span></a></li> --}}
     <li class="active"><a href="/accreditation"><i class="fa fa-book"></i> <span>Accreditation</span></a></li>
     <li><a href="/messenger"><i class="fa fa-inbox"></i> <span>Message</span></a></li>
-    @if($request != null OR Auth::user()->id == 1 OR Auth::user()->id == 2 OR Auth::user()->id == 3 OR Auth::user()->id == 4)
+    @if($request != null OR Auth::user()->type == 1 OR Auth::user()->type == 2 OR Auth::user()->type == 3 OR Auth::user()->type == 4)
     <li class="treeview">
       <a href="#">
         <i class="fa fa-hourglass-o"></i> <span>Requests</span>
@@ -17,6 +17,13 @@
         <li><a href="/request"><i class="fa fa-flag"></i> Area</a></li>
         <li><a href="/request/file"><i class="fa fa-files-o"></i> File</a></li>
       </ul>
+    </li>
+    @endif
+    @if(Auth::user()->type == 1)
+    <li>
+      <a href="#">
+        <i class="fa fa-list"></i> <span>Logs</span>
+      </a>
     </li>
     @endif
 </ul>
@@ -64,12 +71,12 @@
                                     <td>
                                       {{$entry->headUser->first_name}} {{$entry->headUser->last_name}} 
                                   @endif
-                                    @if(Auth::user()->id == 1 OR Auth::user()->type == 2 OR Auth::user()->type == 3 OR Auth::user()->id == 4)
+                                    @if(Auth::user()->type == 1 OR Auth::user()->type == 2 OR Auth::user()->type == 3 OR (Auth::user()->type == 4 AND Auth::user()->dept_id == $department->id))
                                       <button type="button" class="update" style="border: none;">Edit</button>
                                     @endif
                                     </td>
                                   <td>
-                                    @if(Auth::user()->id == 1 OR Auth::user()->type == 2 OR Auth::user()->type == 3)
+                                    @if(Auth::user()->type == 1 OR Auth::user()->type == 2 OR Auth::user()->type == 3)
                                       <button type="button" class="edit btn btn-group btn-default btn-s">Edit</button>
                                       <button type="button" class="del btn btn-group btn-danger btn-s">Delete</button>
                                     @elseif($entry->departmentId == Auth::user()->dept_id AND (Auth::user()->type == 4 OR $entry->head == Auth::user()->id))
@@ -101,8 +108,8 @@
                         @else
                           <a href="/accreditation/" class="btn btn-default"><i class="fa fa-arrow-left"><span> Return</span></i></a>
                         @endif
-                        @foreach($access as $area)
-                          @if($area->head == Auth::user()->id OR Auth::user()->id == 1 OR Auth::user()->id == 2 OR Auth::user()->id == 3 OR Auth::user()->id == 4)
+                        @foreach($allview as $area)
+                          @if($area->head == Auth::user()->id OR Auth::user()->type == 1 OR Auth::user()->type == 2 OR Auth::user()->type == 3 OR Auth::user()->type == 4)
                             <button type="button" class="btn btn-group btn-default pull-right" data-toggle="modal" data-target="#departments">
                               <i class="fa fa-list-ul"><span> Departments</span></i></button>
                             @break

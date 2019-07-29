@@ -2,10 +2,10 @@
 
 @section('sidebar')
 <ul class="sidebar-menu" data-widget="tree">
-    <li><a href="/"><i class="fa fa-home"></i> <span>Home</span></a></li>
+    {{-- <li><a href="/"><i class="fa fa-home"></i> <span>Home</span></a></li> --}}
     <li class="active"><a href="/accreditation"><i class="fa fa-book"></i> <span>Accreditation</span></a></li>
     <li><a href="/messenger"><i class="fa fa-inbox"></i> <span>Message</span></a></li>
-    @if($request != null OR Auth::user()->id == 1 OR Auth::user()->id == 2 OR Auth::user()->id == 3 OR Auth::user()->id == 4)
+    @if($request != null OR Auth::user()->type == 1 OR Auth::user()->type == 2 OR Auth::user()->type == 3 OR Auth::user()->type == 4)
     <li class="treeview">
       <a href="#">
         <i class="fa fa-hourglass-o"></i> <span>Requests</span>
@@ -17,6 +17,13 @@
         <li><a href="/request"><i class="fa fa-flag"></i> Area</a></li>
         <li><a href="/request/file"><i class="fa fa-files-o"></i> File</a></li>
       </ul>
+    </li>
+    @endif
+    @if(Auth::user()->type == 1)
+    <li>
+      <a href="#">
+        <i class="fa fa-list"></i> <span>Logs</span>
+      </a>
     </li>
     @endif
 </ul>
@@ -54,13 +61,7 @@
                           </tbody>
                         </table>
                         <hr style="padding: 0px; margin: 0px; padding-bottom: 10px">
-                        @if($department == Auth::user()->dept_id AND Auth::user()->type == 4 OR Auth::user()->type == 3 OR Auth::user()->type == 2 OR Auth::user()->type == 1 OR $access->head == Auth::user()->id)
                           <a href="/accreditation/{{$agency->id}}/department/{{$department}}/areas/{{$access->id}}/parameters" class="btn btn-default"><i class="fa fa-arrow-left"><span> Return</span></i></a>
-                          <button type="button" class="btn btn-primary pull-right" data-toggle="modal" data-target="#add-parameter">
-                            <i class="fa fa-circle-plus"><span> Add Parameter</span></i></button>
-                        @else
-                          <a href="/accreditation/{{$agency->id}}/department/{{$department}}/areas/{{$access}}/parameters" class="btn btn-default"><i class="fa fa-arrow-left"><span> Return</span></i></a>
-                        @endif 
                 </div>
             </div>
     </section>

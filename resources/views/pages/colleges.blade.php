@@ -2,7 +2,7 @@
 
 @section('sidebar')
 <ul class="sidebar-menu" data-widget="tree">
-    <li><a href="/"><i class="fa fa-home"></i> <span>Home</span></a></li>
+    {{-- <li><a href="/"><i class="fa fa-home"></i> <span>Home</span></a></li> --}}
     <li class="active"><a href="/accreditation"><i class="fa fa-book"></i> <span>Accreditation</span></a></li>
     <li><a href="/messenger"><i class="fa fa-inbox"></i> <span>Message</span></a></li>
 </ul>

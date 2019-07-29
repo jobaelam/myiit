@@ -42,7 +42,7 @@ class AreaController extends Controller
         $agency = $request->agency; 
         $department = $request->department;
         $areas = array();
-        $access = AccessArea::where('departmentId', $department)->distinct()->get();
+        $access = AccessArea::where('departmentId', $department)->get();
         $data = array(
             'title' => Agency::find($agency)->name,
             'agency' => Agency::find($agency),
@@ -51,6 +51,7 @@ class AreaController extends Controller
             'department' => Department::find($department),
             'departments' => Department::all(),
             'access' => $access,
+            'allview' => AccessArea::all(),
             'areaView' => $areaView,
             'views' => AreaView::where('user', Auth::user()->id)->get(),
             'request' => AccessArea::where('head', Auth::user()->id)->first()

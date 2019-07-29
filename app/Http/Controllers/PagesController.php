@@ -76,18 +76,31 @@ class PagesController extends Controller
             );
         }elseif(Auth::user()->type == 4){
             $access = AccessArea::where('departmentId', Auth::user()->dept_id)->get();
-            foreach($access as $ass){
-                $datas[] = AreaView::where('accessId', $ass->id)->first();
-            };
-            $data = array(
-                'request' => $datas
-            );
+
+            if(count($access) > 0){
+                foreach($access as $ass){
+                    $datas[] = AreaView::where('accessId', $ass->id)->first();
+                };
+                $data = array(
+                    'request' => $datas,
+                );
+            }else{
+                $data = array(
+                    'request' => array(),
+                );
+            }
             
         }else{
             $access = AccessArea::where('head', Auth::user()->id)->first();
-            $data = array(
-                'request' => AreaView::where('accessId', $access->id)->get()
-            );
+            if($access != null){
+                $data = array(
+                    'request' => AreaView::where('accessId', $access->id)->get()
+                );
+            } else {
+                $data = array(
+                    'request' => array(),
+                );
+            }
         }
         return view('pages.request')->with($data);
     }
