@@ -21,7 +21,7 @@
     @endif
     @if(Auth::user()->type == 1)
     <li>
-      <a href="#">
+      <a href="/logs">
         <i class="fa fa-list"></i> <span>Logs</span>
       </a>
     </li>
@@ -60,6 +60,7 @@
                         @foreach($chats as $chat)
                         @csrf
                             <li value="{{$chat->user2}}" ><a href="#"><span>{{$chat->hasUser2->first_name}}</span> </a></li>
+                            <span class="label label-primary pull-right">12</span>
                         @endforeach
                      @endif
                      @if(count($chats2) > 0)

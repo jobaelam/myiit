@@ -118,7 +118,7 @@
                     {{Auth::user()->fullName()}}
                     @endif
                   @if(Auth::user()->id != 1)
-                  <small>{{Auth::user()->hasType->name}}</small>
+                  <small>{{Auth::user()->department->name}}</small>
                   @endif
                 </p>
               </li>

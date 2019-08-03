@@ -27,6 +27,7 @@ class CreateUsersTable extends Migration
             $table->foreign('type')->references('id')->on('types');
             $table->rememberToken();
             $table->timestamps();
+
         });
 
         DB::table('users')->insert(

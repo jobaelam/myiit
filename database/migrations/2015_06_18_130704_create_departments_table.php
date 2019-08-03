@@ -18,6 +18,9 @@ class CreateDepartmentsTable extends Migration
             $table->string('name');
             $table->unsignedBigInteger('college_id');
             $table->foreign('college_id')->references('id')->on('colleges');
+            $table->unsignedBigInteger('head')->nullable();
+            $table->foreign('head')->references('id')->on('users');
+            $table->timestamps();
         });
 
         DB::table('departments')->insert(

@@ -21,7 +21,7 @@
     @endif
     @if(Auth::user()->type == 1)
     <li>
-      <a href="#">
+      <a href="/logs">
         <i class="fa fa-list"></i> <span>Logs</span>
       </a>
     </li>
@@ -51,7 +51,10 @@
                             <th>Area</th>
                             <th>Description</th>
                             <th>Head</th>
-                            <th width=10%>Action</th>
+                            <th style="width: 25%">Status</th>
+                            @if(Auth::user()->type == 1 OR Auth::user()->type == 2 OR Auth::user()->type == 3 OR ((Auth::user()->type == 4 OR Auth::user()->id == $department->head) AND Auth::user()->dept_id == $department->id))
+                              <th width=10%>Action</th>
+                            @endif
                             <th style="display:none;"></th>
                           </tr>
                           </thead>
@@ -75,12 +78,16 @@
                                       <button type="button" class="update" style="border: none;">Edit</button>
                                     @endif
                                     </td>
-                                  <td>
-                                    @if(Auth::user()->type == 1 OR Auth::user()->type == 2 OR Auth::user()->type == 3)
+                                    <td>
+                                      <div class="progress progress-xs">
+                                          <div class="progress-bar progress-bar-success" data-toggle="tooltip" title="{{100*$entry->status}}%" style="width: {{100*$entry->status}}%"></div>
+                                      </div>
+                                    </td>                                  
+                                    @if(Auth::user()->type == 1 OR Auth::user()->type == 2 OR Auth::user()->type == 3 OR $entry->departmentId == Auth::user()->dept_id AND (Auth::user()->type == 4 OR $entry->head == Auth::user()->id))
+                                    <td>
                                       <button type="button" class="edit btn btn-group btn-default btn-s">Edit</button>
                                       <button type="button" class="del btn btn-group btn-danger btn-s">Delete</button>
-                                    @elseif($entry->departmentId == Auth::user()->dept_id AND (Auth::user()->type == 4 OR $entry->head == Auth::user()->id))
-                                    @elseif($entry->head == null)
+                                    </td>
                                     @else
                                         @if(in_array($entry->id, $areaView) OR $areaView != null)
                                           @foreach($views as $view)
@@ -94,24 +101,41 @@
                                           <button value="{{$entry->id}}" class="request btn btn-block btn-warning btn-s" style="width: 100%">Request</button>
                                         @endif
                                     @endif
-                                  </td>
                                 </tr>
                               @endif
                              @endforeach
                           </tbody>
                         </table>
                         <hr style="padding: 0px; margin: 0px; padding-bottom: 10px">
+                        <div class="form-inline">
                         @if(Auth::user()->id == 1)
                           <a href="/accreditation/{{$agency->id}}" class="btn btn-default"><i class="fa fa-arrow-left"><span> Return</span></i></a>
-                          <button type="button" class="btn btn-group btn-primary pull-right" data-toggle="modal" data-target="#add-area">
+                          <button type="button" class="btn btn-group btn-primary pull-right" data-toggle="modal" data-target="#add-area">                            
                             <i class="fa fa-circle-plus"><span> Add Area</span></i></button>
                         @else
-                          <a href="/accreditation/" class="btn btn-default"><i class="fa fa-arrow-left"><span> Return</span></i></a>
+                          <a href="/accreditation/" class="btn form-control btn-default"><i class="fa fa-arrow-left"><span> Return</span></i></a>
                         @endif
                         @foreach($allview as $area)
                           @if($area->head == Auth::user()->id OR Auth::user()->type == 1 OR Auth::user()->type == 2 OR Auth::user()->type == 3 OR Auth::user()->type == 4)
-                            <button type="button" class="btn btn-group btn-default pull-right" data-toggle="modal" data-target="#departments">
+                            <span>Accreditation Head:</span>
+                            <select id="editAccHead" name="editHead" class="form-control" value="" disabled>
+                              <option disabled selected>
+                                @if($department->head != null)
+                                {{$department->hasHead->first_name}} {{$department->hasHead->last_name}}
+                                @else
+                                Not Yet Assigned
+                                @endif
+                              </option>
+                              @foreach($users as $user)
+                                @if($user->dept_id == $department->id AND $user->id != 1)
+                                  <option value="{{$user->id}}">{{$user->first_name}} {{$user->last_name}}</option>
+                                @endif
+                              @endforeach
+                            </select>
+                            <button id="editAccHeadButton" type="button" class="form-control btn btn-success" style="border: none;">Edit</button>
+                            <button type="button" class="btn btn-group btn-default form-control pull-right" style="margin-right: 0.1em" data-toggle="modal" data-target="#departments">
                               <i class="fa fa-list-ul"><span> Departments</span></i></button>
+                            </div>
                             @break
                           @endif
                         @endforeach
@@ -305,6 +329,24 @@
 <script>
       var editClicked, deleteClicked, updateClicked, requestClicked;
       $(document).ready(function() {
+        $('[data-toggle="tooltip"]').tooltip();
+        $('#editAccHeadButton').click(function(){
+          if($('#editAccHead').attr('disabled')){
+            $('#editAccHead').removeAttr("disabled");
+            $(this).removeClass("btn-success");
+            $(this).addClass("btn-danger");
+            $(this).html('Save');
+          }else{
+            $('#editAccHead').attr('disabled',true);
+            $(this).addClass("btn-success");
+            $(this).removeClass("btn-danger");
+            $(this).html('Edit');
+            $.post('/changeAccHead', {_token:"{{csrf_token()}}",accHead: $('#editAccHead').val(), department: '{{$department->id}}'}, function(data){
+                console.log(data);
+            });
+          }
+        });
+
         $('.edit').click(function() {
           editClicked = true;
         });

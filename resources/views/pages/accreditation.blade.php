@@ -21,7 +21,7 @@
     @endif
     @if(Auth::user()->type == 1)
     <li>
-      <a href="#">
+      <a href="/logs">
         <i class="fa fa-list"></i> <span>Logs</span>
       </a>
     </li>
@@ -64,7 +64,7 @@
                           <td>{{$agency->desc}}</td>
                           <td>
                               <div class="progress progress-xs">
-                                  <div class="progress-bar progress-bar-success" style="width: {{$agency->status}}%"></div>
+                                  <div class="progress-bar progress-bar-success" data-toggle="tooltip" title="{{100*$agency->status}}%" style="width: {{100*$agency->status}}%"></div>
                               </div>
                           </td>
                           @if( Auth::user()->id == 1)
@@ -198,6 +198,7 @@
 <script>
       var editClicked, deleteClicked;
       $(document).ready(function() {
+        $('[data-toggle="tooltip"]').tooltip();
         $('.edit').click(function() {
           editClicked = true;
         });

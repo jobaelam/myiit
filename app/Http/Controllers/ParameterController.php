@@ -11,6 +11,7 @@ use App\Agency;
 use App\User;
 use App\Department;
 use App\Parameter;
+use App\ParameterView;
 use App\ParameterName;
 use App\File;
 use App\Benchmark;
@@ -35,6 +36,14 @@ class ParameterController extends Controller
      */
     public function index(Request $request)
     {
+        $parametersView = ParameterView::where('user', Auth::user()->id)->distinct()->get('parameterId');
+        if(count($parametersView) > 0){
+            foreach($parametersView as $parameter){
+                $parameterView[] = $parameter->parameterId; 
+            };
+        }else{
+            $parameterView = array();
+        }
         $agency = $request->agency; 
         $department = $request->department;
         $access = $request->access;
@@ -44,7 +53,9 @@ class ParameterController extends Controller
             'area' => Area::where(AccessArea::find($access)->areaId),
             'department' => $department,
             'access' => AccessArea::find($access),
+            'parameterView' => $parameterView,
             'parameters' => Parameter::where('accessId', $access)->get(),
+            'views' => ParameterView::where('user', Auth::user()->id)->get(),
             'request' => AccessArea::where('head', Auth::user()->id)->first(),
         );
 
@@ -88,7 +99,7 @@ class ParameterController extends Controller
         $parameterName = ParameterName::all();
         foreach($parameterName as $names){
             $benchmark = array(
-                'parameterId' => $access,
+                'parameterId' => $params,
                 'nameId' => $names->id
             );
             Benchmark::create($benchmark);
@@ -120,5 +131,40 @@ class ParameterController extends Controller
     public function destroy(Request $request)
     {
         Parameter::find($request->deleteId)->delete();
+    }
+
+    public function request(Request $request){
+        $access = $request->access;
+        $user = $request->user;
+        $view = new ParameterView;
+        $view->parameterId = $access;
+        $view->user = $user;
+        $view->isApproved = false;
+        $view->save();
+        // return redirect('/accreditation/'.$request->agency.'/department/'.$request->department.'/areas');
+    }
+
+    public function done(Request $request){
+        $benchmark = Benchmark::find($request->bench);
+        // $benchmark->status = 1;
+        $benchmark->update(['status' => 1]);
+        $benches = Benchmark::where('parameterId', $request->parameter)->get();
+        $ParameterStatus = Parameter::find($benchmark->parameterId);
+        $ParameterStatus->status = $ParameterStatus->status + ($benchmark->status)/(count($benches));
+        $ParameterStatus->save();
+
+        $parameters = Parameter::where('accessId', $request->areaAccess)->get();
+        $AccessStatus = AccessArea::find($ParameterStatus->accessId);
+        $AccessStatus->status = ($ParameterStatus->status)/(count($parameters));
+        $AccessStatus->save();
+
+        $Area = Area::where('agency_id',$request->agency)->get();
+        $AgencyStatus = Agency::find($request->agency);
+        $AgencyStatus->status = ($AccessStatus->status)/(count($Area));
+        $AgencyStatus->save();
+    }
+
+    public function unDone(Request $request){
+        return 'done';
     }
 }

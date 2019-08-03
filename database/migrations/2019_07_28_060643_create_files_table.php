@@ -23,6 +23,7 @@ class CreateFilesTable extends Migration
             $table->foreign('userId')->references('id')->on('users');
             $table->unsignedBigInteger('benchmarkId');
             $table->foreign('benchmarkId')->references('id')->on('parameters');
+            $table->decimal('status',3,2)->default(0);
             $table->timestamps();
         });
     }

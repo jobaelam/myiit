@@ -18,6 +18,7 @@ class CreateParametersTable extends Migration
             $table->unsignedBigInteger('accessId');
             $table->foreign('accessId')->references('id')->on('access_areas');
             $table->string('name');
+            $table->decimal('status',3,2)->default(0);
             $table->timestamps();
         });
     }
