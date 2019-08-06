@@ -41,6 +41,7 @@ class CreateUsersTable extends Migration
                 'profile_image' => 'http://via.placeholder.com/150x150',
             )
         );
+
         //Information Technology
         DB::table('users')->insert(
             array(

@@ -9,7 +9,10 @@ use App\Agency;
 use App\User;
 use App\Department;
 use App\Parameter;
+use App\ParameterView;
 use App\ParameterName;
+use App\File;
+use App\Benchmark;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -186,4 +189,6 @@ class AreaController extends Controller
             ['head' => $head]
         );
     }
+
+
 }
