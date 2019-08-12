@@ -245,6 +245,7 @@
             e.preventDefault();
             var editForm = $(this).serialize();
             $.post('/editParameter', editForm, function(data){
+              //console.log(data);
               window.location.reload();
             })
         });

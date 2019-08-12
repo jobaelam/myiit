@@ -51,7 +51,7 @@
                       <th>Agencies</th>
                       <th>Description</th>
                       <th style="width: 25%">Status</th>
-                      @if( Auth::user()->id == 1)
+                      @if( Auth::user()->id == 1 OR Auth::user()->type == 2 or Auth::user()->type == 3)
                         <th width=10%>Action</th>
                       @endif
                     </tr>
@@ -67,7 +67,7 @@
                                   <div class="progress-bar progress-bar-success" data-toggle="tooltip" title="{{100*$agency->status}}%" style="width: {{100*$agency->status}}%"></div>
                               </div>
                           </td>
-                          @if( Auth::user()->id == 1)
+                          @if( Auth::user()->type == 1 OR Auth::user()->type == 2 OR Auth::user()->type == 3)
                             <td>
                               <button type="button" class="edit btn btn-default btn-s">Edit</button>
                               <button type="button" class="del btn btn-danger btn-s">Delete</button>
@@ -78,7 +78,7 @@
                     @endif
                   </tbody>
                 </table>
-                @if( Auth::user()->id == 1)
+                @if( Auth::user()->type == 1 OR Auth::user()->type == 2 OR Auth::user()->type == 3)
                   <hr style="padding: 0px; margin: 0px; padding-bottom: 10px">
                   <button type="button" class="btn btn-info pull-right" data-toggle="modal" data-target="#add-agency">
                     <i class="fa fa-plus-circle"><span> Add Agency</span></i>
@@ -213,21 +213,29 @@
             var editName = $(this).find('td:eq(0)').text();
             var editDesc = $(this).find('td:eq(1)').text();
             if(editClicked){
+
               $('#editId').val(rowId);
               $('#editName').val(editName);
               $('#editDesc').val(editDesc);
               $('#edit-agency').modal();
               editClicked = false;
+
             } else if(deleteClicked){
+
               $('#deleteId').val(rowId);
               $('#deleteMessage').html('Do you want to delete "'+editName+'"?');
               $('#delete-agency').modal();
               deleteClicked = false;
+
             }else {
+
               if('{{Auth::user()->type}}' == 1 || '{{Auth::user()->type}}' == 2 || '{{Auth::user()->type}}' == 3){
+
                 //window.location.href="agency/"+rowId+"/colleges";
                 window.location.href="/accreditation/"+rowId;
+
               } else if('{{Auth::user()->type}}' == 4 || '{{Auth::user()->type}}' == 5){
+                
                 window.location.href="/accreditation/"+rowId+"/department/"+{{Auth::user()->dept_id}}+"/areas";
               }
             } 

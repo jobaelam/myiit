@@ -103,7 +103,8 @@
           var bench = $(this).attr('value');
           if(doneClicked){
             $.post('/done', {_token:"{{csrf_token()}}",bench: bench, agency: '{{$agency->id}}', areaAccess: '{{$access->id}}', parameter: {{$parameters->id}}, department: '{{$department}}'}, function(data){
-                document.location.reload();
+               //console.log(data);
+              document.location.reload();
             });
             doneClicked = false;
           } else if(unDoneClicked){

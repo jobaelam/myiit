@@ -3,7 +3,6 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-
 class AccessArea extends Model
 {
     protected $guarded = [];

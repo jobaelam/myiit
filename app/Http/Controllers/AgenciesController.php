@@ -61,6 +61,7 @@ class AgenciesController extends Controller
         );
         $Agency = new Agency();
         $Agency->create($data);
+        
         if(Auth::user()->type !=1){
             $log = Auth::user()->first_name.' '.Auth::user()->last_name.' added Agency '.$name.' ('.$desc.')';
         }else{

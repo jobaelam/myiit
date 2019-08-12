@@ -31,4 +31,13 @@ class EventServiceProvider extends ServiceProvider
 
         //
     }
+    //retrieving
+    //retrieved
+    //updating
+    //updated
+    //saved
+    //storing
+    //stored
+    //deleting
+    //deleted
 }

@@ -15,6 +15,7 @@ use App\Parameter;
 use App\ParameterView;
 use App\ParameterName;
 use App\File;
+use App\Log;
 use App\Benchmark;
 
 
@@ -105,6 +106,19 @@ class ParameterController extends Controller
             );
             Benchmark::create($benchmark);
         }
+
+        if(Auth::user()->type != 1){
+
+            $log = Auth::user()->first_name.' '.Auth::user()->last_name.' added Parameter '.$name.'';
+        } else {
+
+            $log = Auth::user()->first_name.' added Parameter '.$name.'';
+        
+        }
+
+        $logs = new Log;
+        $logs->record = $log;
+        $logs->save();
     }
 
     /**
@@ -118,9 +132,21 @@ class ParameterController extends Controller
     {
         $editId = $request->editId;
         $editName = $request->editName;
+        $param = Parameter::find($editId);
+        $oldParamName = Parameter::find($editId)->name;
         Parameter::where('id',$editId)->update([
         	'name' => $editName
         ]);
+
+        if(Auth::user()->type !=1){
+            $log = Auth::user()->first_name.' '.Auth::user()->last_name.' edited Parameter '.$oldParamName.' to '.$editName.'';
+        }else{
+            $log = Auth::user()->first_name.' edited Parameter '.$oldParamName.' to '.$editName.'';
+        }
+
+        $logs = new Log;
+        $logs->record = $log;
+        $logs->save();
     }
 
     /**
@@ -156,33 +182,44 @@ class ParameterController extends Controller
         //if done is clicked, status is updated to 1 from 0
         $benchmark->update(['status' => 1]);
 
-        
         //same as $benchmark::where('parameterId',($parameter->pluck('id')))->get();
         //which gets all benchmark where parameterId and bench id are connected
-        // $benches = Benchmark::where('parameterId', $request->parameter)->get();
+        $benches = Benchmark::where('parameterId', $request->parameter)->get();
         // //same as $parameter::where('id',($benchmark->pluck('parameterId')))->get();
         // //gets the parameter in where you click 'done' button example the parameter "student"
-        // $ParameterStatus = Parameter::find($benchmark->parameterId);
+        $ParameterStatus = Parameter::find($benchmark->parameterId);
 
         // //so this one changes the status of parameter where 'done' button is clicked
-        // $ParameterStatus->status = ($ParameterStatus->status) + (($benchmark->status)/(count($benches)));
+        $ParameterStatus->status = ($ParameterStatus->status) + (($benchmark->status)/(count($benches)));
+
+        $ParameterStatus->save();
+
+
+
 
         // + ($benchmark->status)/(count($benches));
         //save in parameter status the total percentage of the last parameter clicked
-        $benchmark->save();
+        
 
         //this query gets all parameters that is connected to the accessId
         //same as $parameter::where('accessId',($areaaccess->pluck('id')))->get();
         //so when you count(parameters) you get the total number of parameters
-        // $parameters = Parameter::where('accessId', $request->access)->get();
-
+        $totalStat = null;
+        $parameters = Parameter::where('accessId', $request->areaAccess)->get();
+        foreach($parameters as $test){
+            $totalStat = $totalStat + $test->status;
+        }
         // // //real problem starts here
         // // pluck() and sum() wont work 
-        // $AccessStatus = AccessArea::find($ParameterStatus->accessId);
+        $AccessStatus = AccessArea::find($ParameterStatus->accessId);
         // // // $parameterTotal = DB::table('parameters')->where('accessId',($benchmark->pluck('parameterId')))->sum('status');
         // //$parameterTotal = Parameter::where('accessId',$benchmark->parameterId)->sum('status');
+        
 
-        // $AccessStatus->status = (($AccessStatus->status)/(count($parameters)));
+        $AccessStatus->status = $totalStat/(count($parameters));
+        $AccessStatus->save();
+
+        // $AccessStatus->save();
         // // // + (($ParameterStatus->status)/(count($parameters)));
         // $AccessStatus->save();
 

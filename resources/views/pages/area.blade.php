@@ -406,7 +406,8 @@
             e.preventDefault();
             var deleteForm = $(this).serialize();
             $.post('/deleteArea', deleteForm, function(data){
-              window.location.reload();
+              console.log(data);
+              //window.location.reload();
             })
         });
 
@@ -415,6 +416,7 @@
             e.preventDefault();
             var editForm = $(this).serialize();
             $.post('/editAreaHead', editForm, function(data){
+              //console.log(data);
               window.location.reload();
             })
         });
@@ -431,6 +433,7 @@
             e.preventDefault();
             var editForm = $(this).serialize();
             $.post('/editArea', editForm, function(data){
+              //console.log(data);
               window.location.reload();
             })
         });
