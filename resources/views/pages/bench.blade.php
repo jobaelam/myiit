@@ -14,14 +14,14 @@
         </span>
       </a>
       <ul class="treeview-menu">
-        <li><a href="/request"><i class="fa fa-flag"></i> Area</a></li>
+        <li><a href="/request"><i class="fa fa-flag"></i> Parameter</a></li>
         <li><a href="/request/file"><i class="fa fa-files-o"></i> File</a></li>
       </ul>
     </li>
     @endif
     @if(Auth::user()->type == 1)
     <li>
-      <a href="#">
+      <a href="/logs">
         <i class="fa fa-list"></i> <span>Logs</span>
       </a>
     </li>
@@ -48,14 +48,32 @@
                           <thead>
                             <tr class="active" disabled>
                               <th>Name</th>
-                              <th width="10%">File</th>
+                              <th style="width: 25%">Status</th>
+                              <th width="5%">File</th>
+                              @if( Auth::user()->id == $AccHead OR Auth::user()->type == 1)
+                                <th width="7%">Action</th>
+                              @endif
                             </tr>
                           </thead>
                           <tbody>
                             @foreach($bench as $benchmark)                            
                                 <tr value="{{$benchmark->id}}" class="table-row">
                                   <td>{{$benchmark->hasName->name}}</td>
+                                  <td>
+                                    <div class="progress progress-xs">
+                                        <div class="progress-bar progress-bar-success progress-bar-striped" data-toggle="tooltip" title="{{100*$benchmark->status}}%" style="width: {{100*$benchmark->status}}%"></div>
+                                    </div>
+                                  </td>
                                   <td>{{count($benchmark->hasFiles)}}</td>
+                                  @if(Auth::user()->id == $AccHead  OR Auth::user()->type == 1)
+                                    <td>
+                                      @if($benchmark->status == 0)
+                                        <button type="button" class="done btn btn-block btn-success btn-s">Done</button>
+                                      @else
+                                        <button type="button" class="unDone btn btn-block btn-danger btn-s">Undone</button>
+                                      @endif
+                                    </td>
+                                  @endif
                                 </tr>
                              @endforeach
                           </tbody>
@@ -69,13 +87,38 @@
 <!-- jQuery 3 -->
 <script src="/bower_components/jquery/dist/jquery.min.js"></script>
 <script>
-      var editClicked, deleteClicked, updateClicked, requestClicked;
+      var unDoneClicked, doneClicked;
+
+      $('.done').click(function() {
+        doneClicked = true;
+      })
+
+      $('.unDone').click(function() {
+        unDoneClicked = true;
+      })
+
       $(document).ready(function() {
-        $('.table-row:has(td)').click(function() 
-        {
+        $('[data-toggle="tooltip"]').tooltip();
+        $('.table-row:has(td)').click(function() {
+          var bench = $(this).attr('value');
+          if(doneClicked){
+            $.post('/done', {_token:"{{csrf_token()}}",bench: bench, agency: '{{$agency->id}}', areaAccess: '{{$access->id}}', parameter: {{$parameters->id}}, department: '{{$department}}'}, function(data){
+                console.log(data);
+                document.location.reload();
+            });
+            doneClicked = false;
+          } else if(unDoneClicked){
+            $.post('/unDone', {_token:"{{csrf_token()}}",bench: bench, agency: '{{$agency->id}}', areaAccess: '{{$access->id}}', parameter: {{$parameters->id}}, department: '{{$department}}'}, function(data){
+                document.location.reload();
+            });
+            unDoneClicked = false;
+          }else {
             var rowId = $(this).attr('value');
             window.location.href="/accreditation/"+{{$agency->id}}+"/department/"+{{$department}}+"/areas/"+{{$access->id}}+"/parameters/"+{{$parameters->id}}+"/bench/"+rowId+"/files";
-        });
+          }
+         });
+
+
       });
 </script>
 @endsection

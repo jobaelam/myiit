@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateBenchmarksTable extends Migration
+class CreateParameterViewsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,13 @@ class CreateBenchmarksTable extends Migration
      */
     public function up()
     {
-        Schema::create('benchmarks', function (Blueprint $table) {
+        Schema::create('parameter_views', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('parameterId');
             $table->foreign('parameterId')->references('id')->on('parameters');
-            $table->unsignedBigInteger('nameId');
-            $table->foreign('nameId')->references('id')->on('parameter_names');
-            $table->decimal('status',3,2)->default(0);
+            $table->unsignedBigInteger('user');
+            $table->foreign('user')->references('id')->on('users');
+            $table->boolean('isApproved')->default(false);
             $table->timestamps();
         });
     }
@@ -31,6 +31,6 @@ class CreateBenchmarksTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('benchmarks');
+        Schema::dropIfExists('parameter_views');
     }
 }

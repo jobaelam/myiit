@@ -54,7 +54,8 @@ class AreaController extends Controller
             'allview' => AccessArea::all(),
             'areaView' => $areaView,
             'views' => AreaView::where('user', Auth::user()->id)->get(),
-            'request' => AccessArea::where('head', Auth::user()->id)->first()
+            'request' => AccessArea::where('head', Auth::user()->id)->first(),
+            'AccHead' => Department::find($department)->head,
         );
 
         return view('pages.area')->with($data);
@@ -92,6 +93,16 @@ class AreaController extends Controller
             );
             AccessArea::create($datas);
         }
+
+        // if(Auth::user()->type !=1){
+        //     $log = Auth::user()->first_name.' '.Auth::user()->last_name.' from '.Auth::user()->department->name.' added '.$name.' ('.$request->desc.')';
+        // }else{
+        //     $log = Auth::user()->first_name.' added '.$name.' ('.$request->desc.')';
+        // }
+
+        // $logs = new Log;
+        // $logs->record = $log;
+        // $logs->save();
     }
 
     /**
@@ -121,6 +132,8 @@ class AreaController extends Controller
             'name' => $editName,
             'desc' => $editDesc
         ));
+
+        
     }
 
     /**
@@ -165,5 +178,13 @@ class AreaController extends Controller
         $view->isApproved = false;
         $view->save();
         // return redirect('/accreditation/'.$request->agency.'/department/'.$request->department.'/areas');
+    }
+
+    public function changeAccHead(Request $request){
+        $dept = $request->department;
+        $head = $request->accHead;
+        Department::find($dept)->update(
+            ['head' => $head]
+        );
     }
 }

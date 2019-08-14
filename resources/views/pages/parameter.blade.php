@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.app') 
 
 @section('sidebar')
 <ul class="sidebar-menu" data-widget="tree">
@@ -14,14 +14,14 @@
         </span>
       </a>
       <ul class="treeview-menu">
-        <li><a href="/request"><i class="fa fa-flag"></i> Area</a></li>
+        <li><a href="/request"><i class="fa fa-flag"></i> Parameter</a></li>
         <li><a href="/request/file"><i class="fa fa-files-o"></i> File</a></li>
       </ul>
     </li>
     @endif
     @if(Auth::user()->type == 1)
     <li>
-      <a href="#">
+      <a href="/logs">
         <i class="fa fa-list"></i> <span>Logs</span>
       </a>
     </li>
@@ -48,23 +48,38 @@
                           <thead>
                             <tr class="active" disabled>
                               <th>Name</th>
-                              @if(count($parameters) > 0)
-                                @if(Auth::user()->id == 1 OR Auth::user()->type == 2 OR Auth::user()->type == 3 OR Auth::user()->type == 4 OR $access->head == Auth::user()->id)
-                                  <th width=10%>Action</th>
-                                @endif
-                              @endif
+                              <th style="width: 25%">Status</th>
+                              <th width=10%>Action</th>
                             </tr>
                           </thead>
                           <tbody>
-                            @foreach($parameters as $parameter)                            
+                            @foreach($parameters as $parameter)                          
                                 <tr value="{{$parameter->id}}" class="table-row">
                                   <td>{{$parameter->name}}</td>
-                                  @if(Auth::user()->id == 1 OR Auth::user()->type == 2 OR Auth::user()->type == 3 OR Auth::user()->type == 4 OR $access->head == Auth::user()->id)
-                                    <td>
+                                  <td>
+                                    <div class="progress progress-xs">
+                                        <div class="progress-bar progress-bar-success" data-toggle="tooltip" title="{{100*$parameter->status}}%" style="width: {{100*$parameter->status}}%"></div>
+                                    </div>
+                                  </td>
+                                  <td>
+                                  @if(Auth::user()->id == 1 OR Auth::user()->type == 2 OR Auth::user()->type == 3 OR Auth::user()->type == 4 OR  Auth::user()->id == $AccHead OR $access->head == Auth::user()->id)
                                       <button type="button" class="edit btn btn-group btn-default btn-s">Edit</button>
                                       <button type="button" class="del btn btn-group btn-danger btn-s">Delete</button>
-                                    </td>
+                                  @else
+                                        @if(in_array($parameter->id, $parameterView)) 
+                                          @foreach($views as $view)
+                                            <script type="text/javascript">console.log('{{$view->parameterId == $parameter->id AND $view->isApproved == 1}}')</script> 
+                                            @if($view->parameterId == $parameter->id AND $view->isApproved == 1)
+                                              <button type="button" class="open btn btn-block btn-success btn-s" disabled>Verified</button>
+                                            @elseif($view->parameterId == $parameter->id AND $view->isApproved == 0)
+                                              <button class="request btn btn-block btn-info btn-s" disabled style="width: 100%">Pending</button>
+                                            @endif
+                                          @endforeach
+                                        @else
+                                          <button value="{{$parameter->id}}" class="request btn btn-block btn-warning btn-s">Request</button>
+                                        @endif
                                   @endif
+                                  </td>
                                 </tr>
                              @endforeach
                           </tbody>
@@ -173,6 +188,7 @@
 <script>
       var editClicked, deleteClicked, updateClicked, requestClicked;
       $(document).ready(function() {
+        $('[data-toggle="tooltip"]').tooltip();
         $('.edit').click(function() {
           editClicked = true;
         });
@@ -181,10 +197,15 @@
           deleteClicked = true;
         })
 
+        $('.request').click(function(){
+          requestClicked = true;
+        })
+
         $('.table-row:has(td)').click(function() 
         {
             var rowId = $(this).attr('value');
             var editName = $(this).find('td:eq(0)').text();
+            var request = $(this).find('.request').text();
             if(editClicked){
               console.log(rowId);
               $('#editId').val(rowId);
@@ -196,8 +217,17 @@
               $('#deleteMessage').html('Do you want to delete "'+editName+'"?');
               $('#delete-parameter').modal();
               deleteClicked = false;
+            }else if(requestClicked){
+               $.post('/requestParameter', {_token:"{{csrf_token()}}",access: rowId, user:'{{Auth::user()->id}}'}, function(data){
+                window.location.reload();
+               })
+              requestClicked = false;
             }else {
+              if(request != 'Request'){
+                if (request != 'Pending') {
                   window.location.href="/accreditation/"+{{$agency->id}}+"/department/"+{{$department}}+"/areas/"+{{$access->id}}+"/parameters/"+rowId+"/bench";
+                }
+              }
             } 
         });
 

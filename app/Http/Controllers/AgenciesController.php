@@ -6,6 +6,7 @@ use App\Agency;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\AccessArea;
+use App\Log;
 
 class AgenciesController extends Controller
 {
@@ -60,6 +61,15 @@ class AgenciesController extends Controller
         );
         $Agency = new Agency();
         $Agency->create($data);
+        if(Auth::user()->type !=1){
+            $log = Auth::user()->first_name.' '.Auth::user()->last_name.' added Agency '.$name.' ('.$desc.')';
+        }else{
+            $log = Auth::user()->first_name.' added Agency '.$name.' ('.$desc.')';
+        }
+
+        $logs = new Log;
+        $logs->record = $log;
+        $logs->save();
     }
 
     /**
@@ -96,11 +106,22 @@ class AgenciesController extends Controller
         $editId = $request->editId;
         $editName = $request->editName;
         $editDesc = $request->editDesc;
+        $oldName = Agency::find($editId)->name;
+        $oldDesc = Agency::find($editId)->desc;
 
         Agency::find($editId)->update(array(
             'name' => $editName,
             'desc' => $editDesc
         ));
+        if(Auth::user()->type !=1){
+            $log = Auth::user()->first_name.' '.Auth::user()->last_name.' edited agency '.$oldName.' ('.$oldDesc.') to '.$editName.' ('.$editDesc.')';
+        }else{
+            $log = Auth::user()->first_name.' edited agency '.$oldName.' ('.$oldDesc.') to '.$editName.' ('.$editDesc.')';
+        }
+
+        $logs = new Log;
+        $logs->record = $log;
+        $logs->save();
     }
 
     /**
@@ -111,6 +132,17 @@ class AgenciesController extends Controller
      */
     public function destroy(Request $request)
     {
+        $delete = Agency::find($request->deleteId)->name;
+        if(Auth::user()->type !=1){
+            $log = Auth::user()->first_name.' '.Auth::user()->last_name.' deleted agency '.$delete;
+        }else{
+            $log = Auth::user()->first_name.' deleted agency '.$delete;
+        }
+
+        $logs = new Log;
+        $logs->record = $log;
+        $logs->save();
+
         Agency::find($request->deleteId)->delete();
     }
 }

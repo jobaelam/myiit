@@ -13,6 +13,7 @@ use App\AccessArea;
 use App\AreaView;
 use App\FileView;
 use App\File;
+use App\Log;
 use App\Parameter;
 
 
@@ -110,6 +111,13 @@ class PagesController extends Controller
                 'request' => FileView::all()
             );
         return view('pages.requestfile')->with($data);
+    }
+
+    public function logs(){
+            $data = array(
+                'logs' => Log::all()
+            );
+        return view('pages.logs')->with($data);
     }
 
     public function displayRequest(Request $request){

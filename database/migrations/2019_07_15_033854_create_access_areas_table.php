@@ -21,6 +21,7 @@ class CreateAccessAreasTable extends Migration
             $table->foreign('departmentId')->references('id')->on('departments');
             $table->unsignedBigInteger('head')->nullable();
             $table->foreign('head')->references('id')->on('users');
+            $table->decimal('status',3,2)->default(0);
             $table->timestamps();
         });
     }

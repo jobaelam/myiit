@@ -15,7 +15,12 @@
 //Route::get('/', 'PagesController@index');
 Route::resource('/','AgenciesController');
 Route::get('/request', 'PagesController@request');
+Route::get('/logs', 'PagesController@logs');
+Route::any('/done', 'ParameterController@done');
+Route::any('/unDone', 'ParameterController@unDone');
 Route::get('/request/file', 'PagesController@requestFile');
+Route::any('/requestParameter', 'ParameterController@request');
+Route::any('/changeAccHead', 'AreaController@changeAccHead');
 Route::get('/accreditation/{agencyId}', 'PagesController@departments');
 Route::resource('accreditation','AgenciesController');
 Route::get('/profile', 'PagesController@profile');

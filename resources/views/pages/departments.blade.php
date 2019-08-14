@@ -14,14 +14,14 @@
         </span>
       </a>
       <ul class="treeview-menu">
-        <li><a href="/request"><i class="fa fa-flag"></i> Area</a></li>
+        <li><a href="/request"><i class="fa fa-flag"></i> Parameter</a></li>
         <li><a href="/request/file"><i class="fa fa-files-o"></i> File</a></li>
       </ul>
     </li>
     @endif
     @if(Auth::user()->type == 1)
     <li>
-      <a href="#">
+      <a href="/logs">
         <i class="fa fa-list"></i> <span>Logs</span>
       </a>
     </li>
