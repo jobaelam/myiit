@@ -19,13 +19,6 @@
       </ul>
     </li>
     @endif
-    @if(Auth::user()->type == 1)
-    <li>
-      <a href="/logs">
-        <i class="fa fa-list"></i> <span>Logs</span>
-      </a>
-    </li>
-    @endif
 </ul>
 @endsection
 
@@ -330,12 +323,16 @@
       var editClicked, deleteClicked, updateClicked, requestClicked;
       $(document).ready(function() {
         $('[data-toggle="tooltip"]').tooltip();
+
         $('#editAccHeadButton').click(function(){
           if($('#editAccHead').attr('disabled')){
             $('#editAccHead').removeAttr("disabled");
             $(this).removeClass("btn-success");
             $(this).addClass("btn-danger");
             $(this).html('Save');
+            // $.post('/changeAccHead', {_token:"{{csrf_token()}}",accHead: $('#editAccHead').val(), department: '{{$department->id}}'}, function(data){
+            //     window.location.reload();
+            // });
           }else{
             $('#editAccHead').attr('disabled',true);
             $(this).addClass("btn-success");
@@ -400,6 +397,7 @@
               }
             } 
         });
+
 
         $('#deleteForm').submit(function(e)
         {

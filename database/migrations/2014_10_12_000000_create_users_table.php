@@ -222,13 +222,14 @@ class CreateUsersTable extends Migration
                 'profile_image' => 'http://via.placeholder.com/150x150',
             )
         );
-    }
+     }
 
     /**
      * Reverse the migrations.
      *
      * @return void
      */
+
     public function down()
     {
         Schema::dropIfExists('users');
