@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+
 class AccessArea extends Model
 {
     protected $guarded = [];
@@ -17,5 +18,9 @@ class AccessArea extends Model
 
     public function hasDepartment(){
         return $this->belongsTo(Department::class, 'departmentId', 'id');
+    }
+
+    public function totalParameterStatus(){
+        return $this->hasMany(Parameter::class, 'accessId','id');
     }
 }

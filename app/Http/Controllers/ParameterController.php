@@ -59,6 +59,7 @@ class ParameterController extends Controller
             'parameters' => Parameter::where('accessId', $access)->get(),
             'views' => ParameterView::where('user', Auth::user()->id)->get(),
             'request' => AccessArea::where('head', Auth::user()->id)->first(),
+            'AccHead' => Department::find($department)->head,
         );
 
         return view('pages.parameter')->with($data);
@@ -78,6 +79,7 @@ class ParameterController extends Controller
             'parameters' => Parameter::find($parameter)->first(),
             'bench' => Benchmark::where('parameterId', $parameter)->get(),
             'request' => AccessArea::where('head', Auth::user()->id)->first(),
+            'AccHead' => Department::find($department)->head,
         );
 
         return view('pages.bench')->with($data);
@@ -168,9 +170,44 @@ class ParameterController extends Controller
         $view->user = $user;
         $view->isApproved = false;
         $view->save();
+        // return redirect('/accreditation/'.$request->agency.'/department/'.$request->department.'/areas');
     }
 
     public function done(Request $request){
+        $benchmark = Benchmark::find($request->bench);
+        // $benchmark->status = 1;
+        $benchmark->update(['status' => 1]);
+        $totalBenchStatus = null;
+        $benches = Benchmark::where('parameterId', $request->parameter)->get();
+        foreach($benches as $bench){
+            $totalBenchStatus = $totalBenchStatus + $bench->status;
+        }
+        $ParameterStatus = Parameter::find($benchmark->parameterId);
+        $ParameterStatus->status = $totalBenchStatus/(count($benches));
+        $ParameterStatus->save();
+
+        $totalParameterStatus = null;
+        $parameters = Parameter::where('accessId', $request->areaAccess)->get();
+        foreach($parameters as $parameter){
+            $totalParameterStatus = $totalParameterStatus + $parameter->status;
+        } 
+        $AccessStatus = AccessArea::find($ParameterStatus->accessId);
+        $AccessStatus->status = $totalParameterStatus/(count($parameters));
+        $AccessStatus->save();
+        
+        $totalAreaStatus = null;
+        $AccessAreas = AccessArea::all();
+        $Areas = Area::where('agency_id',$request->agency)->get();
+        foreach($Areas as $area){
+            foreach($AccessAreas as $Access){
+                if($area->id == $Access->areaId){
+                    $totalAreaStatus = $totalAreaStatus + $Access->status;
+                }
+            } 
+        } 
+        $AgencyStatus = Agency::find($request->agency);
+        $AgencyStatus->status = $totalAreaStatus/(count($AccessAreas));
+        $AgencyStatus->save();
        }
 
     public function unDone(Request $request){

@@ -19,6 +19,13 @@
       </ul>
     </li>
     @endif
+    @if(Auth::user()->type == 1)
+        <li>
+          <a href="/logs">
+            <i class="fa fa-list"></i> <span>Logs</span>
+          </a>
+        </li>
+    @endif
 </ul>
 @endsection
 
@@ -75,25 +82,25 @@
                                       <div class="progress progress-xs">
                                           <div class="progress-bar progress-bar-success" data-toggle="tooltip" title="{{100*$entry->status}}%" style="width: {{100*$entry->status}}%"></div>
                                       </div>
-                                    </td>                                  
-                                    @if(Auth::user()->type == 1 OR Auth::user()->type == 2 OR Auth::user()->type == 3 OR $entry->departmentId == Auth::user()->dept_id AND (Auth::user()->type == 4 OR $entry->head == Auth::user()->id))
-                                    <td>
-                                      <button type="button" class="edit btn btn-group btn-default btn-s">Edit</button>
-                                      <button type="button" class="del btn btn-group btn-danger btn-s">Delete</button>
                                     </td>
-                                    @else
-                                        @if(in_array($entry->id, $areaView) OR $areaView != null)
-                                          @foreach($views as $view)
-                                            @if($view->accessId == $entry->id AND $view->isApproved == 1)
-                                              <button type="button" class="open btn btn-block btn-success btn-s" disabled>Verified</button>
-                                            @elseif($view->accessId == $entry->id AND $view->isApproved == 0)
-                                              <button class="request btn btn-block btn-info btn-s" disabled style="width: 100%">Pending</button>
-                                            @endif
-                                          @endforeach
-                                        @else
-                                          <button value="{{$entry->id}}" class="request btn btn-block btn-warning btn-s" style="width: 100%">Request</button>
-                                        @endif
-                                    @endif
+                                    <td>                              
+                                      @if(Auth::user()->type == 1 OR Auth::user()->type == 2 OR Auth::user()->type == 3 OR ($entry->departmentId == Auth::user()->dept_id AND (Auth::user()->type == 4 OR $entry->head == Auth::user()->id)) OR  Auth::user()->id == $AccHead)
+                                        <button type="button" class="edit btn btn-group btn-default btn-s">Edit</button>
+                                        <button type="button" class="del btn btn-group btn-danger btn-s">Delete</button>
+                                      @else
+                                          @if(in_array($entry->id, $areaView))
+                                            @foreach($views as $view)
+                                              @if($view->accessId == $entry->id AND $view->isApproved == 1)
+                                                <button type="button" class="open btn btn-block btn-success btn-s" disabled>Verified</button>
+                                              @elseif($view->accessId == $entry->id AND $view->isApproved == 0)
+                                                <button class="request btn btn-block btn-info btn-s" disabled style="width: 100%">Pending</button>
+                                              @endif
+                                            @endforeach
+                                          @else
+                                            <button value="{{$entry->id}}" class="request btn btn-block btn-warning btn-s" style="width: 100%">Request</button>
+                                          @endif
+                                      @endif
+                                    </td>
                                 </tr>
                               @endif
                              @endforeach
@@ -109,7 +116,7 @@
                           <a href="/accreditation/" class="btn form-control btn-default"><i class="fa fa-arrow-left"><span> Return</span></i></a>
                         @endif
                         @foreach($allview as $area)
-                          @if($area->head == Auth::user()->id OR Auth::user()->type == 1 OR Auth::user()->type == 2 OR Auth::user()->type == 3 OR Auth::user()->type == 4)
+                          @if($area->head == Auth::user()->id OR Auth::user()->type == 1 OR Auth::user()->type == 2 OR Auth::user()->type == 3 OR (Auth::user()->type == 4 AND Auth::user()->dept_id == $department->id))
                             <span>Accreditation Head:</span>
                             <select id="editAccHead" name="editHead" class="form-control" value="" disabled>
                               <option disabled selected>
@@ -323,16 +330,12 @@
       var editClicked, deleteClicked, updateClicked, requestClicked;
       $(document).ready(function() {
         $('[data-toggle="tooltip"]').tooltip();
-
         $('#editAccHeadButton').click(function(){
           if($('#editAccHead').attr('disabled')){
             $('#editAccHead').removeAttr("disabled");
             $(this).removeClass("btn-success");
             $(this).addClass("btn-danger");
             $(this).html('Save');
-            // $.post('/changeAccHead', {_token:"{{csrf_token()}}",accHead: $('#editAccHead').val(), department: '{{$department->id}}'}, function(data){
-            //     window.location.reload();
-            // });
           }else{
             $('#editAccHead').attr('disabled',true);
             $(this).addClass("btn-success");
@@ -404,8 +407,7 @@
             e.preventDefault();
             var deleteForm = $(this).serialize();
             $.post('/deleteArea', deleteForm, function(data){
-              console.log(data);
-              //window.location.reload();
+              window.location.reload();
             })
         });
 
@@ -414,7 +416,6 @@
             e.preventDefault();
             var editForm = $(this).serialize();
             $.post('/editAreaHead', editForm, function(data){
-              //console.log(data);
               window.location.reload();
             })
         });
@@ -431,7 +432,6 @@
             e.preventDefault();
             var editForm = $(this).serialize();
             $.post('/editArea', editForm, function(data){
-              //console.log(data);
               window.location.reload();
             })
         });

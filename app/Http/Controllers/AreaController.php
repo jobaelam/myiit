@@ -58,7 +58,8 @@ class AreaController extends Controller
             'allview' => AccessArea::all(),
             'areaView' => $areaView,
             'views' => AreaView::where('user', Auth::user()->id)->get(),
-            'request' => AccessArea::where('head', Auth::user()->id)->first()
+            'request' => AccessArea::where('head', Auth::user()->id)->first(),
+            'AccHead' => Department::find($department)->head,
         );
 
         return view('pages.area')->with($data);
@@ -194,18 +195,7 @@ class AreaController extends Controller
      */
     public function destroy(Request $request)
     {
-        // $delete = Area::find($request->deleteId)->name;
-        // if(Auth::user()->type !=1){
-        //     $log = Auth::user()->first_name.' '.Auth::user()->last_name.' deleted agency '.$delete;
-        // }else{
-        //     $log = Auth::user()->first_name.' deleted agency '.$delete;
-        // }
-
-        // $logs = new Log;
-        // $logs->record = $log;
-        // $logs->save();
-
-        // Area::find($request->deleteId)->delete();
+        //
     }
 
     public function showAreaHead(Request $request)

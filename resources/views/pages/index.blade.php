@@ -19,6 +19,13 @@
           </ul>
         </li>
         @endif
+        @if(Auth::user()->type == 1)
+        <li>
+          <a href="/logs">
+            <i class="fa fa-list"></i> <span>Logs</span>
+          </a>
+        </li>
+        @endif
     </ul>
 @endsection
 

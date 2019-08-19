@@ -115,8 +115,7 @@ class PagesController extends Controller
 
     public function logs(){
             $data = array(
-                'logs' => Log::orderBy('id','DESC')->get(),
-                'logCount' => Log::count()
+                'logs' => Log::orderBy('id','DESC')->get()
             );
         return view('pages.logs')->with($data);
     }

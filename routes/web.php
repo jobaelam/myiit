@@ -18,7 +18,6 @@ Route::get('/request', 'PagesController@request');
 Route::get('/logs', 'PagesController@logs');
 Route::any('/done', 'ParameterController@done');
 Route::any('/unDone', 'ParameterController@unDone');
-// Route::any('/calculateParamStatus','ParameterController@calculateParamStatus');
 Route::get('/request/file', 'PagesController@requestFile');
 Route::any('/requestParameter', 'ParameterController@request');
 Route::any('/changeAccHead', 'AreaController@changeAccHead');

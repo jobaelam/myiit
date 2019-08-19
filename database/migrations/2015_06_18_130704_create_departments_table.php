@@ -19,7 +19,6 @@ class CreateDepartmentsTable extends Migration
             $table->unsignedBigInteger('college_id');
             $table->foreign('college_id')->references('id')->on('colleges');
             $table->unsignedBigInteger('head')->nullable();
-            //problem when migrate:fresh
             $table->foreign('head')->references('id')->on('users');
             $table->timestamps();
         });
