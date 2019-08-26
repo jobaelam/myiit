@@ -20,6 +20,7 @@ class CreateDepartmentsTable extends Migration
             $table->foreign('college_id')->references('id')->on('colleges');
             $table->unsignedBigInteger('head')->nullable();
             $table->foreign('head')->references('id')->on('users');
+            $table->decimal('status',3,2)->default(0);
             $table->timestamps();
         });
 

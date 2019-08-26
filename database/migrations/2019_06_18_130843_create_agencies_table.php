@@ -17,7 +17,7 @@ class CreateAgenciesTable extends Migration
             $table->bigIncrements('id');
             $table->string('name');
             $table->mediumText('desc');
-            $table->decimal('status',3,2)->default(0);
+            //$table->decimal('status',3,2)->default(0);
             $table->timestamps();
         });
     }

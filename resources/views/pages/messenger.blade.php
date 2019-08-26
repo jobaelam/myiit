@@ -44,14 +44,22 @@
     <section class="content">
         <div class="row">
             <div class="col-md-2">
-    
+            @if(count($chats) > 0 OR count($chats2) > 0)
+            <div class="box box-solid">
+            @else
             <div class="box box-solid collapsed-box">
+            @endif
                 <div class="box-header with-border">
                 <h3 class="box-title">Inbox</h3>
     
                 <div class="box-tools">
+                    @if(count($chats) > 0 OR count($chats2) > 0)
+                    <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                    </button>
+                    @else
                     <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i>
                     </button>
+                    @endif
                 </div>
                 </div>
                 <div class="box-body no-padding">
@@ -60,7 +68,7 @@
                         @foreach($chats as $chat)
                         @csrf
                             <li value="{{$chat->user2}}" ><a href="#"><span>{{$chat->hasUser2->first_name}}</span> </a></li>
-                            <span class="label label-primary pull-right">12</span>
+                            {{-- <span class="label label-primary pull-right">12</span> --}}
                         @endforeach
                      @endif
                      @if(count($chats2) > 0)

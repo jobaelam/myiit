@@ -50,8 +50,8 @@
                     <tr class="active">
                       <th>Agencies</th>
                       <th>Description</th>
-                      <th style="width: 25%">Status</th>
-                      @if( Auth::user()->id == 1)
+                      {{-- <th style="width: 25%">Status</th> --}}
+                      @if( Auth::user()->id == 1 OR Auth::user()->type == 2 OR Auth::user()->type == 3)
                         <th width=10%>Action</th>
                       @endif
                     </tr>
@@ -62,11 +62,11 @@
                        <tr value="{{$agency->id}}" class="table-row">
                           <td>{{$agency->name}}</td>
                           <td>{{$agency->desc}}</td>
-                          <td>
+                          {{-- <td>
                               <div class="progress progress-xs">
                                   <div class="progress-bar progress-bar-success" data-toggle="tooltip" title="{{100*$agency->status}}%" style="width: {{100*$agency->status}}%"></div>
                               </div>
-                          </td>
+                          </td> --}}
                           @if( Auth::user()->id == 1 OR Auth::user()->type == 2)
                             <td>
                               <button type="button" class="edit btn btn-default btn-s">Edit</button>
@@ -224,12 +224,12 @@
               $('#delete-agency').modal();
               deleteClicked = false;
             }else {
-              if('{{Auth::user()->type}}' == 1 || '{{Auth::user()->type}}' == 2 || '{{Auth::user()->type}}' == 3){
+              // if('{{Auth::user()->type}}' == 1 || '{{Auth::user()->type}}' == 2 || '{{Auth::user()->type}}' == 3){
                 //window.location.href="agency/"+rowId+"/colleges";
                 window.location.href="/accreditation/"+rowId;
-              } else if('{{Auth::user()->type}}' == 4 || '{{Auth::user()->type}}' == 5){
-                window.location.href="/accreditation/"+rowId+"/department/"+{{Auth::user()->dept_id}}+"/areas";
-              }
+              // } else if('{{Auth::user()->type}}' == 4 || '{{Auth::user()->type}}' == 5){
+              //   window.location.href="/accreditation/"+rowId+"/department/"+{{Auth::user()->dept_id}}+"/areas";
+              // }
             } 
         });
 

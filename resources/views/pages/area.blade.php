@@ -66,7 +66,7 @@
                                   @if($entry->head == null)
                                     <td class="assigned" style="display:none;">false</td>
                                     <td> 
-                                      Not Yet Assigned
+                                      
                                   @else
                                     <td class="assigned" style="display:none;">true</td>
                                     <td>
@@ -82,9 +82,10 @@
                                       </div>
                                     </td>        
                                     <td>
-                                      @if(Auth::user()->type == 1 OR Auth::user()->type == 2 OR Auth::user()->type == 3 OR ($entry->departmentId == Auth::user()->dept_id AND (Auth::user()->type == 4 OR $entry->head == Auth::user()->id)) OR  Auth::user()->id == $AccHead)
+                                      @if(Auth::user()->type == 1 OR Auth::user()->type == 2 OR Auth::user()->type == 3)
                                         <button type="button" class="edit btn btn-group btn-default btn-s">Edit</button>
                                         <button type="button" class="del btn btn-group btn-danger btn-s">Delete</button>
+                                      @elseif(($entry->departmentId == Auth::user()->dept_id AND (Auth::user()->type == 4 OR $entry->head == Auth::user()->id)) OR  Auth::user()->id == $AccHead)
                                       @else
                                           @if(in_array($entry->id, $areaView))
                                             @foreach($views as $view)
@@ -115,7 +116,7 @@
                           <a href="/accreditation/" class="btn form-control btn-default"><i class="fa fa-arrow-left"><span> Return</span></i></a>
                         @endif
                         @foreach($allview as $area)
-                          @if($area->head == Auth::user()->id OR Auth::user()->type == 1 OR Auth::user()->type == 2 OR Auth::user()->type == 3 OR (Auth::user()->type == 4 AND Auth::user()->dept_id == $department->id))
+                          @if(Auth::user()->type == 1 OR Auth::user()->type == 2 OR Auth::user()->type == 3)
                             <span>Accreditation Head:</span>
                             <select id="editAccHead" name="editHead" class="form-control" value="" disabled>
                               <option disabled selected>
@@ -443,7 +444,8 @@
                 alert("Enter a Valid Input");
             }else{
               $.post('/insertArea', addForm, function(data){
-                window.location.reload();
+                console.log(data);
+                // window.location.reload();
               })
             };
         });

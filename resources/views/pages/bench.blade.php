@@ -48,9 +48,9 @@
                           <thead>
                             <tr class="active" disabled>
                               <th>Name</th>
-                              <th style="width: 25%">Status</th>
+                              <th width="25%">Status</th>
                               <th width="5%">File</th>
-                              @if( Auth::user()->id == $AccHead OR Auth::user()->type == 1)
+                              @if( Auth::user()->id == $AccHead OR Auth::user()->type == 1 OR Auth::user()->type == 2 OR Auth::user()->type == 3)
                                 <th width="7%">Action</th>
                               @endif
                             </tr>
@@ -65,7 +65,10 @@
                                     </div>
                                   </td>
                                   <td>{{count($benchmark->hasFiles)}}</td>
-                                  @if(Auth::user()->id == $AccHead  OR Auth::user()->type == 1)
+                                  @if(Auth::user()->id == $AccHead  OR Auth::user()->type == 1 OR Auth::user()->type == 2 OR Auth::user()->type == 3)
+                                    {{-- <td>
+                                        <button type="button" class="edit btn btn-block btn-default btn-s">Edit</button>
+                                    </td> --}}
                                     <td>
                                       @if($benchmark->status == 0)
                                         <button type="button" class="done btn btn-block btn-success btn-s">Done</button>
@@ -87,7 +90,12 @@
 <!-- jQuery 3 -->
 <script src="/bower_components/jquery/dist/jquery.min.js"></script>
 <script>
-      var unDoneClicked, doneClicked;
+      var unDoneClicked, doneClicked, editClicked;
+
+      $('.edit').click(function() {
+        editClicked = true;
+      })
+
 
       $('.done').click(function() {
         doneClicked = true;
@@ -112,7 +120,15 @@
                 document.location.reload();
             });
             unDoneClicked = false;
-          }else {
+          }
+          if(editClicked){
+            $.post('/edit', {_token:"{{csrf_token()}}",bench: bench, agency: '{{$agency->id}}', areaAccess: '{{$access->id}}', parameter: {{$parameters->id}}, department: '{{$department}}'}, function(data){
+                console.log(data);
+                document.location.reload();
+            });
+            doneClicked = false;
+          }
+          else {
             var rowId = $(this).attr('value');
             window.location.href="/accreditation/"+{{$agency->id}}+"/department/"+{{$department}}+"/areas/"+{{$access->id}}+"/parameters/"+{{$parameters->id}}+"/bench/"+rowId+"/files";
           }

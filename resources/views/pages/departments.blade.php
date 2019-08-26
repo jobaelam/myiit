@@ -47,8 +47,9 @@
                 <table class="table table-bordered table-hover unselectable" style="table-layout:fixed;">
                   <thead>
                     <tr class="active" disabled>
-                      <th>Departments</th>
+                      <th>Departments</th>                      
                       <th>Chairperson</th>
+                      <th>Status</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -57,6 +58,11 @@
                         <td>{{$department->name}}</td>
                         <td>
                           Prof. {{$chairPersons->where('dept_id', $department->id)->first()->first_name}} {{$chairPersons->where('dept_id', $department->id)->first()->last_name}}
+                        </td>
+                        <td>
+                            <div class="progress progress-xs">
+                                <div class="progress-bar progress-bar-success" data-toggle="tooltip" title="{{100*$department->status}}%" style="width: {{100*$department->status}}%"></div>
+                            </div>
                         </td>
                      </tr>
                    @endforeach

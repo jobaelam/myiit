@@ -92,6 +92,15 @@ class AreaController extends Controller
                 'departmentId' => $department->id,
             );
             AccessArea::create($datas);
+            //Department Total Status
+            $totalDepartmentStatus = null;
+            $AccessAreas = AccessArea::where('departmentId',$department->id)->get();
+            foreach($AccessAreas as $Access){
+                $totalDepartmentStatus = $totalDepartmentStatus + $Access->status;
+            } 
+            $DepartmentStatus = Department::find($department->id);
+            $DepartmentStatus->status = $totalDepartmentStatus/(count($AccessAreas));
+            $DepartmentStatus->save();
         }
 
         // if(Auth::user()->type !=1){
